@@ -901,6 +901,135 @@
     text-align: center;
   }
 
+  /* SETTINGS MODAL */
+  .settings-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    align-items: center;
+    justify-content: center;
+  }
+  .settings-overlay.open    { display: flex; }
+  .settings-overlay.visible { opacity: 1; }
+
+  .settings-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: min(480px, 92vw);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 0 0 28px;
+    transform: translateY(16px);
+    transition: transform 0.3s ease;
+  }
+  .settings-overlay.visible .settings-panel { transform: translateY(0); }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(28,52,69,0.6);
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+  .settings-row-desc {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* Toggle switch */
+  .toggle-switch {
+    position: relative;
+    width: 46px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    border-radius: 26px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-track::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .toggle-switch input:checked + .toggle-track { background: var(--blue); }
+  .toggle-switch input:checked + .toggle-track::before { transform: translateX(20px); }
+
+  /* HELP MODAL */
+  .help-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    align-items: center;
+    justify-content: center;
+  }
+  .help-overlay.open    { display: flex; }
+  .help-overlay.visible { opacity: 1; }
+
+  .help-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: min(520px, 92vw);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 0 0 28px;
+    transform: translateY(16px);
+    transition: transform 0.3s ease;
+  }
+  .help-overlay.visible .help-panel { transform: translateY(0); }
+
+  .help-q {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 20px 24px 6px;
+  }
+  .help-a {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    padding: 0 24px 4px;
+  }
+  .help-a a { color: var(--blue); text-decoration: none; }
+  .help-a a:hover { text-decoration: underline; }
+  .help-divider {
+    border: none;
+    border-top: 1px solid rgba(28,52,69,0.6);
+    margin: 14px 24px 0;
+  }
+
   /* LEADERBOARD MODAL */
   .lb-overlay {
     display: none;
@@ -1326,6 +1455,65 @@
   </div>
 </div>
 
+<!-- Settings modal -->
+<div class="settings-overlay" id="settingsOverlay" onclick="handleSettingsOverlayClick(event)">
+  <div class="settings-panel" id="settingsPanel">
+    <div class="stats-panel-header">
+      <span class="stats-title">Settings</span>
+      <button class="stats-close" onclick="closeSettings()">&#x2715;</button>
+    </div>
+
+    <div class="stats-section-label">Leaderboard</div>
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">Show me on the leaderboard</div>
+        <div class="settings-row-desc">Your name and score will appear in today's results</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="settingShowOnLeaderboard" onchange="saveLeaderboardSetting(this.checked)" checked>
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Help modal -->
+<div class="help-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">
+  <div class="help-panel" id="helpPanel">
+    <div class="stats-panel-header">
+      <span class="stats-title">How to Play</span>
+      <button class="stats-close" onclick="closeHelp()">&#x2715;</button>
+    </div>
+
+    <div class="help-q">How do you play?</div>
+    <div class="help-a">Every day there's a new puzzle and you can play on your computer, phone or tablet. Read the origin clue and guess the word or phrase it describes. Type in your answer — if you get letters wrong they'll turn red and erase, so you can keep trying. A timer starts once you begin and pauses if you close the browser or switch tabs.</div>
+
+    <hr class="help-divider">
+    <div class="help-q">What are the Definition and Reveal a Letter buttons?</div>
+    <div class="help-a">For many puzzles you can tap <strong>Definition</strong> to get an extra clue. For more help, tap <strong>Reveal a Letter</strong> and a random letter from the answer is shown. You can reveal as many letters as you like — even the whole answer if you're stuck.</div>
+
+    <hr class="help-divider">
+    <div class="help-q">How is my score calculated?</div>
+    <div class="help-a">Lower is better. Your score = your time + 30 seconds for using the definition + 15 seconds per letter revealed + 5 seconds per wrong letter.</div>
+
+    <hr class="help-divider">
+    <div class="help-q">Can I post my results?</div>
+    <div class="help-a">After you play, tap <strong>See Results</strong>, enter your name and location (e.g. Carlos, San Francisco), and your results are posted to the Orijinz leaderboard. You only see results from players who choose to share. There are three tabs — Score, Games Played, and Streak.</div>
+
+    <hr class="help-divider">
+    <div class="help-q">Can I share my results with others?</div>
+    <div class="help-a">Yes! After finishing, tap the <strong>Share</strong> button to copy your results and send them to friends. Comparing results and discussing the origins is half the fun.</div>
+
+    <hr class="help-divider">
+    <div class="help-q">Can I play puzzles from earlier days?</div>
+    <div class="help-a">No, sorry — each puzzle is available for one day only.</div>
+
+    <hr class="help-divider">
+    <div class="help-q">Can I send feedback or ideas?</div>
+    <div class="help-a">Of course! Email <a href="mailto:orijinzgames@outlook.com">orijinzgames@outlook.com</a> — we'd love to hear from you.</div>
+  </div>
+</div>
+
 <!-- Leaderboard modal -->
 <div class="lb-overlay" id="lbOverlay" onclick="handleLbOverlayClick(event)">
   <div class="lb-panel" id="lbPanel">
@@ -1413,9 +1601,47 @@ function closeMenu() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); } });
 
 function menuHome()     { closeMenu(); /* TODO: navigate home */ }
-function menuHelp()     { closeMenu(); /* TODO: show help modal */ }
+function menuHelp()     { closeMenu(); openHelp(); }
+
+function openHelp() {
+  const overlay = document.getElementById('helpOverlay');
+  const panel   = document.getElementById('helpPanel');
+  overlay.classList.add('open');
+  panel.scrollTop = 0;
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+function closeHelp() {
+  const overlay = document.getElementById('helpOverlay');
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.remove('open'), 250);
+}
+function handleHelpOverlayClick(e) {
+  if (e.target === document.getElementById('helpOverlay')) closeHelp();
+}
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
-function menuSettings() { closeMenu(); /* TODO: show advanced settings */ }
+function menuSettings() { closeMenu(); openSettings(); }
+
+function openSettings() {
+  const overlay = document.getElementById('settingsOverlay');
+  const panel   = document.getElementById('settingsPanel');
+  // Load saved preference
+  const saved = localStorage.getItem('showOnLeaderboard');
+  document.getElementById('settingShowOnLeaderboard').checked = saved !== 'false';
+  overlay.classList.add('open');
+  panel.scrollTop = 0;
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+function closeSettings() {
+  const overlay = document.getElementById('settingsOverlay');
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.remove('open'), 250);
+}
+function handleSettingsOverlayClick(e) {
+  if (e.target === document.getElementById('settingsOverlay')) closeSettings();
+}
+function saveLeaderboardSetting(val) {
+  localStorage.setItem('showOnLeaderboard', val);
+}
 
 // =================================================================
 // STATISTICS
@@ -1733,6 +1959,7 @@ let animating = false;
 let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount = 0;
 let streak = 0, puzzleIndex = 0;
 let timerInterval = null, startTime = null, elapsedSeconds = 0;
+let wixResultSent = false;
 
 function formatTime(sec) {
   const h = Math.floor(sec / 3600);
@@ -2077,6 +2304,7 @@ function submitGuess() {
     if (won) {
       streak++;
       recordGameResult(true);
+      sendResultToWix();
       updateCurrentInputDisplay();
       launchConfetti();
       setTimeout(() => showResult(true), 600);
@@ -2395,6 +2623,27 @@ function showResult(won) {
   document.getElementById('rs-streak').textContent = streak;
   const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (defShown ? 30 : 0);
   document.getElementById('rs-score').textContent = score;
+}
+
+function sendResultToWix() {
+  if (wixResultSent) return;
+  wixResultSent = true;
+  const score      = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (defShown ? 30 : 0);
+  const showOnLB   = localStorage.getItem('showOnLeaderboard') !== 'false';
+  const puzzleDate = new Date().toISOString().slice(0, 10);
+  window.parent.postMessage({
+    type:             'orijinz_result',
+    game:             'wordsandphrases',
+    puzzleNumber:     puzzleIndex,
+    puzzleDate:       puzzleDate,
+    score:            score,
+    timeSecs:         elapsedSeconds,
+    lettersRevealed:  revealCount,
+    definitionUsed:   defShown,
+    wrongLetters:     wrongCount,
+    wonGame:          true,
+    showOnLeaderboard: showOnLB
+  }, '*');
 }
 
 function toggleScoreInfo(e) {
