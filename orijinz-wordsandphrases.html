@@ -1889,44 +1889,74 @@ function getDeviceId() {
 }
 
 function renderLeaderboard() {
-  const deviceId = getDeviceId();
-  const list     = document.getElementById('lbList');
-  const form     = document.getElementById('lbEntryForm');
-  const hdr      = document.getElementById('lbListHeader');
+  const list = document.getElementById('lbList');
+  const form = document.getElementById('lbEntryForm');
+  const hdr  = document.getElementById('lbListHeader');
 
-  if (lbSortBy === 'score') {
-    const d = getLbData();
-    const puzzleKey = 'puzzle_' + puzzleIndex;
-    const entries = (d[puzzleKey] && d[puzzleKey].entries) ? [...d[puzzleKey].entries] : [];
-    entries.sort((a, b) => a.score - b.score);
-    const alreadySubmitted = entries.some(e => e.deviceId === deviceId);
-    form.style.display = alreadySubmitted ? 'none' : '';
-    hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
-    if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">No scores yet today \u2014 be the first!</div>'; return; }
-    list.innerHTML = entries.map((e, i) => {
-      const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
-    }).join('');
-
-  } else {
+  if (wixLeaderboardData) {
+    // --- Wix CMS data ---
     form.style.display = 'none';
-    const players = getAllPlayerStats();
-    if (lbSortBy === 'played') {
-      players.sort((a, b) => b.played - a.played);
+    if (lbSortBy === 'score') {
+      const entries = wixLeaderboardData.scores || [];
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
+      if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">No scores yet today \u2014 be the first!</div>'; return; }
+      list.innerHTML = entries.map((e, i) => {
+        const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
+      }).join('');
+    } else if (lbSortBy === 'played') {
+      const players = [...(wixLeaderboardData.stats || [])].sort((a, b) => b.gamesPlayed - a.gamesPlayed);
       hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-played">Played</span><span class="lb-col-streak" style="color:var(--text-muted)">Streak</span>';
-      if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
+      if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet.</div>'; return; }
       list.innerHTML = players.map((e, i) => {
-        const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span><span class="lb-row-streak">' + e.streak + '</span></div>';
+        const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-played lb-col-active">' + e.gamesPlayed + '</span><span class="lb-row-streak">' + e.currentStreak + '</span></div>';
       }).join('');
     } else {
-      players.sort((a, b) => b.streak - a.streak);
+      const players = [...(wixLeaderboardData.stats || [])].sort((a, b) => b.currentStreak - a.currentStreak);
       hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-streak">Streak</span><span class="lb-col-played" style="color:var(--text-muted)">Played</span>';
-      if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
+      if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet.</div>'; return; }
       list.innerHTML = players.map((e, i) => {
-        const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span><span class="lb-row-played">' + e.played + '</span></div>';
+        const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-streak lb-col-active">' + e.currentStreak + '</span><span class="lb-row-played">' + e.gamesPlayed + '</span></div>';
       }).join('');
+    }
+  } else {
+    // --- Fallback: localStorage ---
+    const deviceId = getDeviceId();
+    if (lbSortBy === 'score') {
+      const d = getLbData();
+      const puzzleKey = 'puzzle_' + puzzleIndex;
+      const entries = (d[puzzleKey] && d[puzzleKey].entries) ? [...d[puzzleKey].entries] : [];
+      entries.sort((a, b) => a.score - b.score);
+      const alreadySubmitted = entries.some(e => e.deviceId === deviceId);
+      form.style.display = alreadySubmitted ? 'none' : '';
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
+      if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">No scores yet today \u2014 be the first!</div>'; return; }
+      list.innerHTML = entries.map((e, i) => {
+        const mine = e.deviceId === deviceId ? ' lb-mine' : '';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
+      }).join('');
+    } else {
+      form.style.display = 'none';
+      const players = getAllPlayerStats();
+      if (lbSortBy === 'played') {
+        players.sort((a, b) => b.played - a.played);
+        hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-played">Played</span><span class="lb-col-streak" style="color:var(--text-muted)">Streak</span>';
+        if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet.</div>'; return; }
+        list.innerHTML = players.map((e, i) => {
+          const mine = e.deviceId === deviceId ? ' lb-mine' : '';
+          return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span><span class="lb-row-streak">' + e.streak + '</span></div>';
+        }).join('');
+      } else {
+        players.sort((a, b) => b.streak - a.streak);
+        hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-streak">Streak</span><span class="lb-col-played" style="color:var(--text-muted)">Played</span>';
+        if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet.</div>'; return; }
+        list.innerHTML = players.map((e, i) => {
+          const mine = e.deviceId === deviceId ? ' lb-mine' : '';
+          return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span><span class="lb-row-played">' + e.played + '</span></div>';
+        }).join('');
+      }
     }
   }
 }
@@ -1960,6 +1990,8 @@ let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount =
 let streak = 0, puzzleIndex = 0;
 let timerInterval = null, startTime = null, elapsedSeconds = 0;
 let wixResultSent = false;
+let wixLeaderboardData = null;
+let wixMemberId = null;
 
 function formatTime(sec) {
   const h = Math.floor(sec / 3600);
@@ -2645,6 +2677,15 @@ function sendResultToWix() {
     showOnLeaderboard: showOnLB
   }, '*');
 }
+
+// Receive leaderboard data sent back from Wix page code
+window.addEventListener('message', function(event) {
+  if (!event.data || event.data.type !== 'orijinz_leaderboard') return;
+  wixLeaderboardData = event.data;
+  wixMemberId = event.data.memberId || null;
+  const overlay = document.getElementById('lbOverlay');
+  if (overlay && overlay.classList.contains('open')) renderLeaderboard();
+});
 
 function toggleScoreInfo(e) {
   e.stopPropagation();
