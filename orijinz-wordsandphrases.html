@@ -1707,35 +1707,64 @@ function recordGameResult(won) {
 }
 
 function openStats() {
-  const s      = getStats();
-  const played = s.gamesPlayed;
+  const wixStats = wixLeaderboardData?.playerStats || null;
 
-  const pendingUnfinished = (s.lastPuzzleDate !== new Date().toDateString() && !s.lastWasFinished) ? 1 : 0;
-  const totalUnfinished   = s.unfinished + pendingUnfinished;
+  let played, curStreak, longestStr, totalUnfinished, pureWins,
+      totalReveals, avgReveals, totalDefs, totalWrong, avgWrong,
+      totalTimeFmt, avgTime, bestTime, avgScore, bestScore;
 
-  const avgReveals = played > 0 ? (s.totalReveals / played).toFixed(1) : '0.0';
-  const avgTime    = played > 0 ? formatTime(Math.round(s.totalTime / played)) : '0:00';
-  const avgScore   = played > 0 ? Math.round(s.totalScore / played) : '--';
-  const avgWrong   = played > 0 ? (s.totalWrong / played).toFixed(1) : '0.0';
-  const bestTime   = s.bestTime   !== null ? formatTime(s.bestTime)   : '--';
-  const bestScore  = s.bestScore  !== null ? s.bestScore              : '--';
-  const longestStr = Math.max(s.longestStreak, streak);
+  if (wixStats) {
+    played          = wixStats.gamesPlayed || 0;
+    curStreak       = wixStats.currentStreak || 0;
+    longestStr      = wixStats.longestStreak || 0;
+    totalUnfinished = 0;
+    pureWins        = wixStats.pureWins || 0;
+    totalReveals    = wixStats.totalReveals || 0;
+    avgReveals      = played > 0 ? (totalReveals / played).toFixed(1) : '0.0';
+    totalDefs       = wixStats.totalDefinitions || 0;
+    totalWrong      = wixStats.totalWrongLetters || 0;
+    avgWrong        = played > 0 ? (totalWrong / played).toFixed(1) : '0.0';
+    const tt        = wixStats.totalTimeSecs || 0;
+    totalTimeFmt    = formatTime(tt);
+    avgTime         = played > 0 ? formatTime(Math.round(tt / played)) : '0:00';
+    bestTime        = wixStats.bestTimeSecs != null ? formatTime(wixStats.bestTimeSecs) : '--';
+    avgScore        = played > 0 ? Math.round((wixStats.totalScore || 0) / played) : '--';
+    bestScore       = wixStats.bestScore != null ? wixStats.bestScore : '--';
+  } else {
+    const s         = getStats();
+    played          = s.gamesPlayed;
+    curStreak       = streak;
+    longestStr      = Math.max(s.longestStreak, streak);
+    const pending   = (s.lastPuzzleDate !== new Date().toDateString() && !s.lastWasFinished) ? 1 : 0;
+    totalUnfinished = s.unfinished + pending;
+    pureWins        = s.pureWins;
+    totalReveals    = s.totalReveals;
+    avgReveals      = played > 0 ? (s.totalReveals / played).toFixed(1) : '0.0';
+    totalDefs       = s.totalDefs;
+    totalWrong      = s.totalWrong;
+    avgWrong        = played > 0 ? (s.totalWrong / played).toFixed(1) : '0.0';
+    totalTimeFmt    = formatTime(s.totalTime);
+    avgTime         = played > 0 ? formatTime(Math.round(s.totalTime / played)) : '0:00';
+    bestTime        = s.bestTime  !== null ? formatTime(s.bestTime)  : '--';
+    avgScore        = played > 0 ? Math.round(s.totalScore / played) : '--';
+    bestScore       = s.bestScore !== null ? s.bestScore             : '--';
+  }
 
-  document.getElementById('st-played').textContent        = played;
-  document.getElementById('st-streak').textContent        = streak;
-  document.getElementById('st-longest-streak').textContent= longestStr;
-  document.getElementById('st-unfinished').textContent    = totalUnfinished;
-  document.getElementById('st-pure-wins').textContent     = s.pureWins;
-  document.getElementById('st-reveals').textContent       = s.totalReveals;
-  document.getElementById('st-avg-reveals').textContent   = avgReveals;
-  document.getElementById('st-defs').textContent          = s.totalDefs;
-  document.getElementById('st-wrong').textContent         = s.totalWrong;
-  document.getElementById('st-avg-wrong').textContent     = avgWrong;
-  document.getElementById('st-total-time').textContent    = formatTime(s.totalTime);
-  document.getElementById('st-avg-time').textContent      = avgTime;
-  document.getElementById('st-best-time').textContent     = bestTime;
-  document.getElementById('st-avg-score').textContent     = avgScore;
-  document.getElementById('st-best-score').textContent    = bestScore;
+  document.getElementById('st-played').textContent         = played;
+  document.getElementById('st-streak').textContent         = curStreak;
+  document.getElementById('st-longest-streak').textContent = longestStr;
+  document.getElementById('st-unfinished').textContent     = totalUnfinished;
+  document.getElementById('st-pure-wins').textContent      = pureWins;
+  document.getElementById('st-reveals').textContent        = totalReveals;
+  document.getElementById('st-avg-reveals').textContent    = avgReveals;
+  document.getElementById('st-defs').textContent           = totalDefs;
+  document.getElementById('st-wrong').textContent          = totalWrong;
+  document.getElementById('st-avg-wrong').textContent      = avgWrong;
+  document.getElementById('st-total-time').textContent     = totalTimeFmt;
+  document.getElementById('st-avg-time').textContent       = avgTime;
+  document.getElementById('st-best-time').textContent      = bestTime;
+  document.getElementById('st-avg-score').textContent      = avgScore;
+  document.getElementById('st-best-score').textContent     = bestScore;
 
   const overlay = document.getElementById('statsOverlay');
   overlay.classList.add('open');
