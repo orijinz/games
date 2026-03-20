@@ -1474,10 +1474,11 @@
 <div class="share-overlay" id="shareOverlay" onclick="handleShareOverlayClick(event)">
   <div class="share-popup" id="sharePopup">
     <div class="share-popup-title">Share</div>
+    <a class="share-option" id="shareEmail" href="#" target="_blank" rel="noopener">&#128140; Email</a>
+    <a class="share-option" id="shareMessages" href="#" target="_blank" rel="noopener">&#128172; Messages</a>
+    <a class="share-option" id="shareWhatsApp" href="#" target="_blank" rel="noopener">&#128518; WhatsApp</a>
     <button class="share-option" onclick="sharePopupCopy()">&#128203; Copy to clipboard</button>
     <a class="share-option" id="shareTwitter" href="#" target="_blank" rel="noopener">&#120143; Post on X / Twitter</a>
-    <a class="share-option" id="shareWhatsApp" href="#" target="_blank" rel="noopener">&#128172; WhatsApp</a>
-    <a class="share-option" id="shareEmail" href="#" target="_blank" rel="noopener">&#128140; Email</a>
     <button class="share-option share-cancel" onclick="closeSharePopup()">&#10005; Cancel</button>
   </div>
 </div>
@@ -1879,12 +1880,7 @@ function shareStats() {
   const text = lines.join('\n');
   const url  = 'https://www.entspire.com/orijinz-daily';
 
-  if (navigator.share) {
-    navigator.share({ title: 'Orijinz Daily Words & Phrases — My Stats', text, url })
-      .catch(err => { if (err.name !== 'AbortError') openSharePopup(text, url); });
-  } else {
-    openSharePopup(text, url);
-  }
+  openSharePopup(text, url);
 }
 
 // =================================================================
@@ -2803,9 +2799,10 @@ function openSharePopup(text, url) {
   _shareText = text;
   _shareUrl  = url;
   const enc = encodeURIComponent(text + '\n' + url);
-  document.getElementById('shareTwitter').href  = 'https://twitter.com/intent/tweet?text=' + enc;
-  document.getElementById('shareWhatsApp').href = 'https://wa.me/?text=' + enc;
   document.getElementById('shareEmail').href    = 'mailto:?subject=Orijinz%20Daily&body=' + enc;
+  document.getElementById('shareMessages').href = 'sms:?&body=' + enc;
+  document.getElementById('shareWhatsApp').href = 'https://wa.me/?text=' + enc;
+  document.getElementById('shareTwitter').href  = 'https://twitter.com/intent/tweet?text=' + enc;
   document.getElementById('shareOverlay').classList.add('open');
 }
 function closeSharePopup() {
@@ -2835,12 +2832,7 @@ function shareResult() {
   const shareText = 'Orijinz Daily Words & Phrases #' + (puzzleIndex + 1) + ' \u23F1\uFE0F ' + timeStr;
   const shareUrl  = 'https://www.entspire.com/orijinz-daily';
 
-  if (navigator.share) {
-    navigator.share({ title: 'Orijinz Daily Words & Phrases', text: shareText, url: shareUrl })
-      .catch(err => { if (err.name !== 'AbortError') openSharePopup(shareText, shareUrl); });
-  } else {
-    openSharePopup(shareText, shareUrl);
-  }
+  openSharePopup(shareText, shareUrl);
 }
 
 // =================================================================
