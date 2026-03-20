@@ -1814,14 +1814,7 @@ function shareStats() {
   const text = lines.join('\n');
   const url  = 'https://www.entspire.com/orijinz-daily';
 
-  if (navigator.share) {
-    navigator.share({ title: 'Orijinz Daily Words & Phrases Stats', text, url })
-      .catch(err => {
-        if (err.name !== 'AbortError') copyViaParent(text);
-      });
-  } else {
-    copyViaParent(text);
-  }
+  copyViaParent(text);
 }
 
 // =================================================================
@@ -2755,15 +2748,7 @@ function shareResult() {
   const shareText = 'Orijinz Daily Words & Phrases #' + (puzzleIndex + 1) + ' \u23F1\uFE0F ' + timeStr;
   const shareUrl  = 'https://www.entspire.com/orijinz-daily';
 
-  if (navigator.share) {
-    navigator.share({ title: 'Orijinz Daily Words & Phrases', text: shareText, url: shareUrl })
-      .catch(err => {
-        // User cancelled — do nothing. Any other error falls back to clipboard.
-        if (err.name !== 'AbortError') copyViaParent(shareText + '\n' + shareUrl);
-      });
-  } else {
-    copyViaParent(shareText + '\n' + shareUrl);
-  }
+  copyViaParent(shareText + '\n' + shareUrl);
 }
 
 // =================================================================
