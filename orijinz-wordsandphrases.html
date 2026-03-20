@@ -608,10 +608,16 @@
     min-width: 260px;
     max-width: 320px;
     width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  @media (max-width: 480px) {
+    .share-overlay { align-items: flex-end; }
+    .share-popup { max-width: 100%; width: 100%; border-radius: 16px 16px 0 0; padding-bottom: 28px; }
   }
   .share-popup-title {
     color: var(--teal);
@@ -2145,6 +2151,10 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('blur',  () => document.body.classList.add('window-blurred'));
 window.addEventListener('focus', () => document.body.classList.remove('window-blurred'));
+if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+  const el = document.getElementById('shareMessages');
+  if (el) el.style.display = 'none';
+}
 
 // =================================================================
 // INIT
