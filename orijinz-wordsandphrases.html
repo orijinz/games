@@ -874,6 +874,16 @@
     background: var(--border);
     margin: 8px 20px;
   }
+  .menu-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--subtle);
+  }
+  .menu-footer svg { opacity: 0.5; flex-shrink: 0; }
 
   /* STATISTICS MODAL */
   .stats-overlay {
@@ -1387,6 +1397,10 @@
       Advanced Settings
     </button>
   </div>
+  <div class="menu-footer" id="menuFooter" style="display:none">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span id="menuMemberName"></span>
+  </div>
 </nav>
 
 <main>
@@ -1632,18 +1646,6 @@
       </div>
     </div>
 
-    <!-- Name entry form -->
-    <div class="lb-entry-form" id="lbEntryForm">
-      <div class="lb-entry-form-title">Add your Name (Optional)</div>
-      <div class="lb-input-row">
-        <input class="lb-input" id="lbName"     type="text" placeholder="Name"     maxlength="32" autocomplete="off" onkeydown="if(event.key==='Enter')submitLeaderboardEntry()">
-        <input class="lb-input" id="lbLocation" type="text" placeholder="Location" maxlength="64" autocomplete="off" onkeydown="if(event.key==='Enter')submitLeaderboardEntry()">
-      </div>
-      <div style="display:flex; justify-content:flex-end;">
-        <button class="lb-submit-btn" onclick="submitLeaderboardEntry()">Submit Score</button>
-      </div>
-    </div>
-
     <!-- Sort tabs -->
     <div class="lb-sort-tabs">
       <div class="lb-sort-tab active" id="lbTab-score"  onclick="setLbSort('score')">Score</div>
@@ -1659,7 +1661,6 @@
       <span class="lb-col-tier"></span>
     </div>
     <div id="lbList"></div>
-    <p class="stats-note">Results saved on this device. Global leaderboard coming with player accounts.</p>
   </div>
 </div>
 
@@ -1688,7 +1689,7 @@ function closeMenu() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); } });
 
-function menuHome()     { closeMenu(); /* TODO: navigate home */ }
+function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
 function menuHelp()     { closeMenu(); openHelp(); }
 
 function openHelp() {
@@ -2809,6 +2810,11 @@ window.addEventListener('message', function(event) {
   } else if (event.data.type === 'orijinz_leaderboard') {
     wixLeaderboardData = event.data;
     wixMemberId = event.data.memberId || null;
+    if (event.data.memberName) {
+      const footer = document.getElementById('menuFooter');
+      const nameEl = document.getElementById('menuMemberName');
+      if (footer && nameEl) { nameEl.textContent = event.data.memberName; footer.style.display = 'flex'; }
+    }
     const overlay = document.getElementById('lbOverlay');
     if (overlay && overlay.classList.contains('open')) renderLeaderboard();
   }
