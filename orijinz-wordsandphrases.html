@@ -269,7 +269,7 @@
     text-align: center;
     line-height: 1.2;
   }
-  .letter-tile.active {
+  body:not(.window-blurred) .letter-tile.active {
     border-color: var(--gold);
     background: rgba(200,146,42,0.08);
     box-shadow: 0 0 0 3px rgba(200,146,42,0.2);
@@ -1451,7 +1451,6 @@
     <div style="text-align:center; padding: 20px 24px 4px;">
       <button class="share-btn" onclick="shareStats()">Share Stats! <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
     </div>
-    <p class="stats-note">Stats saved locally on this device. Login coming soon.</p>
   </div>
 </div>
 
@@ -1782,20 +1781,29 @@ function handleStatsOverlayClick(e) {
 }
 
 function shareStats() {
-  const s        = getStats();
-  const played   = s.gamesPlayed;
-  const avgTime  = played > 0 ? formatTime(Math.round(s.totalTime / played)) : '--';
-  const bestTime = s.bestTime  !== null ? formatTime(s.bestTime)  : '--';
-  const bestScore= s.bestScore !== null ? s.bestScore             : '--';
-  const longestStr = Math.max(s.longestStreak, streak);
+  const ws       = wixLeaderboardData?.playerStats || null;
+  const s        = ws ? null : getStats();
+  const played   = ws ? (ws.gamesPlayed || 0)   : s.gamesPlayed;
+  const curStr   = ws ? (ws.currentStreak || 0)  : streak;
+  const longestStr = ws ? (ws.longestStreak || 0) : Math.max(s.longestStreak, streak);
+  const pureWins = ws ? (ws.pureWins || 0)       : s.pureWins;
+  const avgTime  = played > 0
+    ? (ws ? formatTime(Math.round((ws.totalTimeSecs || 0) / played)) : formatTime(Math.round(s.totalTime / played)))
+    : '--';
+  const bestTime = ws
+    ? (ws.bestTimeSecs != null ? formatTime(ws.bestTimeSecs) : '--')
+    : (s.bestTime !== null ? formatTime(s.bestTime) : '--');
+  const bestScore = ws
+    ? (ws.bestScore != null ? ws.bestScore : '--')
+    : (s.bestScore !== null ? s.bestScore : '--');
 
   const lines = [
     'Orijinz Daily Words & Phrases \u2014 My Stats \uD83D\uDCCA',
     '',
     '\uD83D\uDCC5 Days Played:     ' + played,
-    '\uD83D\uDD25 Current Streak:  ' + streak,
+    '\uD83D\uDD25 Current Streak:  ' + curStr,
     '\uD83C\uDFC6 Longest Streak:  ' + longestStr,
-    '\u2B50 Pure Wins:       ' + s.pureWins,
+    '\u2B50 Pure Wins:       ' + pureWins,
     '',
     '\u23F1\uFE0F Best Time:       ' + bestTime,
     '\u23F1\uFE0F Avg Time:        ' + avgTime,
@@ -1809,11 +1817,10 @@ function shareStats() {
   if (navigator.share) {
     navigator.share({ title: 'Orijinz Daily Words & Phrases Stats', text, url })
       .catch(err => {
-        if (err.name !== 'AbortError')
-          navigator.clipboard.writeText(text).then(() => showToast('Copied! \uD83D\uDCCB', 2000));
+        if (err.name !== 'AbortError') copyViaParent(text);
       });
   } else {
-    navigator.clipboard.writeText(text).then(() => showToast('Copied! \uD83D\uDCCB', 2000));
+    copyViaParent(text);
   }
 }
 
@@ -2077,6 +2084,8 @@ function resumeTimer() {
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { pauseTimer(); } else { resumeTimer(); }
 });
+window.addEventListener('blur',  () => document.body.classList.add('window-blurred'));
+window.addEventListener('focus', () => document.body.classList.remove('window-blurred'));
 
 // =================================================================
 // INIT
@@ -2725,6 +2734,11 @@ document.addEventListener('click', function() {
   if (p) p.classList.remove('visible');
 });
 
+function copyViaParent(text) {
+  window.parent.postMessage({ type: 'orijinz_copy', text }, '*');
+  showToast('Copied to clipboard! \uD83D\uDCCB', 2000);
+}
+
 function shareResult() {
   const timeStr  = formatTime(elapsedSeconds);
   const shareText = 'Orijinz Daily Words & Phrases #' + (puzzleIndex + 1) + ' \u23F1\uFE0F ' + timeStr;
@@ -2734,14 +2748,10 @@ function shareResult() {
     navigator.share({ title: 'Orijinz Daily Words & Phrases', text: shareText, url: shareUrl })
       .catch(err => {
         // User cancelled — do nothing. Any other error falls back to clipboard.
-        if (err.name !== 'AbortError') {
-          navigator.clipboard.writeText(shareText + '\n' + shareUrl)
-            .then(() => showToast('Copied to clipboard! \uD83D\uDCCB', 2000));
-        }
+        if (err.name !== 'AbortError') copyViaParent(shareText + '\n' + shareUrl);
       });
   } else {
-    navigator.clipboard.writeText(shareText + '\n' + shareUrl)
-      .then(() => showToast('Copied to clipboard! \uD83D\uDCCB', 2000));
+    copyViaParent(shareText + '\n' + shareUrl);
   }
 }
 
