@@ -2735,6 +2735,17 @@ document.addEventListener('click', function() {
 });
 
 function copyViaParent(text) {
+  try {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(el);
+    el.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(el);
+    if (ok) { showToast('Copied to clipboard! \uD83D\uDCCB', 2000); return; }
+  } catch(e) {}
+  // fallback: relay to Wix parent
   window.parent.postMessage({ type: 'orijinz_copy', text }, '*');
   showToast('Copied to clipboard! \uD83D\uDCCB', 2000);
 }
