@@ -590,6 +590,59 @@
     line-height: 1.65;
   }
 
+  .share-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+  }
+  .share-overlay.open { display: flex; }
+  .share-popup {
+    background: #1a2d3f;
+    border: 1px solid #2e4a60;
+    border-radius: 14px;
+    padding: 20px 16px;
+    min-width: 260px;
+    max-width: 320px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .share-popup-title {
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .share-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    background: #0d1b2a;
+    color: var(--white);
+    border: 1px solid #2e4a60;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.15s;
+    text-align: left;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .share-option:hover { background: #1e3347; }
+  .share-cancel { color: var(--text-muted); border-color: transparent; margin-top: 2px; }
+
   .share-btn {
     -webkit-appearance: none;
     appearance: none;
@@ -1417,6 +1470,18 @@
   </div>
 </main>
 
+<!-- Share popup -->
+<div class="share-overlay" id="shareOverlay" onclick="handleShareOverlayClick(event)">
+  <div class="share-popup" id="sharePopup">
+    <div class="share-popup-title">Share</div>
+    <button class="share-option" onclick="sharePopupCopy()">&#128203; Copy to clipboard</button>
+    <a class="share-option" id="shareTwitter" href="#" target="_blank" rel="noopener">&#120143; Post on X / Twitter</a>
+    <a class="share-option" id="shareWhatsApp" href="#" target="_blank" rel="noopener">&#128172; WhatsApp</a>
+    <a class="share-option" id="shareEmail" href="#" target="_blank" rel="noopener">&#128140; Email</a>
+    <button class="share-option share-cancel" onclick="closeSharePopup()">&#10005; Cancel</button>
+  </div>
+</div>
+
 <!-- Statistics modal -->
 <div class="stats-overlay" id="statsOverlay" onclick="handleStatsOverlayClick(event)">
   <div class="stats-panel" id="statsPanel">
@@ -1814,7 +1879,12 @@ function shareStats() {
   const text = lines.join('\n');
   const url  = 'https://www.entspire.com/orijinz-daily';
 
-  copyViaParent(text);
+  if (navigator.share) {
+    navigator.share({ title: 'Orijinz Daily Words & Phrases — My Stats', text, url })
+      .catch(err => { if (err.name !== 'AbortError') openSharePopup(text, url); });
+  } else {
+    openSharePopup(text, url);
+  }
 }
 
 // =================================================================
@@ -2727,20 +2797,37 @@ document.addEventListener('click', function() {
   if (p) p.classList.remove('visible');
 });
 
-function copyViaParent(text) {
+let _shareText = '', _shareUrl = '';
+
+function openSharePopup(text, url) {
+  _shareText = text;
+  _shareUrl  = url;
+  const enc = encodeURIComponent(text + '\n' + url);
+  document.getElementById('shareTwitter').href  = 'https://twitter.com/intent/tweet?text=' + enc;
+  document.getElementById('shareWhatsApp').href = 'https://wa.me/?text=' + enc;
+  document.getElementById('shareEmail').href    = 'mailto:?subject=Orijinz%20Daily&body=' + enc;
+  document.getElementById('shareOverlay').classList.add('open');
+}
+function closeSharePopup() {
+  document.getElementById('shareOverlay').classList.remove('open');
+}
+function handleShareOverlayClick(e) {
+  if (e.target === document.getElementById('shareOverlay')) closeSharePopup();
+}
+function sharePopupCopy() {
   try {
     const el = document.createElement('textarea');
-    el.value = text;
+    el.value = _shareText + '\n' + _shareUrl;
     el.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
     document.body.appendChild(el);
     el.select();
-    const ok = document.execCommand('copy');
+    document.execCommand('copy');
     document.body.removeChild(el);
-    if (ok) { showToast('Copied to clipboard! \uD83D\uDCCB', 2000); return; }
-  } catch(e) {}
-  // fallback: relay to Wix parent
-  window.parent.postMessage({ type: 'orijinz_copy', text }, '*');
-  showToast('Copied to clipboard! \uD83D\uDCCB', 2000);
+  } catch(e) {
+    window.parent.postMessage({ type: 'orijinz_copy', text: _shareText + '\n' + _shareUrl }, '*');
+  }
+  closeSharePopup();
+  showToast('Copied! \uD83D\uDCCB', 2000);
 }
 
 function shareResult() {
@@ -2748,7 +2835,12 @@ function shareResult() {
   const shareText = 'Orijinz Daily Words & Phrases #' + (puzzleIndex + 1) + ' \u23F1\uFE0F ' + timeStr;
   const shareUrl  = 'https://www.entspire.com/orijinz-daily';
 
-  copyViaParent(shareText + '\n' + shareUrl);
+  if (navigator.share) {
+    navigator.share({ title: 'Orijinz Daily Words & Phrases', text: shareText, url: shareUrl })
+      .catch(err => { if (err.name !== 'AbortError') openSharePopup(shareText, shareUrl); });
+  } else {
+    openSharePopup(shareText, shareUrl);
+  }
 }
 
 // =================================================================
