@@ -619,15 +619,29 @@
     .share-overlay { align-items: flex-end; }
     .share-popup { max-width: 100%; width: 100%; border-radius: 16px 16px 0 0; padding-bottom: 28px; }
   }
+  .share-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
   .share-popup-title {
     color: var(--teal);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    margin-bottom: 4px;
-    text-align: center;
   }
+  .share-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+  }
+  .share-close:hover { color: var(--white); }
   .share-option {
     display: flex;
     align-items: center;
@@ -647,7 +661,6 @@
     appearance: none;
   }
   .share-option:hover { background: #1e3347; }
-  .share-cancel { color: var(--text-muted); border-color: transparent; margin-top: 2px; }
 
   .share-btn {
     -webkit-appearance: none;
@@ -1479,7 +1492,10 @@
 <!-- Share popup -->
 <div class="share-overlay" id="shareOverlay" onclick="handleShareOverlayClick(event)">
   <div class="share-popup" id="sharePopup">
-    <div class="share-popup-title">Share</div>
+    <div class="share-popup-header">
+      <div class="share-popup-title">Share</div>
+      <button class="share-close" onclick="closeSharePopup()">&#10005;</button>
+    </div>
     <a class="share-option" id="shareEmail" href="#" target="_blank" rel="noopener">&#128140; Email</a>
     <a class="share-option" id="shareMessages" href="#" target="_blank" rel="noopener">&#128172; Messages</a>
     <a class="share-option" id="shareWhatsApp" href="#" target="_blank" rel="noopener">&#128518; WhatsApp</a>
@@ -1487,7 +1503,6 @@
     <a class="share-option" id="shareFacebook" href="#" target="_blank" rel="noopener">&#128420; Facebook</a>
     <a class="share-option" id="shareBluesky" href="#" target="_blank" rel="noopener">&#127756; Bluesky</a>
     <a class="share-option" id="shareTwitter" href="#" target="_blank" rel="noopener">&#120143; Post on X / Twitter</a>
-    <button class="share-option share-cancel" onclick="closeSharePopup()">&#10005; Cancel</button>
   </div>
 </div>
 
@@ -2093,6 +2108,7 @@ let timerInterval = null, startTime = null, elapsedSeconds = 0;
 let wixResultSent = false;
 let wixLeaderboardData = null;
 let wixMemberId = null;
+let wixPageUrl = 'https://www.entspire.com/odwordsandphrases'; // update if page URL changes
 
 function formatTime(sec) {
   const h = Math.floor(sec / 3600);
@@ -2785,13 +2801,17 @@ function sendResultToWix() {
   }, '*');
 }
 
-// Receive leaderboard data sent back from Wix page code
+// Receive messages from Wix page code
 window.addEventListener('message', function(event) {
-  if (!event.data || event.data.type !== 'orijinz_leaderboard') return;
-  wixLeaderboardData = event.data;
-  wixMemberId = event.data.memberId || null;
-  const overlay = document.getElementById('lbOverlay');
-  if (overlay && overlay.classList.contains('open')) renderLeaderboard();
+  if (!event.data) return;
+  if (event.data.type === 'orijinz_pageurl') {
+    wixPageUrl = event.data.url;
+  } else if (event.data.type === 'orijinz_leaderboard') {
+    wixLeaderboardData = event.data;
+    wixMemberId = event.data.memberId || null;
+    const overlay = document.getElementById('lbOverlay');
+    if (overlay && overlay.classList.contains('open')) renderLeaderboard();
+  }
 });
 
 function toggleScoreInfo(e) {
@@ -2806,7 +2826,7 @@ document.addEventListener('click', function() {
 let _shareText = '', _shareUrl = '';
 
 function openSharePopup(text) {
-  const url  = document.referrer || window.location.href;
+  const url  = wixPageUrl || document.referrer || window.location.href;
   _shareText = text;
   _shareUrl  = url;
   const encFull = encodeURIComponent(text + '\n' + url);
