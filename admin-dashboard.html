@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orijinz Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:        #0d1b2a;
+    --card:      #1a2d3f;
+    --card2:     #0f2133;
+    --border:    #2e4a60;
+    --text:      #c8dce8;
+    --text-dim:  #7aafc4;
+    --teal:      #4ecdc4;
+    --gold:      #f5c842;
+    --blue:      #1a7a96;
+    --blue-lt:   #2199bc;
+    --green:     #27ae60;
+    --orange:    #e67e22;
+    --red:       #c0392b;
+    --purple:    #9b59b6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; padding: 16px; }
+
+  /* HEADER */
+  .header { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .header h1 { flex: 1; min-width: 180px; font-size: 18px; font-weight: 700; color: var(--teal); letter-spacing: 1px; }
+  .controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .controls select, .controls input[type="date"] { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 13px; }
+  .controls label { color: var(--text-dim); font-size: 12px; }
+  .btn-load { background: var(--teal); color: #000; border: none; padding: 7px 18px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 13px; }
+  .btn-load:hover { background: var(--blue-lt); color: #fff; }
+
+  /* TABS */
+  .tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+  .tab-btn { background: none; border: none; color: var(--text-dim); padding: 10px 20px; cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+  .tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  /* CARDS */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+  .card-label { color: var(--text-dim); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .card-value { font-size: 24px; font-weight: 700; color: var(--teal); }
+  .card-value.small { font-size: 16px; }
+
+  /* CHARTS */
+  .charts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 680px) { .charts-2 { grid-template-columns: 1fr; } }
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .chart-full { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 24px; }
+  .chart-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px; }
+
+  /* SECTION LABEL */
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px; }
+
+  /* GAME SELECTOR */
+  .game-sel { margin-bottom: 20px; }
+  .game-sel select { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin-bottom: 24px; border: 1px solid var(--border); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--card2); color: var(--teal); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 9px 12px; border-bottom: 1px solid rgba(46,74,96,0.35); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(26,45,63,0.7); }
+  .r { text-align: right; }
+
+  /* DIFFICULTY BADGE */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 32px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Orijinz Admin</h1>
+  <div class="controls">
+    <select id="presetRange" onchange="applyPreset()">
+      <option value="7">Last 7 days</option>
+      <option value="30" selected>Last 30 days</option>
+      <option value="90">Last 90 days</option>
+      <option value="0">Custom</option>
+    </select>
+    <label>From</label>
+    <input type="date" id="startDate">
+    <label>to</label>
+    <input type="date" id="endDate">
+    <button class="btn-load" onclick="requestData()">Load</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" id="btn-pergame" onclick="showTab('pergame')">Per Game</button>
+  <button class="tab-btn" id="btn-global" onclick="showTab('global')">Global</button>
+</div>
+
+<!-- ==================== PER GAME TAB ==================== -->
+<div id="tab-pergame">
+  <div class="game-sel">
+    <select id="gameSelect" onchange="renderPerGame()">
+      <option value="wordsandphrases">Words &amp; Phrases</option>
+      <option value="covers">Covers</option>
+      <option value="quotes">Quotes</option>
+      <option value="70ssongs">70s Songs</option>
+      <option value="movies">Movies</option>
+    </select>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="card-label">Players</div><div class="card-value" id="pg-players">—</div></div>
+    <div class="card"><div class="card-label">Avg Score</div><div class="card-value" id="pg-avgscore">—</div></div>
+    <div class="card"><div class="card-label">Avg Time</div><div class="card-value" id="pg-avgtime">—</div></div>
+    <div class="card"><div class="card-label">Win Rate</div><div class="card-value" id="pg-winrate">—</div></div>
+    <div class="card"><div class="card-label">Avg Reveals</div><div class="card-value" id="pg-avgreveals">—</div></div>
+    <div class="card"><div class="card-label">Def Usage</div><div class="card-value" id="pg-defusage">—</div></div>
+    <div class="card"><div class="card-label">Pure Wins</div><div class="card-value" id="pg-purewins">—</div></div>
+  </div>
+
+  <div class="charts-2">
+    <div class="chart-card"><div class="chart-title">Players Per Day</div><canvas id="pg-chart-players"></canvas></div>
+    <div class="chart-card"><div class="chart-title">Avg Score Per Day</div><canvas id="pg-chart-score"></canvas></div>
+  </div>
+
+  <div class="chart-full">
+    <div class="chart-title">Score Tier Distribution</div>
+    <canvas id="pg-chart-tiers"></canvas>
+  </div>
+
+  <div class="section-label">Day by Day</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th class="r">Players</th>
+          <th class="r">Avg Score</th>
+          <th class="r">Avg Time</th>
+          <th class="r">Avg Reveals</th>
+          <th class="r">Def Usage</th>
+          <th class="r">Win Rate</th>
+          <th class="r">Wrong Ltrs</th>
+          <th>Difficulty</th>
+        </tr>
+      </thead>
+      <tbody id="pg-tbody"><tr><td colspan="9" class="empty">Waiting for data…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== GLOBAL TAB ==================== -->
+<div id="tab-global" class="hidden">
+  <div class="cards">
+    <div class="card"><div class="card-label">Total Games</div><div class="card-value" id="gl-total">—</div></div>
+    <div class="card"><div class="card-label">Unique Players</div><div class="card-value" id="gl-players">—</div></div>
+    <div class="card"><div class="card-label">Most Popular</div><div class="card-value small" id="gl-popular">—</div></div>
+    <div class="card"><div class="card-label">Avg Per Day</div><div class="card-value" id="gl-avgday">—</div></div>
+    <div class="card"><div class="card-label">Win Rate</div><div class="card-value" id="gl-winrate">—</div></div>
+  </div>
+
+  <div class="chart-full">
+    <div class="chart-title">Games Per Day by Game</div>
+    <canvas id="gl-chart-games"></canvas>
+  </div>
+
+  <div class="section-label">Day by Day</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th class="r">Total</th>
+          <th class="r">W&amp;P</th>
+          <th class="r">Covers</th>
+          <th class="r">Quotes</th>
+          <th class="r">70s Songs</th>
+          <th class="r">Movies</th>
+        </tr>
+      </thead>
+      <tbody id="gl-tbody"><tr><td colspan="7" class="empty">Waiting for data…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONSTANTS
+// ============================================================
+const GAMES = [
+  { key: 'wordsandphrases', label: 'Words & Phrases', color: '#4ecdc4' },
+  { key: 'covers',          label: 'Covers',          color: '#f5c842' },
+  { key: 'quotes',          label: 'Quotes',          color: '#1a7a96' },
+  { key: '70ssongs',        label: '70s Songs',       color: '#e67e22' },
+  { key: 'movies',          label: 'Movies',          color: '#9b59b6' }
+];
+
+const TIERS = [
+  { label: 'Legendary',     max: 20  },
+  { label: 'Otherworldly',  max: 40  },
+  { label: 'Uncanny',       max: 60  },
+  { label: 'Brilliant',     max: 90  },
+  { label: 'Epic',          max: 120 },
+  { label: 'Miraculous',    max: 150 },
+  { label: 'Extraordinary', max: 180 },
+  { label: 'Impressive',    max: 210 },
+  { label: 'Terrific',      max: 240 },
+  { label: 'Tenacious',     max: 270 },
+  { label: 'Well Played',   max: 300 },
+  { label: 'Nice Job',      max: 360 },
+  { label: 'Solid Work',    max: 420 },
+  { label: 'You Got It',    max: Infinity }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let allResults = [];
+let allStats   = [];
+let charts     = {};
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', setDefaultDates);
+
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'orijinz_admin_data') return;
+  allResults = e.data.gameResults || [];
+  allStats   = e.data.memberStats || [];
+  renderAll();
+});
+
+// ============================================================
+// DATE CONTROLS
+// ============================================================
+function setDefaultDates() {
+  const end   = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - 29);
+  document.getElementById('endDate').value   = fmtDate(end);
+  document.getElementById('startDate').value = fmtDate(start);
+}
+
+function applyPreset() {
+  const v = document.getElementById('presetRange').value;
+  if (v === '0') return;
+  const end   = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - (parseInt(v) - 1));
+  document.getElementById('endDate').value   = fmtDate(end);
+  document.getElementById('startDate').value = fmtDate(start);
+  requestData();
+}
+
+function requestData() {
+  const start = document.getElementById('startDate').value;
+  const end   = document.getElementById('endDate').value;
+  window.parent.postMessage({ type: 'orijinz_admin_request', start, end }, '*');
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function showTab(name) {
+  ['pergame', 'global'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+    document.getElementById('btn-' + t).classList.toggle('active', t === name);
+  });
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmtDate(d)     { return d.toISOString().slice(0, 10); }
+function dateKey(item)  { return new Date(item.puzzleDate).toISOString().slice(0, 10); }
+function avg(arr)       { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+function pct(n, d)      { return d > 0 ? Math.round((n / d) * 100) + '%' : '—'; }
+function fmtTime(s)     { const m = Math.floor(s / 60); return m + ':' + String(Math.round(s % 60)).padStart(2, '0'); }
+
+function getTier(score) {
+  for (const t of TIERS) { if (score < t.max) return t.label; }
+  return 'You Got It';
+}
+
+function difficulty(avgScore) {
+  if (avgScore < 60)  return { label: 'Easy',      color: '#27ae60' };
+  if (avgScore < 120) return { label: 'Medium',     color: '#f5c842' };
+  if (avgScore < 200) return { label: 'Hard',       color: '#e67e22' };
+  return                     { label: 'Very Hard',  color: '#c0392b' };
+}
+
+function groupByDate(rows) {
+  const map = {};
+  rows.forEach(r => {
+    const k = dateKey(r);
+    if (!map[k]) map[k] = [];
+    map[k].push(r);
+  });
+  return map;
+}
+
+function destroyChart(key) {
+  if (charts[key]) { charts[key].destroy(); charts[key] = null; }
+}
+
+// ============================================================
+// CHART BUILDERS
+// ============================================================
+function lineChart(key, labels, data, color, label) {
+  destroyChart(key);
+  const ctx = document.getElementById(key).getContext('2d');
+  charts[key] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label, data,
+        borderColor: color,
+        backgroundColor: color + '28',
+        tension: 0.3,
+        fill: true,
+        pointRadius: labels.length > 25 ? 2 : 4,
+        pointBackgroundColor: color
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#7aafc4', maxTicksLimit: 10 }, grid: { color: 'rgba(46,74,96,0.3)' } },
+        y: { ticks: { color: '#7aafc4' }, grid: { color: 'rgba(46,74,96,0.3)' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function hBarChart(key, labels, data, color) {
+  destroyChart(key);
+  const ctx = document.getElementById(key).getContext('2d');
+  charts[key] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data, backgroundColor: color + 'bb', borderColor: color, borderWidth: 1 }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#7aafc4' }, grid: { color: 'rgba(46,74,96,0.3)' }, beginAtZero: true },
+        y: { ticks: { color: '#7aafc4', font: { size: 11 } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+function stackedBarChart(key, labels, datasets) {
+  destroyChart(key);
+  const ctx = document.getElementById(key).getContext('2d');
+  charts[key] = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#c8dce8', boxWidth: 12, font: { size: 11 } } } },
+      scales: {
+        x: { stacked: true, ticks: { color: '#7aafc4', maxTicksLimit: 10 }, grid: { color: 'rgba(46,74,96,0.3)' } },
+        y: { stacked: true, ticks: { color: '#7aafc4' }, grid: { color: 'rgba(46,74,96,0.3)' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function renderAll() {
+  renderPerGame();
+  renderGlobal();
+}
+
+// ============================================================
+// PER GAME
+// ============================================================
+function renderPerGame() {
+  const game = document.getElementById('gameSelect').value;
+  const rows = allResults.filter(r => r.game === game);
+  const tbody = document.getElementById('pg-tbody');
+
+  if (rows.length === 0) {
+    ['pg-players','pg-avgscore','pg-avgtime','pg-winrate','pg-avgreveals','pg-defusage','pg-purewins']
+      .forEach(id => document.getElementById(id).textContent = '—');
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">No data for this game in the selected range.</td></tr>';
+    ['pg-chart-players','pg-chart-score','pg-chart-tiers'].forEach(k => destroyChart(k));
+    return;
+  }
+
+  // Summary cards
+  const wins      = rows.filter(r => r.wonGame);
+  const avgScore  = avg(rows.map(r => r.score));
+  const avgTime   = avg(rows.map(r => r.timeSecs || 0));
+  const avgRevs   = avg(rows.map(r => r.lettersRevealed || 0));
+  const defCount  = rows.filter(r => r.definitionUsed).length;
+  const pureWins  = rows.filter(r => r.wonGame && (r.lettersRevealed || 0) === 0 && !r.definitionUsed).length;
+
+  document.getElementById('pg-players').textContent    = rows.length;
+  document.getElementById('pg-avgscore').textContent   = Math.round(avgScore);
+  document.getElementById('pg-avgtime').textContent    = fmtTime(Math.round(avgTime));
+  document.getElementById('pg-winrate').textContent    = pct(wins.length, rows.length);
+  document.getElementById('pg-avgreveals').textContent = avgRevs.toFixed(1);
+  document.getElementById('pg-defusage').textContent   = pct(defCount, rows.length);
+  document.getElementById('pg-purewins').textContent   = pureWins;
+
+  // Group by date
+  const byDate = groupByDate(rows);
+  const dates  = Object.keys(byDate).sort();
+
+  // Line charts
+  lineChart('pg-chart-players', dates, dates.map(d => byDate[d].length), '#4ecdc4', 'Players');
+  lineChart('pg-chart-score', dates, dates.map(d => Math.round(avg(byDate[d].map(r => r.score)))), '#f5c842', 'Avg Score');
+
+  // Tier distribution
+  const tierCounts = Object.fromEntries(TIERS.map(t => [t.label, 0]));
+  rows.forEach(r => tierCounts[getTier(r.score)]++);
+  hBarChart('pg-chart-tiers',
+    TIERS.map(t => t.label),
+    TIERS.map(t => tierCounts[t.label]),
+    '#1a7a96'
+  );
+
+  // Table (newest first)
+  tbody.innerHTML = '';
+  [...dates].reverse().forEach(d => {
+    const dr   = byDate[d];
+    const dAvgSc = Math.round(avg(dr.map(r => r.score)));
+    const dAvgTm = Math.round(avg(dr.map(r => r.timeSecs || 0)));
+    const dWins  = dr.filter(r => r.wonGame).length;
+    const dRevs  = avg(dr.map(r => r.lettersRevealed || 0)).toFixed(1);
+    const dDefs  = dr.filter(r => r.definitionUsed).length;
+    const dWrong = avg(dr.map(r => r.wrongLetters || 0)).toFixed(1);
+    const diff   = difficulty(dAvgSc);
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td>${d}</td>` +
+      `<td class="r">${dr.length}</td>` +
+      `<td class="r">${dAvgSc}</td>` +
+      `<td class="r">${fmtTime(dAvgTm)}</td>` +
+      `<td class="r">${dRevs}</td>` +
+      `<td class="r">${pct(dDefs, dr.length)}</td>` +
+      `<td class="r">${pct(dWins, dr.length)}</td>` +
+      `<td class="r">${dWrong}</td>` +
+      `<td><span class="badge" style="background:${diff.color}22;color:${diff.color}">${diff.label}</span></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ============================================================
+// GLOBAL
+// ============================================================
+function renderGlobal() {
+  const tbody = document.getElementById('gl-tbody');
+
+  if (allResults.length === 0) {
+    ['gl-total','gl-players','gl-popular','gl-avgday','gl-winrate']
+      .forEach(id => document.getElementById(id).textContent = '—');
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">No data in the selected range.</td></tr>';
+    destroyChart('gl-chart-games');
+    return;
+  }
+
+  // Summary
+  const uniquePlayers = new Set(allResults.map(r => r.memberId)).size;
+  const gameCounts    = Object.fromEntries(GAMES.map(g => [g.key, 0]));
+  allResults.forEach(r => { if (gameCounts[r.game] !== undefined) gameCounts[r.game]++; });
+  const topGame       = GAMES.reduce((a, b) => gameCounts[a.key] >= gameCounts[b.key] ? a : b);
+  const byDate        = groupByDate(allResults);
+  const dates         = Object.keys(byDate).sort();
+  const wins          = allResults.filter(r => r.wonGame).length;
+
+  document.getElementById('gl-total').textContent   = allResults.length;
+  document.getElementById('gl-players').textContent = uniquePlayers;
+  document.getElementById('gl-popular').textContent = topGame.label;
+  document.getElementById('gl-avgday').textContent  = dates.length ? Math.round(allResults.length / dates.length) : '—';
+  document.getElementById('gl-winrate').textContent = pct(wins, allResults.length);
+
+  // Stacked bar chart
+  stackedBarChart('gl-chart-games', dates,
+    GAMES.map(g => ({
+      label: g.label,
+      data: dates.map(d => byDate[d].filter(r => r.game === g.key).length),
+      backgroundColor: g.color,
+    }))
+  );
+
+  // Table (newest first)
+  tbody.innerHTML = '';
+  [...dates].reverse().forEach(d => {
+    const dr    = byDate[d];
+    const total = dr.length;
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td>${d}</td>` +
+      `<td class="r"><strong>${total}</strong></td>` +
+      GAMES.map(g => `<td class="r">${dr.filter(r => r.game === g.key).length || 0}</td>`).join('');
+    tbody.appendChild(tr);
+  });
+}
+</script>
+</body>
+</html>
