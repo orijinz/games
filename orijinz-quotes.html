@@ -851,7 +851,7 @@
   </button>
   <div class="header-ornament">&ldquo; QUOTES &rdquo;</div>
   <div class="logo"><span class="logo-brand">Orijinz</span><span class="logo-daily"> Daily</span></div>
-  <div class="header-sub">Read the quote. Name the source.</div>
+  <div class="header-sub">Read the quote. Guess the source.</div>
   <div class="date-badge" id="dateBadge"></div>
   <button id="resetBtn" onclick="devReset()" title="Dev Reset">&#x21BA;</button>
   <button id="nextBtn"  onclick="devNext()"  title="Next Puzzle">&#x276F;</button>
@@ -1399,10 +1399,10 @@ function initGame() {
   document.getElementById('catBadge').textContent   = puzzle.badge;
   document.getElementById('quoteText').textContent  = puzzle.quote;
 
-  // Instruction text: "Name the [category]" for all types
+  // Instruction text: "Guess the [category]" for all types
   const instrEl = document.getElementById('instructionText');
   const catLabel = (puzzle.cat || 'source').toLowerCase();
-  instrEl.textContent = 'Name the ' + catLabel;
+  instrEl.textContent = 'Guess the ' + catLabel;
 
   // Restore hint panel if already shown
   if (hintShown && puzzle.hint) {

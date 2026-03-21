@@ -2232,9 +2232,9 @@ function initGame() {
   badge.textContent = CAT_LABELS[puzzle.cat] || puzzle.cat;
   badge.className   = 'category-badge ' + (CAT_CLASSES[puzzle.cat] || '');
 
-  const instrMap = { word: 'Name the word', phrase: 'Name the phrase', name: 'Name the name', words: 'Name the two words' };
+  const instrMap = { word: 'Guess the word', phrase: 'Guess the phrase', name: 'Guess the name', words: 'Guess the two words' };
   const instrEl2 = document.getElementById('instructionText');
-  if (instrEl2) instrEl2.textContent = instrMap[puzzle.cat] || 'Name the answer';
+  if (instrEl2) instrEl2.textContent = instrMap[puzzle.cat] || 'Guess the answer';
 
   if (puzzle.def && defShown) {
     document.getElementById('defText').innerHTML = puzzle.def;
