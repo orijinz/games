@@ -332,6 +332,7 @@
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
     overflow: hidden;
     max-height: 120px;
     transition: opacity 0.7s ease, max-height 0.9s ease, margin 0.9s ease;
@@ -362,6 +363,17 @@
     background: var(--accent);
     border-color: var(--accent);
     color: #fff;
+    flex: 1;
+  }
+  .listen-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+  }
+  #listenBtn {
+    width: 100%;
   }
   .clue-btn:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -384,8 +396,8 @@
   .clue-count {
     font-size: 0.6rem;
     opacity: 0.7;
-    display: block;
-    margin-top: 2px;
+    display: inline;
+    margin-left: 5px;
   }
 
   /* LISTEN CLUE */
@@ -421,6 +433,32 @@
     background: var(--gold);
     border-radius: 2px;
   }
+
+  /* DURATION PICKER */
+  .duration-pick {
+    display: flex;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+  }
+  .dur-opt {
+    background: none;
+    border: none;
+    border-bottom: 1.5px solid transparent;
+    padding: 8px 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.12s, border-color 0.12s;
+    min-width: 44px;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dur-opt:hover { color: var(--accent-light); border-bottom-color: var(--accent-light); }
+  .dur-opt.selected { color: var(--accent-light); border-bottom-color: var(--accent-light); }
+  .dur-sep { color: var(--border); font-family: 'Space Mono', monospace; font-size: 0.58rem; }
 
   /* TOAST */
   .toast {
@@ -1316,9 +1354,16 @@
       &#x1F521; Reveal a Letter
       <span class="clue-count" id="revealUsed"></span>
     </button>
-    <button class="clue-btn" id="listenBtn" onclick="playClip()" style="display:none">
-      &#x1F3A7; <span id="listenBtnText">Listen for a 10 second clue</span>
-    </button>
+    <div class="listen-wrap" id="listenWrap" style="display:none">
+      <button class="clue-btn" id="listenBtn" onclick="playClip()">&#x1F3A7; Listen</button>
+      <div class="duration-pick" id="durationPick">
+        <button class="dur-opt selected" id="dur10" onclick="selectDuration(10)">10s</button>
+        <span class="dur-sep">·</span>
+        <button class="dur-opt" id="dur20" onclick="selectDuration(20)">20s</button>
+        <span class="dur-sep">·</span>
+        <button class="dur-opt" id="dur30" onclick="selectDuration(30)">30s</button>
+      </div>
+    </div>
   </div>
   <div class="listen-progress" id="listenProgress" style="display:none">
     <div class="listen-progress-bar" id="listenProgressBar"></div>
@@ -1840,9 +1885,8 @@ let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount =
 let streak = 0, puzzleIndex = 0;
 let timerInterval = null, startTime = null, elapsedSeconds = 0;
 let audioEl = null, clipTimer = null;
-let listenStep = 0, listenPenalty = 0;
-const LISTEN_PENALTIES = [20, 40, 60];
-const LISTEN_LABELS = ['Listen for 10 seconds', 'Listen for 20 seconds', 'Listen for 30 seconds'];
+let listenPenalty = 0;
+let selectedDuration = 10;
 
 function formatTime(sec) {
   const h = Math.floor(sec / 3600);
@@ -1930,7 +1974,6 @@ function initGame() {
     wrongCount      = stored.wrongCount  || 0;
     gameOver        = stored.gameOver   || false;
     elapsedSeconds  = stored.elapsed    || 0;
-    listenStep      = stored.listenStep    || 0;
     listenPenalty   = stored.listenPenalty || 0;
   }
 
@@ -1967,9 +2010,9 @@ function initGame() {
     startTimer();
   }
   updateRevealBtn();
-  const listenBtn = document.getElementById('listenBtn');
-  if (listenBtn) {
-    listenBtn.style.display = (puzzle.preview_url && !gameOver) ? '' : 'none';
+  const listenWrap = document.getElementById('listenWrap');
+  if (listenWrap) {
+    listenWrap.style.display = (puzzle.preview_url && !gameOver) ? '' : 'none';
     updateListenBtn();
   }
   initDevTap();
@@ -1987,7 +2030,7 @@ function saveState() {
     streak, lastPlayed: new Date().toDateString(),
     guesses, revealed: [...revealedLetters],
     defShown: false, revealCount, wrongCount, gameOver, elapsed: elapsedSeconds,
-    listenStep, listenPenalty,
+    listenPenalty,
     ...(existing.devPuzzleIndex !== undefined ? { devPuzzleIndex: existing.devPuzzleIndex } : {})
   });
 }
@@ -2396,15 +2439,15 @@ function updateRevealBtn() {
 
 function playClip() {
   if (!puzzle || !puzzle.preview_url) return;
-  if (gameOver || listenStep >= 3) return;
-  const seconds = [10, 20, 30][listenStep];
+  if (gameOver) return;
+  const seconds = selectedDuration;
   if (audioEl) { audioEl.pause(); audioEl.currentTime = 0; }
   if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
   if (!audioEl) audioEl = new Audio(puzzle.preview_url);
   audioEl.currentTime = 0;
   audioEl.play().catch(() => {});
   const btn = document.getElementById('listenBtn');
-  if (btn) { btn.classList.add('playing'); document.getElementById('listenBtnText').textContent = 'Playing\u2026'; }
+  if (btn) { btn.classList.add('playing'); btn.innerHTML = '&#x1F3A7; Playing\u2026'; }
   const prog = document.getElementById('listenProgress');
   const bar  = document.getElementById('listenProgressBar');
   if (prog && bar) {
@@ -2416,8 +2459,7 @@ function playClip() {
       bar.style.width = '100%';
     }));
   }
-  listenStep++;
-  listenPenalty = LISTEN_PENALTIES[listenStep - 1];
+  listenPenalty += seconds * 2;
   saveState();
   clipTimer = setTimeout(() => {
     if (audioEl) audioEl.pause();
@@ -2436,14 +2478,19 @@ function updateListenBtn() {
   const btn = document.getElementById('listenBtn');
   if (!btn) return;
   btn.classList.remove('playing');
-  const textEl = document.getElementById('listenBtnText');
-  if (listenStep >= 3) {
-    btn.disabled = true;
-    if (textEl) textEl.textContent = 'Listened';
-  } else {
-    btn.disabled = gameOver;
-    if (textEl) textEl.textContent = LISTEN_LABELS[listenStep];
-  }
+  btn.innerHTML = '&#x1F3A7; Listen';
+  btn.disabled = gameOver;
+  [10, 20, 30].forEach(d => {
+    const el = document.getElementById('dur' + d);
+    if (!el) return;
+    el.classList.toggle('selected', d === selectedDuration);
+  });
+}
+
+function selectDuration(secs) {
+  if (clipTimer) return;
+  selectedDuration = secs;
+  updateListenBtn();
 }
 
 // =================================================================
@@ -2452,7 +2499,7 @@ function updateListenBtn() {
 function showResult(won) {
   stopTimer();
   stopClip();
-  const lb = document.getElementById('listenBtn');
+  const lb = document.getElementById('listenWrap');
   if (lb) lb.style.display = 'none';
   const lp = document.getElementById('listenProgress');
   if (lp) lp.style.display = 'none';
@@ -2613,7 +2660,7 @@ function devNext() {
     devPuzzleIndex: randIdx,
     lastPlayed: null, guesses: [], revealed: [],
     defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenStep: 0, listenPenalty: 0
+    listenPenalty: 0
   });
   location.reload();
 }
@@ -2625,7 +2672,7 @@ function devGoTo(n) {
     devPuzzleIndex: idx,
     lastPlayed: null, guesses: [], revealed: [],
     defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenStep: 0, listenPenalty: 0
+    listenPenalty: 0
   });
   location.reload();
 }
