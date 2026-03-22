@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Orijinz Daily — Slogans</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@300;400;600;700&family=Space+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+/* ── THEME: RUST BRIGHT ─────────────────────────────────────────────────── */
+:root {
+  --bg:            #240e02;
+  --bg2:           #2e1404;
+  --bg3:           #3a1a06;
+  --panel:         #281406;
+  --border:        #5e2610;
+  --text:          #ffffff;
+  --text-muted:    #e09858;
+  --accent:        #ff8820;
+  --accent-light:  #ffa840;
+  --accent-dark:   #d86808;
+  --gold:          #ffd050;
+  --letter-bg:     #2a1408;
+  --letter-border: #642c10;
+  --tile-active-bg:rgba(255,136,32,0.18);
+  --accent-ring:   rgba(255,136,32,0.34);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scrollbar-gutter: stable; }
+
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(255,136,32,0.26) 0%, transparent 42%),
+    radial-gradient(ellipse at 20% 20%, var(--bg2) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, var(--bg)  0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, var(--bg2) 0%, transparent 70%);
+  font-family: 'Nunito Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+/* HEADER */
+header {
+  width: 100%; max-width: 680px;
+  padding: 20px 24px 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.hamburger-btn {
+  position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; gap: 4px; padding: 6px;
+}
+.hamburger-btn span { display: block; width: 20px; height: 2px; background: var(--text-muted); border-radius: 2px; }
+.header-ornament {
+  font-size: 0.64rem; letter-spacing: 0.42em; text-transform: uppercase;
+  color: #fff; font-family: 'Nunito Sans', sans-serif; font-weight: 700; margin-bottom: 6px;
+}
+.logo {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 900; letter-spacing: -0.01em; line-height: 1;
+}
+.logo .logo-brand { color: var(--accent); }
+.logo .logo-daily {
+  background: linear-gradient(90deg, var(--accent-light), #fff8ee);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.header-sub {
+  font-size: 0.83rem; color: var(--text-muted);
+  margin-top: 5px; letter-spacing: 0.04em; font-style: italic;
+}
+.date-badge {
+  position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+  font-family: 'Nunito', sans-serif; font-size: 0.62rem; font-weight: 700;
+  color: var(--text-muted); opacity: 0.8; text-align: right; line-height: 1.5;
+}
+
+/* MAIN */
+main {
+  width: 100%; max-width: 680px;
+  padding: 24px 20px 40px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+
+/* META ROW */
+.meta-row {
+  font-family: 'Space Mono', monospace; font-size: 0.7rem;
+  color: var(--text-muted); letter-spacing: 0.1em; opacity: 0.8;
+  cursor: default; user-select: none;
+}
+
+/* SLOGAN CARD */
+.slogan-card {
+  width: 100%;
+  background-color: var(--panel);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ctext x='3' y='30' font-family='Georgia' font-size='30' font-weight='bold' fill='rgba(255,255,255,0.038)'%3E%3F%3C/text%3E%3C/svg%3E");
+  background-size: 36px 36px;
+  border: 1px solid var(--border); border-top: 2px solid var(--accent);
+  border-radius: 8px; padding: 18px 20px 20px;
+  animation: cardReveal 0.5s ease-out;
+}
+@keyframes cardReveal {
+  from { transform: translateY(8px); opacity: 0.7; }
+  to   { transform: translateY(0);   opacity: 1;   }
+}
+.card-top {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+.card-label {
+  font-family: 'Space Mono', monospace; font-size: 0.58rem;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold);
+}
+.cat-pill {
+  font-family: 'Nunito', sans-serif; font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--bg); background: var(--accent);
+  border-radius: 20px; padding: 3px 11px; white-space: nowrap;
+}
+.slogan-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(0.95rem, 3.5vw, 1.18rem);
+  line-height: 1.7; color: var(--text);
+  text-align: center; font-style: italic; padding: 0 4px;
+}
+.slogan-blank {
+  font-style: normal;
+  font-family: 'Space Mono', monospace; font-size: 0.88rem;
+  color: var(--accent-light);
+  border-bottom: 2px solid var(--accent);
+  background: rgba(255,255,255,0.04);
+  padding: 0 3px; letter-spacing: 0.04em;
+  white-space: nowrap; display: inline-block;
+}
+
+/* CLUE SECTION */
+.clue-section {
+  display: flex; justify-content: center; width: 100%;
+  transition: opacity 0.5s, transform 0.5s;
+}
+.clue-section.fading { opacity: 0; pointer-events: none; }
+.clue-btn {
+  -webkit-appearance: none; appearance: none;
+  padding: 10px 24px;
+  border: 1.5px solid var(--accent); background: transparent; border-radius: 24px;
+  font-family: 'Space Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); cursor: pointer;
+  transition: opacity 0.2s;
+}
+.clue-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* INSTRUCTION */
+.instruction {
+  font-size: 0.9rem; color: var(--text); font-style: italic; opacity: 0.85;
+}
+
+/* INPUT TILES */
+.current-input-display {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+  gap: 5px; width: 100%;
+}
+.word-group { display: flex; gap: 5px; }
+
+.letter-tile {
+  width: 40px; height: 46px;
+  border: 2px solid var(--letter-border); background: var(--letter-bg);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+  user-select: none; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.letter-tile.active {
+  border-color: var(--accent); background: var(--tile-active-bg);
+  box-shadow: 0 0 0 3px var(--accent-ring), 0 2px 8px rgba(0,0,0,0.5);
+}
+.letter-tile.revealed {
+  background: var(--accent-dark); border-color: var(--accent-dark); color: #fff;
+}
+.letter-tile.prefilled-tile {
+  background: rgba(255,136,32,0.10); border-color: var(--border);
+  color: var(--accent-light);
+  font-family: 'Space Mono', monospace; font-size: 0.9rem;
+}
+.letter-tile.space-tile {
+  width: 14px; background: transparent; border: none; box-shadow: none;
+  color: var(--border); font-size: 1rem; cursor: default;
+}
+.answer-reveal {
+  width: 100%; display: flex; justify-content: center; padding: 10px 4px;
+}
+.answer-reveal-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.2rem, 4vw, 1.6rem); font-weight: 700; color: var(--accent-light);
+  text-align: center; letter-spacing: 0.04em;
+  text-shadow: 0 0 24px rgba(255,136,32,0.45);
+}
+
+/* TIMER */
+.timer-display {
+  font-family: 'Space Mono', monospace; font-size: 1.05rem; color: var(--gold); letter-spacing: 0.06em;
+}
+
+/* KEYBOARD */
+.section-divider {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  transition: opacity 0.5s;
+}
+.section-divider.fading { opacity: 0; }
+.section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.section-divider span {
+  font-family: 'Space Mono', monospace; font-size: 0.55rem;
+  letter-spacing: 0.25em; color: var(--text-muted); text-transform: uppercase;
+}
+
+#keyboard { width: 100%; display: flex; flex-direction: column; gap: 6px; transition: opacity 0.5s; }
+#keyboard.fading { opacity: 0; pointer-events: none; }
+.kb-row { display: flex; gap: 5px; justify-content: center; }
+.kb-key {
+  -webkit-appearance: none; appearance: none;
+  flex: 1; height: 52px; max-width: 42px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 7px;
+  font-family: 'Space Mono', monospace; font-size: 0.88rem; font-weight: 700;
+  color: var(--text); text-transform: uppercase;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.4); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+.kb-key.wide { flex: 1.5; max-width: 64px; font-size: 0.6rem; letter-spacing: 0.04em; }
+.kb-key.hit  { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; }
+.kb-key.miss { background: #2c1008; border-color: #2c1008; color: rgba(255,255,255,0.25); }
+
+/* RESULT PANEL */
+#resultPanel {
+  width: 100%; background: var(--panel);
+  border: 1px solid var(--border); border-top: 2px solid var(--accent);
+  border-radius: 8px; padding: 24px 20px; text-align: center;
+  display: none;
+}
+#resultPanel.visible { display: block; animation: fadeUp 0.5s ease-out; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.result-emoji  { font-size: 2.5rem; margin-bottom: 8px; }
+.result-head   { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+.result-answer { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+.result-msg    { font-size: 0.88rem; color: var(--text-muted); font-style: italic; margin-bottom: 18px; line-height: 1.6; }
+
+.stats-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+.stat-box  { flex: 1; max-width: 90px; padding: 10px 6px; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; text-align: center; }
+.stat-num  { font-family: 'Nunito', sans-serif; font-size: 1.5rem; font-weight: 900; color: var(--text); }
+.stat-label{ font-family: 'Space Mono', monospace; font-size: 0.5rem; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; margin-top: 3px; }
+
+/* Score info popover */
+.score-info { position: relative; cursor: pointer; }
+.score-popover {
+  display: none; position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; width: 200px; text-align: left; z-index: 50;
+  font-family: 'Space Mono', monospace; font-size: 0.62rem; color: var(--text-muted); line-height: 1.6;
+}
+.score-popover.visible { display: block; }
+.score-popover-title { color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+.score-breakdown td:first-child { width: 24px; }
+
+/* Result action buttons */
+.result-actions {
+  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 4px;
+}
+.btn-share {
+  -webkit-appearance: none; appearance: none;
+  padding: 11px 22px; background: var(--accent); border: none; border-radius: 24px;
+  font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700;
+  letter-spacing: 0.02em; color: var(--bg); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: all 0.15s ease;
+}
+.btn-share:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,136,32,0.35); }
+.btn-results {
+  -webkit-appearance: none; appearance: none;
+  padding: 11px 22px; background: transparent; border: 2px solid var(--accent); border-radius: 24px;
+  font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700;
+  letter-spacing: 0.02em; color: var(--accent); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: all 0.15s ease;
+}
+.btn-results:hover { background: rgba(255,136,32,0.12); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,136,32,0.2); }
+
+.tidbit-panel {
+  margin-top: 16px; padding: 14px 16px;
+  background: rgba(0,0,0,0.20);
+  border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: 4px; text-align: left; display: none;
+}
+.tidbit-panel.visible { display: block; }
+.tidbit-label { font-family: 'Space Mono', monospace; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.18em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+.tidbit-text  { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; font-style: italic; }
+
+/* BOTTOM NAV */
+.bottom-nav { display: flex; gap: 8px; justify-content: center; width: 100%; }
+.nav-btn {
+  -webkit-appearance: none; appearance: none; padding: 8px 14px;
+  background: transparent; border: 1.5px solid var(--border); border-radius: 22px;
+  font-family: 'Space Mono', monospace; font-size: 0.58rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer;
+}
+
+/* TOAST */
+#toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(255,136,32,0.92); color: var(--bg);
+  padding: 10px 20px; border-radius: 24px;
+  font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em;
+  pointer-events: none; opacity: 0; transition: opacity 0.25s, transform 0.25s;
+  white-space: nowrap; z-index: 999;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* CONFETTI */
+#confettiCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 998; }
+
+/* ANIMATIONS */
+@keyframes rowShake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX( 6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX( 4px); }
+}
+.row-shake { animation: rowShake 0.5s ease; }
+
+/* ── MENU PANEL ─────────────────────────────────────────────────────────── */
+.menu-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200;
+  opacity: 0; transition: opacity 0.3s;
+}
+.menu-overlay.open { display: block; }
+.menu-overlay.visible { opacity: 1; }
+.menu-panel {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 260px;
+  background: var(--bg2); border-right: 1px solid var(--border);
+  z-index: 201; transform: translateX(-100%); transition: transform 0.3s ease;
+  display: flex; flex-direction: column;
+}
+.menu-panel.open { transform: translateX(0); }
+.menu-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.menu-logo { font-family: 'Nunito', sans-serif; font-size: 1.3rem; font-weight: 900; color: var(--accent); }
+.menu-close {
+  background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer;
+}
+.menu-items { flex: 1; padding: 12px 0; }
+.menu-item {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 13px 20px; background: none; border: none;
+  font-family: 'Nunito Sans', sans-serif; font-size: 0.95rem; color: var(--text);
+  cursor: pointer; text-align: left; transition: background 0.15s;
+}
+.menu-item:hover { background: rgba(255,136,32,0.08); }
+.menu-item svg { color: var(--text-muted); flex-shrink: 0; }
+.menu-divider { height: 1px; background: var(--border); margin: 6px 0; }
+.menu-footer {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 20px; border-top: 1px solid var(--border);
+  font-size: 0.8rem; color: var(--text-muted);
+}
+
+/* ── MODAL OVERLAYS ─────────────────────────────────────────────────────── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65); z-index: 300;
+  opacity: 0; transition: opacity 0.3s;
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-overlay.visible { opacity: 1; }
+
+.modal-panel {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px 16px 0 0; width: 100%; max-width: 680px;
+  max-height: 90vh; overflow-y: auto;
+  transform: translateY(100%); transition: transform 0.35s ease;
+}
+.modal-overlay.visible .modal-panel { transform: translateY(0); }
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px 14px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg2); z-index: 1;
+}
+.modal-title { font-family: 'Nunito', sans-serif; font-size: 1.1rem; font-weight: 900; color: var(--text); }
+.modal-close {
+  background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; padding: 4px;
+}
+
+.stats-section-label {
+  font-family: 'Space Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); padding: 14px 20px 4px;
+}
+.stats-stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 20px; border-bottom: 1px solid rgba(94,38,16,0.4);
+}
+.stats-stat-label { font-size: 0.85rem; color: var(--text-muted); }
+.stats-stat-value { font-family: 'Space Mono', monospace; font-size: 0.88rem; font-weight: 700; color: var(--text); }
+
+/* Help panel */
+.help-q { font-weight: 700; color: var(--text); padding: 14px 20px 4px; font-size: 0.9rem; }
+.help-a { color: var(--text-muted); padding: 0 20px 14px; font-size: 0.85rem; line-height: 1.6; }
+.help-a a { color: var(--accent); }
+.help-divider { border: none; border-top: 1px solid var(--border); margin: 0 20px; }
+
+/* Settings */
+.settings-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 20px; border-bottom: 1px solid rgba(94,38,16,0.4);
+}
+.settings-row-label { font-size: 0.9rem; color: var(--text); margin-bottom: 2px; }
+.settings-row-desc  { font-size: 0.75rem; color: var(--text-muted); }
+.toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0; background: var(--border); border-radius: 24px; cursor: pointer; transition: background 0.2s;
+}
+.toggle-switch input:checked + .toggle-track { background: var(--accent); }
+.toggle-track::before {
+  content: ''; position: absolute; height: 18px; width: 18px; left: 3px; top: 3px;
+  background: #fff; border-radius: 50%; transition: transform 0.2s;
+}
+.toggle-switch input:checked + .toggle-track::before { transform: translateX(20px); }
+
+/* Leaderboard */
+.lb-rubric {
+  background: rgba(0,0,0,0.25); border: 1px solid var(--border);
+  border-radius: 8px; margin: 14px 20px; padding: 12px 16px;
+}
+.lb-rubric-title { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.lb-rubric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; }
+.lb-rubric-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); padding: 2px 0; }
+.lb-sort-tabs { display: flex; border-bottom: 1px solid var(--border); margin: 0 20px; }
+.lb-sort-tab {
+  flex: 1; padding: 9px 4px; text-align: center; cursor: pointer;
+  font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+}
+.lb-sort-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.lb-list-header {
+  display: flex; padding: 8px 20px;
+  font-family: 'Space Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+}
+.lb-col-rank    { width: 28px; flex-shrink: 0; }
+.lb-col-name    { flex: 1; }
+.lb-col-location{ width: 90px; flex-shrink: 0; font-size: 0.75rem; }
+.lb-col-score   { width: 52px; text-align: right; flex-shrink: 0; }
+.lb-col-tier    { width: 28px; text-align: center; flex-shrink: 0; }
+.lb-col-played  { width: 58px; text-align: right; flex-shrink: 0; }
+.lb-col-streak  { width: 52px; text-align: right; flex-shrink: 0; }
+.lb-row {
+  display: flex; align-items: center; padding: 9px 20px;
+  border-bottom: 1px solid rgba(94,38,16,0.35); font-size: 0.82rem; color: var(--text);
+}
+.lb-row.lb-mine { background: rgba(255,136,32,0.08); }
+.lb-row-rank    { width: 28px; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--text-muted); }
+.lb-row-name    { flex: 1; font-weight: 600; }
+.lb-row-location{ width: 90px; flex-shrink: 0; font-size: 0.75rem; color: var(--text-muted); }
+.lb-row-score   { width: 52px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; color: var(--gold); }
+.lb-row-tier    { width: 28px; text-align: center; flex-shrink: 0; }
+.lb-row-played  { width: 58px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--text-muted); }
+.lb-row-streak  { width: 52px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--text-muted); }
+.lb-empty { padding: 24px 20px; text-align: center; color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
+.lb-col-active, .lb-row-score { color: var(--accent); }
+/* Name entry form */
+.lb-entry-form { padding: 16px 20px; border-top: 1px solid var(--border); }
+.lb-entry-title { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.lb-entry-fields { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.lb-entry-input {
+  flex: 1; min-width: 120px; padding: 9px 12px;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  font-family: 'Nunito Sans', sans-serif; font-size: 0.88rem; color: var(--text);
+}
+.lb-entry-input::placeholder { color: rgba(224,152,88,0.5); }
+.lb-entry-input:focus { outline: none; border-color: var(--accent); }
+.lb-submit-btn {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; padding: 11px; background: var(--accent); border: none; border-radius: 8px;
+  font-family: 'Nunito', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--bg); cursor: pointer;
+}
+
+/* Share popup */
+.share-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65); z-index: 400;
+  align-items: flex-end; justify-content: center;
+}
+.share-overlay.open { display: flex; }
+.share-popup {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px 16px 0 0; width: 100%; max-width: 680px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.share-popup-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 12px; border-bottom: 1px solid var(--border);
+}
+.share-popup-title { font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 900; color: var(--text); }
+.share-close { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; }
+.share-option {
+  display: block; width: 100%; padding: 14px 20px;
+  background: none; border: none; border-bottom: 1px solid rgba(94,38,16,0.4);
+  font-family: 'Nunito Sans', sans-serif; font-size: 0.95rem; color: var(--text);
+  text-align: left; cursor: pointer; text-decoration: none;
+  transition: background 0.15s;
+}
+.share-option:hover { background: rgba(255,136,32,0.08); }
+
+/* RESPONSIVE */
+@media (max-width: 400px) {
+  .letter-tile { width: 36px; height: 42px; font-size: 1.1rem; }
+  .kb-key { height: 48px; }
+  .date-badge { display: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="confettiCanvas"></canvas>
+
+<!-- Side menu -->
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<nav class="menu-panel" id="menuPanel">
+  <div class="menu-header">
+    <span class="menu-logo">Orijinz</span>
+    <button class="menu-close" onclick="closeMenu()">&#x2715;</button>
+  </div>
+  <div class="menu-items">
+    <button class="menu-item" onclick="menuHome()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="menu-item" onclick="menuHelp()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Help
+    </button>
+    <div class="menu-divider"></div>
+    <button class="menu-item" onclick="menuStats()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Statistics
+    </button>
+    <button class="menu-item" onclick="menuSettings()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </button>
+  </div>
+  <div class="menu-footer" id="menuFooter" style="display:none">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span id="menuMemberName"></span>
+  </div>
+</nav>
+
+<header>
+  <button class="hamburger-btn" onclick="openMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="header-ornament">&#10022; Slogans &#10022;</div>
+  <div class="logo">
+    <span class="logo-brand">Orijinz</span><span class="logo-daily"> Daily</span>
+  </div>
+  <div class="header-sub">Read the slogan. Guess the answer.</div>
+  <div class="date-badge" id="dateBadge"></div>
+</header>
+
+<main>
+  <div class="meta-row" id="puzzleNum">Puzzle #1</div>
+
+  <div class="slogan-card">
+    <div class="card-top">
+      <span class="card-label">Today's Slogan</span>
+      <span class="cat-pill" id="catPill"></span>
+    </div>
+    <div class="slogan-text" id="sloganText"></div>
+  </div>
+
+  <div class="clue-section">
+    <button class="clue-btn" id="revealBtn" onclick="revealLetter()">
+      &#x1F521; &nbsp;Reveal a Letter
+    </button>
+  </div>
+
+  <p class="instruction" id="instructionText">Guess the answer</p>
+
+  <div class="current-input-display" id="currentInputDisplay"></div>
+
+  <div class="timer-display" id="timerDisplay">0:00</div>
+
+  <div class="section-divider"><span>Keyboard</span></div>
+  <div id="keyboard"></div>
+
+  <div id="resultPanel">
+    <div class="result-emoji"  id="resultEmoji"></div>
+    <div class="result-head"   id="resultHeadline"></div>
+    <div class="result-answer" id="resultAnswer"></div>
+    <div class="result-msg"    id="resultMsg"></div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" id="rs-played">0</div><div class="stat-label">Played</div></div>
+      <div class="stat-box"><div class="stat-num" id="rs-streak">0</div><div class="stat-label">Streak</div></div>
+      <div class="stat-box score-info" onclick="toggleScoreInfo(event)">
+        <div class="stat-num" id="rs-score">--</div>
+        <div class="stat-label">Score &#x24D8;</div>
+        <div class="score-popover" id="scorePopover">
+          <div class="score-popover-title">How scores work &mdash; lower is better</div>
+          <table class="score-breakdown">
+            <tr><td>&#x23F1;</td><td>Your time +</td></tr>
+            <tr><td>&#x1F521;</td><td>15s per letter revealed +</td></tr>
+            <tr><td>&#x26A0;&#xFE0F;</td><td>5s per wrong letter</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-share" onclick="shareResult()">Share! <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+      <button class="btn-results" onclick="openLeaderboard()">Results <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+    </div>
+    <div class="tidbit-panel" id="tidbitPanel">
+      <div class="tidbit-label">Did You Know?</div>
+      <div class="tidbit-text" id="tidbitText"></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="devNext()"  title="Next puzzle">&#x25B6; Next</button>
+    <button class="nav-btn" onclick="devReset()" title="Reset">&#x21BA; Reset</button>
+  </div>
+</main>
+
+<!-- Statistics modal -->
+<div class="modal-overlay" id="statsOverlay" onclick="handleModalOverlayClick(event,'statsOverlay',closeStats)">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <span class="modal-title">Statistics</span>
+      <button class="modal-close" onclick="closeStats()">&#x2715;</button>
+    </div>
+    <div class="stats-section-label">Games</div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Days played</span>          <span class="stats-stat-value" id="st-played">0</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Current streak</span>        <span class="stats-stat-value" id="st-streak">0</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Longest streak</span>        <span class="stats-stat-value" id="st-longest-streak">0</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Pure wins (no hints)</span>  <span class="stats-stat-value" id="st-pure-wins">0</span></div>
+    <div class="stats-section-label">Hints &amp; Mistakes</div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Letters revealed</span>      <span class="stats-stat-value" id="st-reveals">0</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Avg reveals per game</span>  <span class="stats-stat-value" id="st-avg-reveals">0.0</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Wrong letters total</span>   <span class="stats-stat-value" id="st-wrong">0</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Avg wrong per game</span>    <span class="stats-stat-value" id="st-avg-wrong">0.0</span></div>
+    <div class="stats-section-label">Time</div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Total time</span>            <span class="stats-stat-value" id="st-total-time">0:00</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Avg time per game</span>     <span class="stats-stat-value" id="st-avg-time">0:00</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Best time</span>             <span class="stats-stat-value" id="st-best-time">--</span></div>
+    <div class="stats-section-label">Score</div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Avg score per game</span>    <span class="stats-stat-value" id="st-avg-score">--</span></div>
+    <div class="stats-stat-row"><span class="stats-stat-label">Best score</span>            <span class="stats-stat-value" id="st-best-score">--</span></div>
+    <div style="text-align:center;padding:20px 20px 24px;">
+      <button class="btn-share" onclick="shareStats()">Share Stats! <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-overlay" id="settingsOverlay" onclick="handleModalOverlayClick(event,'settingsOverlay',closeSettings)">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <span class="modal-title">Settings</span>
+      <button class="modal-close" onclick="closeSettings()">&#x2715;</button>
+    </div>
+    <div class="stats-section-label">Leaderboard</div>
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">Show me on the leaderboard</div>
+        <div class="settings-row-desc">Your name and score will appear in today's results</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="settingShowOnLeaderboard" onchange="saveLeaderboardSetting(this.checked)" checked>
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Help modal -->
+<div class="modal-overlay" id="helpOverlay" onclick="handleModalOverlayClick(event,'helpOverlay',closeHelp)">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <span class="modal-title">How to Play</span>
+      <button class="modal-close" onclick="closeHelp()">&#x2715;</button>
+    </div>
+    <div class="help-q">How do you play?</div>
+    <div class="help-a">Every day there's a new puzzle. Read the advertising slogan and guess the brand, product, movie, or TV show it belongs to. Type in your answer using the keyboard &mdash; a timer starts when you begin. Wrong letters don't lock in; keep guessing until you get it right.</div>
+    <hr class="help-divider">
+    <div class="help-q">What is Reveal a Letter?</div>
+    <div class="help-a">Tap <strong>Reveal a Letter</strong> and the next unguessed letter from the answer is shown. You can reveal as many letters as you like &mdash; even the whole answer if you're stuck. Each reveal adds 15 seconds to your score.</div>
+    <hr class="help-divider">
+    <div class="help-q">How is my score calculated?</div>
+    <div class="help-a">Lower is better. Your score = your time + 15 seconds per letter revealed + 5 seconds per wrong letter.</div>
+    <hr class="help-divider">
+    <div class="help-q">Can I post my results?</div>
+    <div class="help-a">After you play, tap <strong>Results</strong> to see the leaderboard and post your score. Enter your name and location and your results will appear for other players.</div>
+    <hr class="help-divider">
+    <div class="help-q">Can I share my results?</div>
+    <div class="help-a">Yes! After finishing, tap <strong>Share</strong> to send your result to friends via email, messages, or social media.</div>
+    <hr class="help-divider">
+    <div class="help-q">Can I send feedback?</div>
+    <div class="help-a">Of course! Email <a href="mailto:orijinzgames@outlook.com">orijinzgames@outlook.com</a> &mdash; we'd love to hear from you.</div>
+  </div>
+</div>
+
+<!-- Leaderboard modal -->
+<div class="modal-overlay" id="lbOverlay" onclick="handleModalOverlayClick(event,'lbOverlay',closeLeaderboard)">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <span class="modal-title">Today's Results</span>
+      <button class="modal-close" onclick="closeLeaderboard()">&#x2715;</button>
+    </div>
+    <div class="lb-rubric">
+      <div class="lb-rubric-title">Scoring &mdash; Lower is Better</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;">Score = time + 15s per letter revealed + 5s per wrong letter</div>
+      <div class="lb-rubric-grid">
+        <div class="lb-rubric-row"><span>&#x1F3C6; Legendary</span><span>&lt; 20</span></div>
+        <div class="lb-rubric-row"><span>&#x1F30C; Otherworldly</span><span>&lt; 40</span></div>
+        <div class="lb-rubric-row"><span>&#x1F52E; Uncanny</span><span>&lt; 60</span></div>
+        <div class="lb-rubric-row"><span>&#x1F3AF; Brilliant</span><span>&lt; 90</span></div>
+        <div class="lb-rubric-row"><span>&#x1F525; Epic</span><span>&lt; 120</span></div>
+        <div class="lb-rubric-row"><span>&#x2728; Miraculous</span><span>&lt; 150</span></div>
+        <div class="lb-rubric-row"><span>&#x1F31F; Extraordinary</span><span>&lt; 180</span></div>
+        <div class="lb-rubric-row"><span>&#x2B50; Impressive</span><span>&lt; 210</span></div>
+        <div class="lb-rubric-row"><span>&#x26A1; Terrific</span><span>&lt; 270</span></div>
+        <div class="lb-rubric-row"><span>&#x1F4AA; Tenacious</span><span>&lt; 330</span></div>
+        <div class="lb-rubric-row"><span>&#x1F331; You Got It</span><span>330+</span></div>
+      </div>
+    </div>
+    <div class="lb-sort-tabs">
+      <div class="lb-sort-tab active" id="lbTab-score"  onclick="setLbSort('score')">Score</div>
+      <div class="lb-sort-tab"        id="lbTab-played" onclick="setLbSort('played')">Games Played</div>
+      <div class="lb-sort-tab"        id="lbTab-streak" onclick="setLbSort('streak')">Streak</div>
+    </div>
+    <div class="lb-list-header" id="lbListHeader">
+      <span class="lb-col-rank">#</span>
+      <span class="lb-col-name">Player</span>
+      <span class="lb-col-score">Score</span>
+      <span class="lb-col-tier"></span>
+    </div>
+    <div id="lbList"></div>
+    <div class="lb-entry-form" id="lbEntryForm">
+      <div class="lb-entry-title">Post Your Score</div>
+      <div class="lb-entry-fields">
+        <input class="lb-entry-input" id="lbName" type="text" placeholder="Your name" maxlength="30">
+        <input class="lb-entry-input" id="lbLocation" type="text" placeholder="City (optional)" maxlength="40">
+      </div>
+      <button class="lb-submit-btn" onclick="submitLeaderboardEntry()">Post to Leaderboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- Share popup -->
+<div class="share-overlay" id="shareOverlay" onclick="handleShareOverlayClick(event)">
+  <div class="share-popup" id="sharePopup">
+    <div class="share-popup-header">
+      <div class="share-popup-title">Share</div>
+      <button class="share-close" onclick="closeSharePopup()">&#10005;</button>
+    </div>
+    <a class="share-option" id="shareEmail"    href="#" target="_blank" rel="noopener">&#128140; Email</a>
+    <a class="share-option" id="shareMessages" href="#" target="_blank" rel="noopener">&#128172; Messages</a>
+    <a class="share-option" id="shareWhatsApp" href="#" target="_blank" rel="noopener">&#128518; WhatsApp</a>
+    <button class="share-option" onclick="sharePopupCopy()">&#128203; Copy to clipboard</button>
+    <a class="share-option" id="shareFacebook" href="#" target="_blank" rel="noopener">&#128420; Facebook</a>
+    <a class="share-option" id="shareBluesky"  href="#" target="_blank" rel="noopener">&#127756; Bluesky</a>
+    <a class="share-option" id="shareTwitter"  href="#" target="_blank" rel="noopener">&#120143; Post on X / Twitter</a>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const PUZZLES=[{"title":"Product","slogan":"Stimulate Your Senses","answer":"5"},{"title":"TV Show","slogan":"The stakes have never been higher","answer":"24"},{"title":"Movie","slogan":"Life is in their hands - death is on their minds!","answer":"12 Angry Men"},{"title":"Movie","slogan":"The future is history","answer":"12 Monkeys"},{"title":"Movie","slogan":"The ultimate trip","answer":"2001: A Space Odyssey"},{"title":"Company","slogan":"Advancing Innovation","answer":"3M"},{"title":"Product","slogan":"When You Gotta Get Stuff Done","answer":"5-hour Energy"},{"title":"TV Show","slogan":"The truth is worth waiting for","answer":"60 Minutes"},{"title":"Product","slogan":"The Uncola","answer":"7 Up"},{"title":"Product","slogan":"It\u2019s the only cat food Morris will eat.","answer":"9Lives"},{"title":"Movie","slogan":"If Nancy doesn't wake up screaming, she won't wake up at all","answer":"A Nightmare On Elm Street"},{"title":"Company/Product","slogan":"All American Food","answer":"A&W"},{"title":"Product","slogan":"That frosty mug sensation","answer":"A&W Root Beer"},{"title":"Product","slogan":"Makes beef sing","answer":"A1 Sauce"},{"title":"Television Show","slogan":"The thrill of victory and the agony of defeat","answer":"ABC Wide World of Sports"},{"title":"Product","slogan":"[???????] PERFECTION","answer":"Absolut Vodka"},{"title":"Company","slogan":"[???} is the place with the helpful hardware man","answer":"Ace Hardware"},{"title":"Company","slogan":"We make Great Games","answer":"Activision Blizzard"},{"title":"Organization","slogan":"Friends don\u2019t let friends drive drunk","answer":"Ad Council"},{"title":"Company/Product","slogan":"Impossible is Nothing","answer":"Adidas"},{"title":"Company","slogan":"Create. Generate. Iterate.","answer":"Adobe Systems Inc"},{"title":"Company","slogan":"Always There","answer":"ADT Corp"},{"title":"Company","slogan":"We\u2019re Ready in [???????]","answer":"Advance Auto Parts"},{"title":"Company","slogan":"Ask about it at work","answer":"Aflac"},{"title":"Company","slogan":"We\u2019ve got you under our wing","answer":"Aflac"},{"title":"Product","slogan":"Belong Anywhere","answer":"Airbnb"},{"title":"Movie","slogan":"Thank God it\u2019s only a motion picture!","answer":"Airplane!"},{"title":"Product","slogan":"Stronger than Dirt","answer":"Ajax"},{"title":"State","slogan":"Yellowhammer State","answer":"Alabama"},{"title":"State","slogan":"The Last Frontier","answer":"Alaska"},{"title":"Company","slogan":"Fly smart, land happy","answer":"Alaska Airlines"},{"title":"Company","slogan":"Your home in the sky","answer":"Alaska Airlines"},{"title":"Company","slogan":"Inventing the future since 1888","answer":"Alcoa"},{"title":"Movie","slogan":"In space no one can hear you scream","answer":"Alien"},{"title":"Movie","slogan":"Whoever wins...we lose","answer":"Alien Vs Predator"},{"title":"Product","slogan":"Mama Mia, that's a spicy meatball","answer":"Alka-Seltzer"},{"title":"Product","slogan":"I can\u2019t believe I ate the whole thing","answer":"Alka-Seltzer"},{"title":"Product","slogan":"Plop, Plop, Fizz, Fizz, Oh What a Relief It Is","answer":"Alka-Seltzer"},{"title":"Product","slogan":"Try it, you\u2019ll like it","answer":"Alka-Seltzer"},{"title":"Company","slogan":"You\u2019re in good hands","answer":"Allstate Corp"},{"title":"Product","slogan":"Sometimes you feel like a nut, sometimes you don't","answer":"Almond Joy/Mounds"},{"title":"Company","slogan":"Don\u2019t Be Evil","answer":"Alphabet"},{"title":"Product","slogan":"Doesn\u2019t your dog deserve [????]?","answer":"Alpo"},{"title":"Product","slogan":"Real meat. Real dogs.","answer":"Alpo"},{"title":"Product","slogan":"#LikeAGirl","answer":"Always"},{"title":"Product","slogan":"Rewrite the rules, [???????]","answer":"Always"},{"title":"Product","slogan":"Stay Happy, [???????]","answer":"Always"},{"title":"Company","slogan":"Work hard. Have fun. Make history.","answer":"Amazon"},{"title":"Company","slogan":"Earth's biggest selection","answer":"Amazon"},{"title":"Company","slogan":"From A to Z","answer":"Amazon"},{"title":"Company","slogan":"Going for great","answer":"American Airlines Group"},{"title":"Movie","slogan":"...look closer","answer":"American Beauty"},{"title":"Organization","slogan":"The Incredible, Edible [???]","answer":"American Egg Board"},{"title":"Company","slogan":"Do More","answer":"American Express"},{"title":"Company","slogan":"Don't leave home without it","answer":"American Express"},{"title":"TV Show","slogan":"Dreams are made here","answer":"American Idol"},{"title":"Organization","slogan":"The greatest tragedy is indifference","answer":"American Red Cross"},{"title":"Organization","slogan":"Together, we can save a life","answer":"American Red Cross"},{"title":"Organization","slogan":"It is better to light a candle than to curse the darkness","answer":"Amnesty International"},{"title":"Product","slogan":"95 calories never tasted so good","answer":"Amstel Light"},{"title":"City","slogan":"Venice of the North","answer":"Amsterdam"},{"title":"Company","slogan":"See America at See Level","answer":"Amtrak"},{"title":"Company","slogan":"We're going places","answer":"Amtrak"},{"title":"Product","slogan":"For fast, fast, fast relief","answer":"Anacin"},{"title":"Company","slogan":"It's a Family Thing","answer":"Ancestry"},{"title":"Company","slogan":"You\u2019ve Got Mail","answer":"AOL"},{"title":"Company/Product","slogan":"The power to be your best","answer":"Apple"},{"title":"Company/Product","slogan":"Think Different","answer":"Apple"},{"title":"Company/Product","slogan":"Think outside the box","answer":"Apple"},{"title":"Company/Product","slogan":"Here's to the crazy ones. The misfits, The rebels. The troublemakers.","answer":"Apple"},{"title":"Product","slogan":"There's an app for that","answer":"Apple iPhone"},{"title":"Product","slogan":"We eat what we like","answer":"Apple Jacks"},{"title":"Product","slogan":"The computer for the rest of us","answer":"Apple Macintosh"},{"title":"Company","slogan":"Eatin' good in the Neighborhood","answer":"Applebee's"},{"title":"Company","slogan":"Together is good","answer":"Applebee's"},{"title":"Product","slogan":"Raise your [???]!","answer":"Appleton Jamaica Rum"},{"title":"Product","slogan":"Cool Drink to Hang Around With","answer":"Appy Fizz"},{"title":"Product","slogan":"There's something about an [???? ?????] man","answer":"Aqua Velva"},{"title":"Product","slogan":"Three in one protection for your family","answer":"Aquafesh"},{"title":"Product","slogan":"Make your body happy","answer":"Aquafina"},{"title":"Restaurant","slogan":"We Have the Meats","answer":"Arby\u2019s"},{"title":"Restaurant","slogan":"Slicing up freshness","answer":"Arby\u2019s"},{"title":"State","slogan":"The Grand Canyon State","answer":"Arizona"},{"title":"State","slogan":"The Natural State","answer":"Arkansas"},{"title":"Podcast","slogan":"Celebrating the messiness of being human","answer":"Armchair Expert with Dax Shepard"},{"title":"TV Show","slogan":"Dysfunction is the new normal","answer":"Arrested Development"},{"title":"Product","slogan":"Work on what matters","answer":"Asana"},{"title":"Organization","slogan":"We are their voice","answer":"ASPCA"},{"title":"Product","slogan":"Power, Beauty and Soul","answer":"Aston Martin"},{"title":"Company","slogan":"The Right Choice","answer":"AT&T"},{"title":"Company","slogan":"It\u2019s All Within Your Reach","answer":"AT&T"},{"title":"Company","slogan":"More Bars in More Places","answer":"AT&T"},{"title":"Company","slogan":"Reach Out and Touch Someone","answer":"AT&T"},{"title":"Company","slogan":"Your World. Delivered","answer":"AT&T"},{"title":"Company/Product","slogan":"Never Follow","answer":"Audi"},{"title":"Company/Product","slogan":"Vorsprung durch Technik","answer":"Audi"},{"title":"Restaurant","slogan":"Pretzel Perfect","answer":"Auntie Anne's"},{"title":"City","slogan":"Live Music Capital of the World","answer":"Austin"},{"title":"Product","slogan":"Design your world","answer":"Autodesk Inc"},{"title":"Company/Product","slogan":"Driven to be the best","answer":"AutoNation Inc"},{"title":"Retail","slogan":"Get in the Zone","answer":"AutoZone Inc"},{"title":"Company/Product","slogan":"We try harder","answer":"Avis"},{"title":"Company/Product","slogan":"The [???] Effect","answer":"AXE"},{"title":"Company/Product","slogan":"Spray more, get more","answer":"AXE"},{"title":"Product","slogan":"100% natural 100% fun!","answer":"Babybel"},{"title":"Product","slogan":"Live Passionately","answer":"Bacardi"},{"title":"Product","slogan":"Thirsty for life? Drink Responsibly","answer":"Bacardi"},{"title":"Product","slogan":"You can prepare them in an instant","answer":"Bagel Bites"},{"title":"Product","slogan":"The Pleasure Society","answer":"Baileys Irish Cream"},{"title":"Product","slogan":"So American You Can Taste It","answer":"Ball Park Franks"},{"title":"TV Show","slogan":"They depended on each other And the world depended on them","answer":"Band of Brothers"},{"title":"Product","slogan":"I am stuck on [????????] brand, 'cause [????????]'s stuck on me!","answer":"Band-Aid"},{"title":"Company","slogan":"Higher Standards","answer":"Bank of America"},{"title":"Company","slogan":"Life's better when we're connected","answer":"Bank of America"},{"title":"Company","slogan":"What would you like the power to do?","answer":"Bank of America"},{"title":"Political Campaign","slogan":"Yes We Can","answer":"Barak  Obama"},{"title":"Product","slogan":"Thank you for your support","answer":"Bartles & Jaymes"},{"title":"Company","slogan":"Create a Better Tomorrow","answer":"BASF"},{"title":"Company","slogan":"31 Flavors","answer":"Baskin-Robbins"},{"title":"Company","slogan":"More flavors More fun","answer":"Baskin-Robbins"},{"title":"TV Show","slogan":"The night is darkest just before the dawn","answer":"Batman: The Animated Series"},{"title":"Product","slogan":"The Wonder Drug","answer":"Bayer Aspirin"},{"title":"Podcast","slogan":"The world explained","answer":"BBC Global News Podcast"},{"title":"Company/Product","slogan":"Hear What You Want","answer":"Beats by Dre"},{"title":"Product","slogan":"Small Is Big Here","answer":"Beech-Nut"},{"title":"Product","slogan":"Make it a double","answer":"Beefeater Gin"},{"title":"Company/Product","slogan":"Quality never stops","answer":"BelGioioso Cheese"},{"title":"Company/Product","slogan":"If It\u2019s Not Fun, Why Do It?","answer":"Ben & Jerry\u2019s"},{"title":"Company/Product","slogan":"Peace, Love & Ice Cream","answer":"Ben & Jerry\u2019s"},{"title":"Company/Product","slogan":"Passion makes perfect","answer":"Bertolli"},{"title":"Company","slogan":"Let's talk about what's possible","answer":"Best Buy"},{"title":"Company","slogan":"Expert Service Unbeatable Price","answer":"Best Buy"},{"title":"Company/Product","slogan":"Writes First Time, Every Time","answer":"Bic"},{"title":"Product","slogan":"Two all-beef patties, special sauce, lettuce, cheese, pickles, onions on a sesame seed bun","answer":"Big Mac"},{"title":"Product","slogan":"Kiss a Little Longer","answer":"Big Red gum"},{"title":"TV Show","slogan":"The future is now","answer":"Black Mirror"},{"title":"Product","slogan":"Feel the [??????]","answer":"Black Velvet"},{"title":"Company/Product","slogan":"Love What You Do","answer":"BlackBerry"},{"title":"Company/Product","slogan":"The best ice cream in the country","answer":"Blue Bell Creameries"},{"title":"Product","slogan":"I'm on it like [???? ??????]?","answer":"Blue Bonnet"},{"title":"Company","slogan":"Live Fearless","answer":"Blue Cross Blue Shield"},{"title":"Company/Product","slogan":"Sheer Driving Pleasure","answer":"BMW"},{"title":"Company/Product","slogan":"The Ultimate Driving Machine","answer":"BMW"},{"title":"Product","slogan":"More than a sports drink","answer":"BodyArmor"},{"title":"Company","slogan":"Forever New Frontiers","answer":"Boeing"},{"title":"Product","slogan":"Share the Ummph!","answer":"BOH tea"},{"title":"Product","slogan":"Pour something priceless","answer":"Bombay Sapphire"},{"title":"Movie","slogan":"They're young...they're in love...and they kill people","answer":"Bonnie & Clyde"},{"title":"Company/Product","slogan":"Invented for life","answer":"Bosch"},{"title":"Product","slogan":"The Quicker Picker Upper","answer":"Bounty"},{"title":"Product","slogan":"Some bread, some wine, some [???????]","answer":"Boursin cheese"},{"title":"Company","slogan":"Beyond Petroleum","answer":"BP"},{"title":"Movie","slogan":"Love never dies","answer":"Bram Stoker's Dracula"},{"title":"TV Show","slogan":"Remember my name","answer":"Breaking Bad"},{"title":"Company/Product","slogan":"It\u2019s the Right Thing to Do","answer":"Breyers"},{"title":"Company/Product","slogan":"It's way beyond ice cream","answer":"Breyers"},{"title":"Product","slogan":"Fill it to the rim with [????]","answer":"Brim coffee"},{"title":"Company","slogan":"The world\u2019s favourite airline","answer":"British Airways"},{"title":"TV Show","slogan":"The truth takes time","answer":"Broadchurch"},{"title":"Movie","slogan":"Love is a force of nature","answer":"Brokeback Mountain"},{"title":"Company/Product","slogan":"Run Happy","answer":"Brooks Running"},{"title":"Product","slogan":"A Little Dab\u2019ll Do Ya","answer":"Brylcreem"},{"title":"Company/Product","slogan":"The King of Beers","answer":"Budweiser"},{"title":"Company/Product","slogan":"This Bud\u2019s for you","answer":"Budweiser"},{"title":"Company/Product","slogan":"Whassup?","answer":"Budweiser"},{"title":"Company/Product","slogan":"Wouldn\u2019t You Really Rather Have a [?????]?","answer":"Buick"},{"title":"Company","slogan":"Make the first move","answer":"Bumble"},{"title":"Company","slogan":"Have it your way","answer":"Burger King"},{"title":"Festival","slogan":"Radical self expression","answer":"Burning Man"},{"title":"Movie","slogan":"Not that it matters, but most of it is true","answer":"Butch Cassidy and the Sundance Kid"},{"title":"Product","slogan":"Nobody Better Lay a Finger on My [???????????]","answer":"Butterfinger"},{"title":"Product","slogan":"A Glass and a Half in Every Bar","answer":"Cadbury"},{"title":"Product","slogan":"It's Hunting Season","answer":"Cadbury Creme Egg"},{"title":"Product","slogan":"Free the joy","answer":"Cadbury Dairy Milk"},{"title":"Product","slogan":"Roses Grow On You","answer":"Cadbury Roses"},{"title":"Company/Product","slogan":"Break Through","answer":"Cadillac"},{"title":"Product","slogan":"Ancient Chinese secret, huh?","answer":"Calgon"},{"title":"Product","slogan":"[??????], Take Me Away!","answer":"Calgon"},{"title":"State","slogan":"The Golden State","answer":"California"},{"title":"Product","slogan":"Got [????]?","answer":"California Milk Processor Board"},{"title":"Product","slogan":"There's a soldier in all of us","answer":"Call of Duty: Black Ops"},{"title":"Product","slogan":"The future is black","answer":"Call of Duty: Black Ops II"},{"title":"Product","slogan":"Paint it black","answer":"Call of Duty: Black Ops III"},{"title":"Company/Product","slogan":"Between love and madness lies obsession","answer":"Calvin Klein"},{"title":"Company/Product","slogan":"Nothing comes between me and my [???????]","answer":"Calvin Klein"},{"title":"Company/Product","slogan":"It\u2019s Amazing What Soup Can Do!","answer":"Campbell Soup"},{"title":"Company/Product","slogan":"Mmm Mmm Good","answer":"Campbell\u2019s"},{"title":"Product","slogan":"Damn Right Your Dad Drank It","answer":"Canadian Club"},{"title":"Product","slogan":"No ordinary Whisky","answer":"Canadian Club"},{"title":"Product","slogan":"Your Mom Wasn't Your Dad's First","answer":"Canadian Club"},{"title":"Product","slogan":"Grip it Tip it Sip it","answer":"Canadian Mist"},{"title":"Company/Product","slogan":"Delighting You Always","answer":"Canon"},{"title":"Company","slogan":"Create stunning graphic designs","answer":"Canva"},{"title":"Product","slogan":"[????????????] stays crunchy, even in milk!","answer":"Cap\u2019n Crunch"},{"title":"Product","slogan":"It\u2019s got crunch!","answer":"Cap\u2019n Crunch"},{"title":"Company","slogan":"What's in your wallet?","answer":"Capital One"},{"title":"Product","slogan":"Respect the Pouch","answer":"Capri Sun"},{"title":"Product","slogan":"Enjoy the contradiction","answer":"Captain Morgan"},{"title":"Organization","slogan":"Defending dignity Fighting poverty","answer":"CARE"},{"title":"Company","slogan":"Stay awake for it","answer":"Caribou Coffee"},{"title":"Company","slogan":"Don\u2019t Bother Me, I\u2019m Eating","answer":"Carl\u2019s Jr."},{"title":"Company","slogan":"Making people happy through food","answer":"Carl\u2019s Jr."},{"title":"Company/Product","slogan":"Probably the Best Beer in the World","answer":"Carlsberg"},{"title":"Company","slogan":"The Way Car Buying Should Be","answer":"CarMax"},{"title":"Company","slogan":"Fun For All All For Fun","answer":"Carnival Corp"},{"title":"Company","slogan":"America's freshest ice cream","answer":"Carvel (franchise)"},{"title":"Company","slogan":"Earthmoving solutions for today\u2019s challenges","answer":"Caterpillar Inc"},{"title":"Company/Product","slogan":"The One With the Elk On It","answer":"Challenge Dairy"},{"title":"Product","slogan":"Share the fantasy","answer":"Chanel No. 5"},{"title":"Movie","slogan":"This is the story of two men who run\u2026 not to run, but to prove something to the world","answer":"Chariots of Fire"},{"title":"Company","slogan":"Helping investors help themselves","answer":"Charles Schwab"},{"title":"Company","slogan":"Own Your Tomorrow","answer":"Charles Schwab"},{"title":"Company","slogan":"Talk to Chuck","answer":"Charles Schwab"},{"title":"Product","slogan":"Please don\u2019t squeeze the [???????]","answer":"Charmin"},{"title":"Company","slogan":"The Right Relationship is Everything","answer":"Chase"},{"title":"Product","slogan":"The One and Only","answer":"Cheerios"},{"title":"Product","slogan":"Dangerously cheesy","answer":"Cheetos"},{"title":"Company/Product","slogan":"Like a Rock","answer":"Chevrolet"},{"title":"Company/Product","slogan":"See the USA in Your [?????????]","answer":"Chevrolet"},{"title":"Company/Product","slogan":"The Heartbeat of America","answer":"Chevrolet"},{"title":"Product","slogan":"Trail Your Taste Buds","answer":"Chex Mix"},{"title":"City","slogan":"Second City","answer":"Chicago"},{"title":"City","slogan":"The Windy City","answer":"Chicago"},{"title":"Product","slogan":"America's best-tasting tuna","answer":"Chicken of the Sea"},{"title":"Movie","slogan":"Escape or die frying","answer":"Chicken Run"},{"title":"Product","slogan":"I feel like [??????? ???????]","answer":"Chicken Tonight"},{"title":"Company","slogan":"Eat Mor Chikin","answer":"Chick-fil-A"},{"title":"Product","slogan":"If you think it\u2019s butter, but it\u2019s not: it\u2019s [???????]","answer":"Chiffon Margarine"},{"title":"Product","slogan":"It\u2019s Not Nice to Fool Mother Nature","answer":"Chiffon Margarine"},{"title":"Company","slogan":"Like no place else","answer":"Chili's"},{"title":"Company","slogan":"Food with integrity","answer":"Chipotle Mexican Grill"},{"title":"Product","slogan":"Crazy with chips!","answer":"Chips Ahoy!"},{"title":"Product","slogan":"Here\u2019s to the Cookie!","answer":"Chips Ahoy!"},{"title":"Company/Product","slogan":"Believe in Food","answer":"Chobani"},{"title":"Company/Product","slogan":"Imported from Detroit","answer":"Chrysler"},{"title":"Company/Product","slogan":"Inspiration Comes Standard","answer":"Chrysler"},{"title":"Company","slogan":"You Bring It Home","answer":"Church's Chicken"},{"title":"Company","slogan":"Empowering the Internet Generation","answer":"Cisco"},{"title":"Company","slogan":"Welcome To The Human Network","answer":"Cisco"},{"title":"Company","slogan":"Live Richly","answer":"Citibank"},{"title":"Company","slogan":"The Citi Never Sleeps","answer":"Citibank"},{"title":"Product","slogan":"If I've only one life, let me live it as a blonde","answer":"Clairol"},{"title":"Product","slogan":"The secret of beautiful hair","answer":"Clairol"},{"title":"Product","slogan":"Does she or doesn\u2019t she?\u00a0Only her hairdresser knows for sure","answer":"Clairol hair color"},{"title":"Product","slogan":"Is it true blondes have more fun?","answer":"Clairol hair color"},{"title":"Product","slogan":"Powerful Clean","answer":"Clorox"},{"title":"Product","slogan":"When it really matters, trust [??????]","answer":"Clorox"},{"title":"Festival","slogan":"The music. The people. The vibe.","answer":"Coachella"},{"title":"Company/Product","slogan":"Have a Coke and a smile","answer":"Coca-Cola"},{"title":"Company/Product","slogan":"I\u2019d like to teach the world to sing","answer":"Coca-Cola"},{"title":"Company/Product","slogan":"It\u2019s the Real Thing","answer":"Coca-Cola"},{"title":"Company/Product","slogan":"Open happiness","answer":"Coca-Cola"},{"title":"Company/Product","slogan":"Taste The Feeling","answer":"Coca-Cola"},{"title":"Company/Product","slogan":"The pause that refreshes","answer":"Coca-Cola"},{"title":"Company/Product","slogan":"Things go better with [????]","answer":"Coca-Cola"},{"title":"Product","slogan":"Can you handle the crunch?","answer":"Cocoa Krispies"},{"title":"Product","slogan":"I\u2019m Cuckoo for [???????????]","answer":"Cocoa Puffs"},{"title":"Product","slogan":"Make More Smiles","answer":"Colgate"},{"title":"Product","slogan":"Stronger, healthier gums","answer":"Colgate"},{"title":"Product","slogan":"It Cleans Your Breath While It Cleans Your Teeth","answer":"Colgate Total"},{"title":"State","slogan":"The Centennial State","answer":"Colorado"},{"title":"Company","slogan":"It\u2019s [???????]ic","answer":"Comcast"},{"title":"Company","slogan":"Let Us Guide You Home","answer":"Compass"},{"title":"Company","slogan":"The Computer Superstore","answer":"CompUSA"},{"title":"State","slogan":"Constitution State","answer":"Connecticut"},{"title":"Conference","slogan":"The global stage for innovation","answer":"Consumer Electronic Show"},{"title":"Movie","slogan":"Nothing spreads like fear","answer":"Contagion"},{"title":"Company/Product","slogan":"Shoes Are Boring. Wear Sneakers.","answer":"Converse"},{"title":"Product","slogan":"Born in the Rockies","answer":"Coors"},{"title":"Product","slogan":"Brewed with Pure Rocky Mountain Spring Water","answer":"Coors"},{"title":"Product","slogan":"It won't slow you down","answer":"Coors"},{"title":"Product","slogan":"Silver Bullet","answer":"Coors"},{"title":"Product","slogan":"The coldest tasting beer in the world","answer":"Coors"},{"title":"Product","slogan":"Gotta have my Pops!","answer":"Corn Pops"},{"title":"Product","slogan":"Find your beach","answer":"Corona"},{"title":"Product","slogan":"La playa awaits","answer":"Corona"},{"title":"Company","slogan":"Simplifying home and life","answer":"Costco Co"},{"title":"Organization","slogan":"Cotton. The fabric of our lives","answer":"Cotton Incorporated"},{"title":"Product","slogan":"Where good habits are delicious","answer":"Country Crock"},{"title":"Product","slogan":"Easy, breezy, beautiful","answer":"CoverGirl"},{"title":"Product","slogan":"I am what I make up","answer":"CoverGirl"},{"title":"Product","slogan":"Everything Imaginable","answer":"Crayola"},{"title":"Product","slogan":"Look, Ma\u2014No Cavities!","answer":"Crest"},{"title":"Podcast","slogan":"If you can never get enough true crime","answer":"Crime Junkie"},{"title":"Product","slogan":"Feel the Love","answer":"Crocs"},{"title":"TV Show","slogan":"Every case is personal","answer":"CSI: Crime Scene Investigation"},{"title":"TV Show","slogan":"A comedy about life\u2019s little disasters","answer":"Curb Your Enthusiasm"},{"title":"Company","slogan":"Health is Everything","answer":"CVS"},{"title":"Company","slogan":"Do something different","answer":"Dairy Queen"},{"title":"Company","slogan":"Fan Food. Not Fast Food.","answer":"Dairy Queen"},{"title":"Company","slogan":"Hot Eats, Cool Treats","answer":"Dairy Queen"},{"title":"Product","slogan":"Love it for life","answer":"Dannon Yogurt"},{"title":"TV Show","slogan":"Real people Real stories","answer":"Dateline NBC"},{"title":"Product","slogan":"Cuts grease like nobody\u2019s business","answer":"Dawn"},{"title":"Product","slogan":"Tough on grease, soft on hands","answer":"Dawn"},{"title":"Company","slogan":"A diamond is forever","answer":"De Beers"},{"title":"Movie","slogan":"Feel the love Valentine\u2019s Day.","answer":"Deadpool"},{"title":"Company","slogan":"Nothing runs like a Deere","answer":"Deere & Co"},{"title":"TV Show","slogan":"The future is theirs","answer":"Degrassi: The Next Generation"},{"title":"Company","slogan":"Feed the Beast","answer":"Del Taco"},{"title":"State","slogan":"The First State","answer":"Delaware"},{"title":"Movie","slogan":"This is the weekend they didn't play golf","answer":"Deliverance"},{"title":"Company/Product","slogan":"Easy as [????]","answer":"Dell"},{"title":"Company","slogan":"Partner of Choice","answer":"Delphi Automotive"},{"title":"Company","slogan":"Keep Climbing","answer":"Delta"},{"title":"Company","slogan":"Ready When You Are","answer":"Delta"},{"title":"Company","slogan":"America\u2019s Diner is always open","answer":"Denny\u2019s"},{"title":"Company","slogan":"We're cooking now","answer":"Denny\u2019s"},{"title":"Product","slogan":"Cleans your teeth while it cleans your breath","answer":"Dentyne"},{"title":"Product","slogan":"Make Face Time","answer":"Dentyne"},{"title":"City","slogan":"The Mile High City","answer":"Denver"},{"title":"TV Show","slogan":"Every family has its secrets","answer":"Desperate Housewives"},{"title":"City","slogan":"Motor City","answer":"Detroit"},{"title":"TV Show","slogan":"America\u2019s favorite serial killer","answer":"Dexter"},{"title":"Product","slogan":"Aren\u2019t You Glad You Use [????]?","answer":"Dial"},{"title":"Movie","slogan":"Twelve terrorists. One cop. The odds are against John McClane... That's just the way he likes it","answer":"Die Hard"},{"title":"Company/Product","slogan":"Be stupid","answer":"Diesel"},{"title":"Product","slogan":"Just for the taste of it","answer":"Diet Coke"},{"title":"Product","slogan":"Light it up!","answer":"Diet Coke"},{"title":"Product","slogan":"Ice Cream of the Future","answer":"Dippin' Dots"},{"title":"Company","slogan":"Don\u2019t Just Watch TV. [???????].","answer":"DirecTV"},{"title":"Company","slogan":"Your place to talk","answer":"Discord"},{"title":"Company","slogan":"Imagine a place","answer":"Discord"},{"title":"Company","slogan":"Explore Your World","answer":"Discovery Channel"},{"title":"Company","slogan":"Where Dreams Come True","answer":"Disney Parks"},{"title":"Company","slogan":"I\u2019m Going to [????????????]!","answer":"Disney World"},{"title":"Company","slogan":"Endless Entertainment","answer":"Disney+"},{"title":"Place","slogan":"The Happiest Place on Earth","answer":"Disneyland"},{"title":"Product","slogan":"Every Picture tells a Story","answer":"Doan's pills"},{"title":"TV Show","slogan":"Beyond imagination","answer":"Doctor Who"},{"title":"Company","slogan":"Save Time, Save Money, Everyday","answer":"Dollar General"},{"title":"Company","slogan":"Our blades are f***ing great.","answer":"Dollar Shave Club"},{"title":"Company","slogan":"Shave Time Shave Money","answer":"Dollar Shave Club"},{"title":"Company","slogan":"Everything\u2019s $1","answer":"Dollar Tree"},{"title":"Company","slogan":"You Got 30 Minutes","answer":"Domino\u2019s"},{"title":"Company","slogan":"30 Minutes or Less, or It\u2019s Free","answer":"Domino's Pizza"},{"title":"Company","slogan":"It\u2019s What We Do. Eat. Sleep. Pizza.","answer":"Domino's Pizza"},{"title":"Company","slogan":"Pizza deliver experts","answer":"Domino's Pizza"},{"title":"Product","slogan":"Know your tequila","answer":"Don Julio"},{"title":"Movie","slogan":"Life is one long insane trip...","answer":"Donnie Darko"},{"title":"Company","slogan":"Get more from your neighborhood","answer":"DoorDash"},{"title":"Company","slogan":"Delivering good","answer":"DoorDash"},{"title":"Product","slogan":"For the Bold","answer":"Doritos"},{"title":"Product","slogan":"The Loudest Taste on Earth","answer":"Doritos"},{"title":"Product","slogan":"The most interesting man in the world","answer":"Dos Equis"},{"title":"Product","slogan":"Double Your Pleasure, Double Your Fun","answer":"Doublemint gum"},{"title":"Product","slogan":"Real Beauty","answer":"Dove"},{"title":"Product","slogan":"Choose pleasure","answer":"Dove Chocolate"},{"title":"Product","slogan":"Be a Pepper","answer":"Dr Pepper"},{"title":"Product","slogan":"I'm a Pepper, He's a Pepper, She's a Pepper, We're a Pepper and Wouldn't you like to Be a Pepper too?","answer":"Dr Pepper"},{"title":"Product","slogan":"Just What The Dr Ordered","answer":"Dr Pepper"},{"title":"Product","slogan":"What\u2019s the Worst That Could Happen?","answer":"Dr Pepper"},{"title":"Product","slogan":"Share a Scoop Share a Smile!","answer":"Dreyer's"},{"title":"Company/Product","slogan":"Work better, safer, together","answer":"Dropbox"},{"title":"Company","slogan":"America Runs on Dunkin'","answer":"Dunkin' Donuts"},{"title":"Company","slogan":"Time to make the donuts","answer":"Dunkin' Donuts"},{"title":"Company","slogan":"Learn languages for free","answer":"Duolingo"},{"title":"Company","slogan":"Better things for better living\u2026Through chemistry","answer":"DuPont"},{"title":"Product","slogan":"Do You Have the Bunny Inside?","answer":"Duracell"},{"title":"Product","slogan":"Trusted Everywhere","answer":"Duracell"},{"title":"Company","slogan":"The new art of wine","answer":"E & J Gallo Winery"},{"title":"Company","slogan":"Don\u2019t Get Mad, Get [???????]","answer":"E*TRADE"},{"title":"Company","slogan":"Buy it, sell it, love it","answer":"eBay"},{"title":"Company","slogan":"The world\u2019s online marketplace","answer":"eBay"},{"title":"Movie","slogan":"His story will touch you, even though he can\u2019t.","answer":"Edward Scissorhands"},{"title":"Company","slogan":"When [?????????] talks, people listen","answer":"EF Hutton"},{"title":"Product","slogan":"L'eggo my Eggo!","answer":"Eggo waffles"},{"title":"Company","slogan":"Challenge everything","answer":"Electronic Arts"},{"title":"Company","slogan":"If it\u2019s in the game It\u2019s in the game","answer":"Electronic Arts"},{"title":"TV Show","slogan":"Power is everything","answer":"Empire"},{"title":"Product","slogan":"It keeps going, and going, and going","answer":"Energizer"},{"title":"Product","slogan":"All my men wear [???????????????], or they wear nothing at all","answer":"English Leather"},{"title":"Company","slogan":"The Worldwide Leader in Sports","answer":"ESPN"},{"title":"Company","slogan":"Put a tiger in your tank","answer":"Esso"},{"title":"Company/Product","slogan":"A fragrance that captures the spirit of a woman","answer":"Est\u00e9e Lauder"},{"title":"Movie","slogan":"You can erase someone from your mind...","answer":"Eternal Sunshine of the Spotless Mind"},{"title":"Company","slogan":"Clothes for a big planet","answer":"Ex Officio"},{"title":"Company","slogan":"Where You Book Matters","answer":"Expedia"},{"title":"Product","slogan":"Give Extra, Get Extra","answer":"Extra gum"},{"title":"Company","slogan":"Taking On the World\u2019s Toughest Energy Challenges","answer":"ExxonMobil"},{"title":"Company","slogan":"Be Connected Be Discovered Be on [????????]","answer":"Facebook"},{"title":"Company","slogan":"Move Fast and Break Things","answer":"Facebook"},{"title":"Product","slogan":"The best ingredient is love","answer":"Fancy Feast"},{"title":"Product","slogan":"Drink [?????], stay Bamboocha","answer":"Fanta"},{"title":"Product","slogan":"Wanna [?????]? Don\u2019t You Wanna?","answer":"Fanta"},{"title":"TV Show","slogan":"Escape the ordinary","answer":"Fantasy Island"},{"title":"Company","slogan":"The last great hamburger stand","answer":"Fatburger"},{"title":"Product","slogan":"Breathe Happy","answer":"Febreze"},{"title":"Company","slogan":"Relax, it\u2019s [?????]; The world on time","answer":"FedEx"},{"title":"Company","slogan":"The new power move","answer":"FedEx"},{"title":"Company","slogan":"The World on Time","answer":"FedEx"},{"title":"Company","slogan":"When it absolutely, positively, has to be there overnight","answer":"FedEx"},{"title":"Organization","slogan":"Together we can solve hunger","answer":"Feeding America"},{"title":"Company/Product","slogan":"We Are the Competition","answer":"Ferrari"},{"title":"Movie","slogan":"Life moves pretty fast. If you don\u2019t stop and look around once in a while, you could miss it","answer":"Ferris Bueller\u2019s Day Off"},{"title":"Movie","slogan":"One man\u2019s struggle to take it easy","answer":"Ferris Bueller\u2019s Day Off"},{"title":"Company/Product","slogan":"Driven by Passion","answer":"Fiat"},{"title":"Company/Product","slogan":"Wherever the Road Takes You","answer":"Firestone"},{"title":"Company","slogan":"Play Laugh Grow","answer":"Fisher-Price"},{"title":"Company/Product","slogan":"Find Your Fit","answer":"Fitbit"},{"title":"Company","slogan":"Discover news from trusted sources","answer":"Flipboard"},{"title":"State","slogan":"The Sunshine State","answer":"Florida"},{"title":"Organization","slogan":"It\u2019s not just for breakfast anymore","answer":"Florida Orange Juice Growers Assoication"},{"title":"Product","slogan":"The Best Part of Waking Up is [???????] in Your Cup","answer":"Folgers"},{"title":"Company","slogan":"Built [????] Tough","answer":"Ford"},{"title":"Company","slogan":"Go Further","answer":"Ford"},{"title":"Company","slogan":"Have You Driven a [????], lately?","answer":"Ford"},{"title":"Company","slogan":"Quality is job one","answer":"Ford"},{"title":"Company","slogan":"Built for the road ahead","answer":"Ford"},{"title":"Product","slogan":"Fight Your Way to Freedom!","answer":"Fortnite"},{"title":"Product","slogan":"Who's behind those [?????????????]?","answer":"Foster Grants"},{"title":"Product","slogan":"Australian for beer","answer":"Foster's Lager"},{"title":"Podcast","slogan":"Ideas that change the world","answer":"Freakonomics Radio"},{"title":"TV Show","slogan":"The family you choose","answer":"Friends"},{"title":"TV Show","slogan":"They don\u2019t know that we know they know we know","answer":"Friends"},{"title":"TV Show","slogan":"The world is about to change","answer":"Fringe"},{"title":"Company","slogan":"Good Fun","answer":"Frito-Lay"},{"title":"Product","slogan":"Made for eating","answer":"Fritos corn chips"},{"title":"Company","slogan":"Low Fares Done Right","answer":"Frontier Airlines"},{"title":"TV Show","slogan":"Stories that matter","answer":"Frontline"},{"title":"Product","slogan":"They\u2019re G-r-r-reat!","answer":"Frosted Flakes"},{"title":"Product","slogan":"Follow your nose","answer":"Fruit Loops"},{"title":"Company","slogan":"Start Happy","answer":"Fruit of the Loom"},{"title":"Product","slogan":"Manage your photos and videos","answer":"Gallery"},{"title":"TV Show","slogan":"All men must die","answer":"Game of Thrones"},{"title":"TV Show","slogan":"Winter is coming","answer":"Game of Thrones"},{"title":"Company","slogan":"We\u2019ll Take You There","answer":"Garmin Ltd"},{"title":"Product","slogan":"Be like Mike","answer":"Gatorade"},{"title":"Product","slogan":"Is it in you?","answer":"Gatorade"},{"title":"Product","slogan":"Life\u2019s a sport. Drink it up","answer":"Gatorade"},{"title":"Product","slogan":"The Legend Continues","answer":"Gatorade"},{"title":"Product","slogan":"Thirst Quencher","answer":"Gatorade"},{"title":"Movie","slogan":"There is no gene for the human spirit","answer":"Gattaca"},{"title":"Company","slogan":"15 minutes could save you 15% or more on car insurance","answer":"GEICO"},{"title":"Company","slogan":"Imagination at Work","answer":"General Electric"},{"title":"Company","slogan":"We bring good things to life","answer":"General Electric"},{"title":"Company","slogan":"People in motion","answer":"General Motors"},{"title":"State","slogan":"The Peach State","answer":"Georgia"},{"title":"Company","slogan":"Babies Are Our business\u2026 our only business","answer":"Gerber"},{"title":"Company","slogan":"Shouldn\u2019t Your Baby Be a [??????] Baby?","answer":"Gerber"},{"title":"Product","slogan":"My wife, I think I\u2019ll keep her","answer":"Geritol"},{"title":"Movie","slogan":"Who ya gonna call?","answer":"Ghostbusters"},{"title":"Company","slogan":"Look Sharp, Feel Sharp","answer":"Gillette"},{"title":"Company","slogan":"Never let \u2018em see you sweat","answer":"Gillette"},{"title":"Company","slogan":"The Best a Man Can Get","answer":"Gillette"},{"title":"Organization","slogan":"Building girls of courage, confidence, and character","answer":"Girl Scouts of the USA"},{"title":"Product","slogan":"Don\u2019t get mad Get [????]","answer":"GLAD"},{"title":"Company","slogan":"Make Your Idea Real","answer":"GoDaddy"},{"title":"Product","slogan":"The snack that smiles back","answer":"Goldfish"},{"title":"Movie","slogan":"You don\u2019t know what you\u2019ve got \u2019til it\u2019s...","answer":"Gone Girl"},{"title":"Movie","slogan":"Three decades of life in the mafia","answer":"Goodfellas"},{"title":"Product","slogan":"Your personal assistant","answer":"Google Assistant"},{"title":"Product","slogan":"All your files, everywhere","answer":"Google Drive"},{"title":"Product","slogan":"Your smart home hub","answer":"Google Home"},{"title":"Product","slogan":"Send quick notes and reminders","answer":"Google Keep"},{"title":"Product","slogan":"Explore the world","answer":"Google Maps"},{"title":"Company/Product","slogan":"Be a Hero","answer":"GoPro"},{"title":"Company/Product","slogan":"Capture + share your world","answer":"GoPro"},{"title":"TV Show","slogan":"You know you love me","answer":"Gossip Girl"},{"title":"Movie","slogan":"Where there's a will, there's a relative","answer":"Greedy"},{"title":"Product","slogan":"Ho, Ho, Ho, [???????????]!","answer":"Green Giant"},{"title":"Product","slogan":"Pardon Me, Do You Have Any [???????????]?","answer":"Grey Poupon"},{"title":"TV Show","slogan":"Not just another hospital show","answer":"Grey\u2019s Anatomy"},{"title":"Company","slogan":"Leave the Driving to Us","answer":"Greyhound"},{"title":"Movie","slogan":"He\u2019s having the day of his life\u2026 over and over again.","answer":"Groundhog Day"},{"title":"Company","slogan":"Whatever you're craving","answer":"Grubhub"},{"title":"Company","slogan":"Deliver good times","answer":"Grubhub"},{"title":"Product","slogan":"Good Things Come to Those Who Wait","answer":"Guinness"},{"title":"Product","slogan":"[????????] is Good for You","answer":"Guinness"},{"title":"Product","slogan":"Made of More","answer":"Guinness"},{"title":"Company","slogan":"You got people","answer":"H&R Block"},{"title":"Product","slogan":"Made Like No Other","answer":"H\u00e4agen-Dazs"},{"title":"Organization","slogan":"Building strength, stability and self-reliance through shelter","answer":"Habitat for Humanity"},{"title":"Company","slogan":"When you care enough to send the very best","answer":"Hallmark"},{"title":"Movie","slogan":"The trick is to stay alive","answer":"Halloween"},{"title":"Product","slogan":"Finish the Fight","answer":"Halo"},{"title":"Company/Product","slogan":"Look who we\u2019ve got our [?????] on now","answer":"Hanes"},{"title":"Podcast","slogan":"History like you\u2019ve never heard it","answer":"Hardcore History"},{"title":"Company/Product","slogan":"All for Freedomm, Freedom for All","answer":"Harley Davidson"},{"title":"Company/Product","slogan":"Define your world in a whole new way","answer":"Harley-Davidson"},{"title":"Product","slogan":"The Man in the Hathaway Shirt","answer":"Hathaway Shirts"},{"title":"State","slogan":"The Aloha State","answer":"Hawaii"},{"title":"Product","slogan":"How about a nice [??????????????]?","answer":"Hawaiian Punch"},{"title":"Company","slogan":"It\u2019s Not TV. It\u2019s [???]","answer":"HBO"},{"title":"Product","slogan":"Live head first","answer":"Head & Shoulders"},{"title":"Product","slogan":"You never get a second chance to make a first impression","answer":"Head & Shoulders"},{"title":"Product","slogan":"We answer to a higher authority","answer":"Hebrew National"},{"title":"Organization","slogan":"Ending hunger Caring for the Earth","answer":"Heifer International"},{"title":"Product","slogan":"America\u2019s No. 1-selling imported beer","answer":"Heineken"},{"title":"Product","slogan":"It's all about the beer","answer":"Heineken"},{"title":"Product","slogan":"Open Your World","answer":"Heineken"},{"title":"Product","slogan":"The First Ahhh","answer":"Heineken"},{"title":"Product","slogan":"Good Food Every Day","answer":"Heinz"},{"title":"Product","slogan":"The Best Things Come to Those Who Wait","answer":"Heinz"},{"title":"Company","slogan":"America's most popular meal kit","answer":"HelloFresh"},{"title":"Company","slogan":"Cook up something good","answer":"HelloFresh"},{"title":"Company","slogan":"Better by Design","answer":"Herman Miller"},{"title":"Company","slogan":"The Great American Chocolate Bar","answer":"Hershey\u2019s"},{"title":"Company","slogan":"[?????] puts you in the driver\u2019s seat","answer":"Hertz"},{"title":"Company","slogan":"The computer is personal again","answer":"Hewlett Packard"},{"title":"Podcast","slogan":"The podcast that makes you smarter","answer":"Hidden Brain"},{"title":"Movie","slogan":"The story of a man who was too proud to run","answer":"High Noon"},{"title":"Company","slogan":"Take Me to the [??????]","answer":"Hilton"},{"title":"Company","slogan":"How Doers Get More Done","answer":"Home Depot"},{"title":"Company","slogan":"More Saving More Doing","answer":"Home Depot"},{"title":"Company","slogan":"The place to find a place","answer":"Homes.com"},{"title":"Company/Product","slogan":"The Power of Dreams","answer":"Honda"},{"title":"Product","slogan":"Refreshingly Honest","answer":"Honest Tea"},{"title":"Product","slogan":"It's what's for breakfast","answer":"Honey Bunches of Oats"},{"title":"Product","slogan":"It\u2019s a honey of an O","answer":"Honey Nut Cheerios"},{"title":"TV Show","slogan":"Murder is only the beginning","answer":"How to Get Away with Murder"},{"title":"Company","slogan":"The World\u2019s Local Bank","answer":"HSBC"},{"title":"Product","slogan":"Big Bubbles, No Troubles","answer":"Hubba Bubba gum"},{"title":"Product","slogan":"For unstoppable babies","answer":"Huggies"},{"title":"Product","slogan":"We Got You, Baby","answer":"Huggies"},{"title":"Product","slogan":"What happens in [???????] stays in [???????]","answer":"Huggies"},{"title":"Company","slogan":"Live TV + Live You","answer":"Hulu"},{"title":"Company","slogan":"All the TV you love","answer":"Hulu"},{"title":"Organization","slogan":"Defending rights Saving lives","answer":"Human Rights Watch"},{"title":"Company/Product","slogan":"Like Nothing Else on Earth","answer":"Hummer"},{"title":"Product","slogan":"The toughest name in tools","answer":"Husky"},{"title":"Company/Product","slogan":"New Thinking. New Possibilities","answer":"Hyundai"},{"title":"Movie","slogan":"The last man on Earth is not alone","answer":"I Am Legend"},{"title":"Company","slogan":"Let's build a smarter planet","answer":"IBM"},{"title":"Company","slogan":"Solutions for a small planet","answer":"IBM"},{"title":"Company","slogan":"Think","answer":"IBM"},{"title":"State","slogan":"The Gem State","answer":"Idaho"},{"title":"Company","slogan":"Come Hungry, Leave Happy","answer":"IHOP"},{"title":"Company","slogan":"Do More With Less","answer":"IKEA"},{"title":"State","slogan":"The Prairie State","answer":"Illinois"},{"title":"Company","slogan":"Think Big","answer":"IMAX"},{"title":"Product","slogan":"Fit for a king","answer":"Imperial margarine"},{"title":"Movie","slogan":"Your mind is the scene of the crime.","answer":"Inception"},{"title":"State","slogan":"The Hoosier State","answer":"Indiana"},{"title":"Company","slogan":"Quality you can taste","answer":"In-N-Out Burger"},{"title":"Company","slogan":"Order groceries delivered","answer":"Instacart"},{"title":"Company","slogan":"Capture and Share the World\u2019s Moments","answer":"Instagram"},{"title":"Company","slogan":"Capture and share your world","answer":"Instagram"},{"title":"Product","slogan":"Create and share stories","answer":"Instagram Stories"},{"title":"Company/Product","slogan":"[?????] Inside","answer":"Intel"},{"title":"Company/Product","slogan":"Sponsors of Tomorrow","answer":"Intel"},{"title":"Company/Product","slogan":"Experience What's Inside","answer":"Intel"},{"title":"Company/Product","slogan":"Do Something Wonderful.","answer":"Intel"},{"title":"Company","slogan":"Trade the world","answer":"Intercontinental Exchange"},{"title":"Movie","slogan":"What if you woke up and you weren\u2019t you anymore","answer":"Invasion of the Body Snatchers"},{"title":"State","slogan":"The Hawkeye State","answer":"Iowa"},{"title":"Movie","slogan":"Heroes aren\u2019t born. They\u2019re built.","answer":"Iron Man"},{"title":"Company/Product","slogan":"Go Farther","answer":"Isuzu"},{"title":"Product","slogan":"99-44/100% Pure: It Floats","answer":"Ivory soap"},{"title":"Product","slogan":"[?????????????] Best Every Day","answer":"Jack Daniel\u2019s"},{"title":"Company","slogan":"Eat it Any time","answer":"Jack in the Box"},{"title":"Company","slogan":"Jack\u2019s Back","answer":"Jack in the Box"},{"title":"Company/Product","slogan":"Say when","answer":"Jacob's Creek"},{"title":"Company/Product","slogan":"Grace...Space...Pace","answer":"Jaguar"},{"title":"Movie","slogan":"On\u00a0the\u00a0Fourth\u00a0of\u00a0July,\u00a0Fishing\u00a0Season\u00a0will\u00a0open...on\u00a0you","answer":"Jaws"},{"title":"Movie","slogan":"You\u2019ll never go in the water again.","answer":"Jaws"},{"title":"Movie","slogan":"You're gonna need a bigger boat","answer":"Jaws"},{"title":"Movie","slogan":"Just when you thought it was safe to go back in the water","answer":"Jaws 2"},{"title":"Company","slogan":"When It Fits, You Feel It","answer":"JCPenney"},{"title":"Company/Product","slogan":"Go Anywhere. Do Anything.","answer":"Jeep"},{"title":"Company/Product","slogan":"Only in a [????]","answer":"Jeep"},{"title":"Company/Product","slogan":"The toughest 4 letter word on wheels","answer":"Jeep"},{"title":"Product","slogan":"There's always room for [??????]","answer":"Jell-O"},{"title":"Product","slogan":"Gee, Your Hair Smells Terrific","answer":"Jergens"},{"title":"Product","slogan":"Choosy Moms Choose [???]","answer":"Jif"},{"title":"Product","slogan":"Real Friends Real Bourbon","answer":"Jim Beam"},{"title":"Company","slogan":"A Family Company","answer":"Johnson & Johnson"},{"title":"Product","slogan":"The taste is gonna move ya","answer":"Juicy Fruit gum"},{"title":"Movie","slogan":"The park is open.","answer":"Jurassic World"},{"title":"State","slogan":"The Sunflower State","answer":"Kansas"},{"title":"Company","slogan":"Every kiss begins with [???]","answer":"Kay Jewelers"},{"title":"Product","slogan":"The Original & Best","answer":"Kellogg\u2019s Corn Flakes"},{"title":"Product","slogan":"Wake up to [???? ??????]","answer":"Kellogg\u2019s Corn Flakes"},{"title":"Company/Product","slogan":"The Best to You Each Morning","answer":"Kellogg's"},{"title":"Product","slogan":"They're GR-R-REAT!","answer":"Kellogg's Frosted Flakes"},{"title":"Product","slogan":"Two scoops of raisins","answer":"Kellogg's Raiain Bran"},{"title":"Product","slogan":"Snap! Crackle!  Pop!","answer":"Kellogg's Rice Krispies"},{"title":"State","slogan":"The Bluegrass State","answer":"Kentucky"},{"title":"Company/Product","slogan":"Brew the love","answer":"Keurig"},{"title":"Company/Product","slogan":"Brew a better day","answer":"Keurig"},{"title":"Company","slogan":"Its finger-lickin good","answer":"KFC"},{"title":"Company","slogan":"Nobody Does Chicken Like [???]","answer":"KFC"},{"title":"Company","slogan":"We do chicken right","answer":"KFC"},{"title":"Company/Product","slogan":"Movement That Inspires","answer":"Kia"},{"title":"Company/Product","slogan":"The Power to Surprise","answer":"Kia"},{"title":"Movie","slogan":"The Bride is back for the final cut","answer":"Kill Bill: Vol. 2"},{"title":"Product","slogan":"Read anytime, anywhere","answer":"Kindle"},{"title":"Company/Product","slogan":"For the Way It\u2019s Made","answer":"KitchenAid"},{"title":"Product","slogan":"Have a Break, Have a Kit Kat","answer":"KitKat"},{"title":"Product","slogan":"Gimme a break","answer":"KitKat"},{"title":"Product","slogan":"Kid-tested. Mother-approved.","answer":"Kix (cereal)"},{"title":"Product","slogan":"Let it Out","answer":"Kleenex"},{"title":"Product","slogan":"What would you do for a [????????????]?","answer":"Klondike bar"},{"title":"Company/Product","slogan":"Share Moments. Share Life.","answer":"Kodak"},{"title":"Product","slogan":"Hey [????????]!\u201d / \u201cOh Yeah!","answer":"Kool-Aid"},{"title":"Company/Product","slogan":"It\u2019s More than Food. It\u2019s [?????]","answer":"Kraft"},{"title":"Company/Product","slogan":"Make Something Amazing","answer":"Kraft"},{"title":"Company","slogan":"Hot. Now. Happy All Around","answer":"Krispy Kreme"},{"title":"Company","slogan":"You Doughnut want to miss it","answer":"Krispy Kreme"},{"title":"Product","slogan":"Nothing Beats a Great Pair of L\u2019eggs","answer":"L\u2019eggs Pantyhose"},{"title":"Company/Product","slogan":"Because you\u2019re worth it","answer":"L\u2019Or\u00e9al"},{"title":"Product","slogan":"Because I\u2019m worth it","answer":"L\u2019Or\u00e9al"},{"title":"Product","slogan":"Never underestimate the power of a woman","answer":"Ladies' Home Journal magazine"},{"title":"Company/Product","slogan":"Above and Beyond","answer":"Land Rover"},{"title":"City","slogan":"Sin City","answer":"Las Vegas"},{"title":"City","slogan":"What Happens Here, Stays Here","answer":"Las Vegas"},{"title":"TV Show","slogan":"Who will be the last laugh","answer":"Last Comic Standing"},{"title":"TV Show","slogan":"Every suspect has a story","answer":"Law & Order: SVU"},{"title":"Product","slogan":"Betcha can't eat just one","answer":"Lay's"},{"title":"Company/Product","slogan":"Build Anything You Can Imagine","answer":"Lego"},{"title":"Company/Product","slogan":"Just Imagine...","answer":"Lego"},{"title":"Company/Product","slogan":"Play On","answer":"Lego"},{"title":"Company/Product","slogan":"Rebuild the World","answer":"Lego"},{"title":"Company","slogan":"Live in [??????]","answer":"Levi\u2019s"},{"title":"Company","slogan":"Quality never goes out of style","answer":"Levi\u2019s"},{"title":"Company/Product","slogan":"Original jeans original people","answer":"Levi's Jeans"},{"title":"Company/Product","slogan":"Experience Amazing","answer":"Lexus"},{"title":"Company/Product","slogan":"The Relentless Pursuit of Perfection","answer":"Lexus"},{"title":"Company/Product","slogan":"Life\u2019s Good","answer":"LG"},{"title":"Company","slogan":"Only pay for what you need","answer":"Liberty Mutual"},{"title":"Product","slogan":"Hey, Mikey\u2026he likes it!","answer":"Life Cereal"},{"title":"Product","slogan":"I\u2019ve fallen and I can\u2019t get up","answer":"LifeCall"},{"title":"Company/Product","slogan":"What a Luxury Car Should Be","answer":"Lincoln"},{"title":"Company","slogan":"Connect to Opportunity","answer":"LinkedIn"},{"title":"Company","slogan":"Join the world's largest professional network","answer":"LinkedIn"},{"title":"Company","slogan":"Relationships Matter","answer":"LinkedIn"},{"title":"Company/Product","slogan":"Drink Positive","answer":"Lipton"},{"title":"Product","slogan":"Kills germs that cause bad breath","answer":"Listerine mouthwash"},{"title":"Company","slogan":"Pizza! Pizza!","answer":"Little Caesars"},{"title":"Company/Product","slogan":"Innovation at Your Fingertips","answer":"Logitech"},{"title":"Festival","slogan":"More than music","answer":"Lollapalooza"},{"title":"City","slogan":"The Big Smoke","answer":"London"},{"title":"City","slogan":"City of Angels","answer":"Los Angeles"},{"title":"TV Show","slogan":"Everything happens for a reason","answer":"Lost"},{"title":"Movie","slogan":"Everyone wants to be found","answer":"Lost In Translation"},{"title":"State","slogan":"The Pelican State","answer":"Louisiana"},{"title":"Movie","slogan":"Love means never having to say you\u2019re sorry","answer":"Love Story"},{"title":"Company","slogan":"Never Stop Improving","answer":"Lowe's"},{"title":"Product","slogan":"They're magically delicious","answer":"Lucky Charms"},{"title":"Company/Product","slogan":"The sweat life","answer":"Lululemon"},{"title":"Product","slogan":"Make fun of lunch!","answer":"Lunchables"},{"title":"Company","slogan":"Get rides anytime, anywhere","answer":"Lyft"},{"title":"Product","slogan":"Melts in your mouth, not in your hand","answer":"M&M's"},{"title":"Company","slogan":"The Magic of [??????]","answer":"Macy\u2019s"},{"title":"TV Show","slogan":"Where the truth lies","answer":"Mad Men"},{"title":"State","slogan":"The Pine Tree State","answer":"Maine"},{"title":"Organization","slogan":"Together, we create life-changing wishes","answer":"Make-A-Wish Foundation"},{"title":"TV Show","slogan":"Growing up is optional","answer":"Malcolm in the Middle"},{"title":"Organization","slogan":"Fighting for the health of all moms and babies","answer":"March of Dimes"},{"title":"Company","slogan":"Rewards Reimagined","answer":"Marriott Bonvoy"},{"title":"Company/Product","slogan":"Work. Rest. Play.","answer":"Mars"},{"title":"Product","slogan":"A Mars a Day Helps You Work, Rest and Play","answer":"Mars Bar"},{"title":"State","slogan":"The Old Line State","answer":"Maryland"},{"title":"State","slogan":"The Bay State","answer":"Massachusetts"},{"title":"Company","slogan":"Heart of Commerce","answer":"Mastercard"},{"title":"Company","slogan":"There are some things money can't buy. For everything else, there's [??????????]","answer":"Mastercard"},{"title":"Company","slogan":"It's okay to look","answer":"Match.com"},{"title":"Company","slogan":"Find who you're looking for","answer":"Match.com"},{"title":"Product","slogan":"Good to the last drop","answer":"Maxwell House"},{"title":"Company/Product","slogan":"Maybe she's born with it Maybe it's [??????????]","answer":"Maybelline"},{"title":"Product","slogan":"I want my [?????]","answer":"Maypo"},{"title":"Company/Product","slogan":"Our repairmen are the loneliest guys in town","answer":"Maytag Appliances"},{"title":"Company/Product","slogan":"Zoom Zoom","answer":"Mazda"},{"title":"Company","slogan":"Safe Never Sleeps","answer":"McAfee"},{"title":"Company/Product","slogan":"McCormick Brings Passion to Flavor","answer":"McCormick & Co"},{"title":"Company","slogan":"Did somebody say McDonald\u2019s?","answer":"McDonald's"},{"title":"Company","slogan":"I\u2019m Lovin\u2019 It","answer":"McDonald's"},{"title":"Company","slogan":"You, you're the one","answer":"McDonald's"},{"title":"Company","slogan":"It\u2019s a Good Time for the Great Taste of McDonald\u2019s","answer":"McDonald's"},{"title":"Company","slogan":"Food, folks and fun","answer":"McDonald's"},{"title":"Company","slogan":"We Do It All for You","answer":"McDonald's"},{"title":"Company","slogan":"We Love to see you smile","answer":"McDonald's"},{"title":"Company","slogan":"You deserve a break today","answer":"McDonald's"},{"title":"Company","slogan":"Open marketsm, Open minds","answer":"McGraw Hill Financial"},{"title":"Company/Product","slogan":"Is it live or is it [???????]?","answer":"Memorex"},{"title":"Product","slogan":"[??????], The Freshmaker","answer":"Mentos"},{"title":"Product","slogan":"Taste So Good, Cats Ask for It by Name","answer":"Meow Mix"},{"title":"Company/Product","slogan":"The Best or Nothing","answer":"Mercedes-Benz"},{"title":"Company","slogan":"Be Bullish","answer":"Merrill Lynch"},{"title":"City","slogan":"La Ciudad de los Palacios (The City of Palaces)","answer":"Mexico City"},{"title":"Company","slogan":"A better way forward","answer":"Michelin"},{"title":"Company","slogan":"Because so much is riding on your tires","answer":"Michelin"},{"title":"State","slogan":"The Great Lakes State","answer":"Michigan"},{"title":"Company","slogan":"Be What\u2019s Next","answer":"Microsoft"},{"title":"Company","slogan":"Where do you want to go today?","answer":"Microsoft"},{"title":"Company","slogan":"Your Potential Our Passion","answer":"Microsoft"},{"title":"Product","slogan":"At work, rest and play, you get three great tastes in a [?????????]","answer":"Milky Way"},{"title":"Product","slogan":"The Sweet You Can Eat Between Meals","answer":"Milky Way"},{"title":"Product","slogan":"If you've got the time, we've got the beer","answer":"Miller Beer"},{"title":"Product","slogan":"It's [??????] time","answer":"Miller Beer"},{"title":"Product","slogan":"Taste Great. Less Filling.","answer":"Miller Lite"},{"title":"Company/Product","slogan":"It\u2019s a MINI Adventure","answer":"Mini Cooper"},{"title":"State","slogan":"The North Star State","answer":"Minnesota"},{"title":"Movie","slogan":"The future is now","answer":"Minority Report"},{"title":"Company","slogan":"Your personal finance manager","answer":"Mint"},{"title":"Product","slogan":"Put Good In. Get Good Out.","answer":"Minute Maid"},{"title":"State","slogan":"The Magnolia State","answer":"Mississippi"},{"title":"State","slogan":"The Show-Me State","answer":"Missouri"},{"title":"Company/Product","slogan":"Wake Up and Drive","answer":"Mitsubishi"},{"title":"TV Show","slogan":"A new kind of family","answer":"Modern Family"},{"title":"Product","slogan":"Find Better","answer":"Monster"},{"title":"Product","slogan":"Unleash the beast","answer":"Monster"},{"title":"State","slogan":"Big Sky Country","answer":"Montana"},{"title":"Product","slogan":"When It Rains, It Pours","answer":"Morton Salt"},{"title":"Company","slogan":"We'll leave the light on for you","answer":"Motel 6"},{"title":"Company/Product","slogan":"Hello Moto","answer":"Motorola"},{"title":"Company/Product","slogan":"Intelligence Everywhere","answer":"Motorola"},{"title":"Product","slogan":"Do the Dew","answer":"Mountain Dew"},{"title":"Product","slogan":"[?????????] gets rid of dirt and grime and grease in just a minute!","answer":"Mr. Clean"},{"title":"Product","slogan":"Remove tough marks like you never thought you could!","answer":"Mr. Clean Magic Eraser"},{"title":"Company","slogan":"I want my [???]!","answer":"MTV"},{"title":"Company","slogan":"Stay fit, stay healthy","answer":"MyFitnessPal"},{"title":"Company/Product","slogan":"Snack Happy","answer":"Nabisco"},{"title":"Movie","slogan":"He's out to prove he's got nothing to prove","answer":"Napoleon Dynamite"},{"title":"City","slogan":"Music City","answer":"Nashville"},{"title":"Organization","slogan":"Beef. It\u2019s what\u2019s for dinner.","answer":"National Cattlemen\u2019s Beef Association"},{"title":"Company/Product","slogan":"Enquiiring minds want to know","answer":"National Enquirer"},{"title":"TV Show","slogan":"See the world differently","answer":"National Geographic Explorer"},{"title":"Organization","slogan":"Pork. The other white meat","answer":"National Pork Board"},{"title":"Company","slogan":"[??????????] is on your side","answer":"Nationwide"},{"title":"State","slogan":"The Cornhusker State","answer":"Nebraska"},{"title":"Product","slogan":"It All Starts with a [???????]","answer":"Nescaf\u00e9"},{"title":"Product","slogan":"[?????????]. What else?","answer":"Nespresso"},{"title":"Company","slogan":"Stream movies, TV shows, and originals","answer":"Netflix"},{"title":"Company/Product","slogan":"Hypoallergenic. Dermatologist tested","answer":"Neutrogena"},{"title":"State","slogan":"The Silver State","answer":"Nevada"},{"title":"State","slogan":"Live Free or Die","answer":"New Hampshire"},{"title":"State","slogan":"The Garden State","answer":"New Jersey"},{"title":"State","slogan":"Land of Enchantment","answer":"New Mexico"},{"title":"City","slogan":"The Big Easy","answer":"New Orleans"},{"title":"State","slogan":"The Empire State","answer":"New York"},{"title":"City","slogan":"The Big Apple","answer":"New York City"},{"title":"City","slogan":"The City That Never Sleeps","answer":"New York City"},{"title":"Company","slogan":"All the news that's fit to print","answer":"New York Times"},{"title":"Company","slogan":"Just do it","answer":"Nike"},{"title":"Company/Product","slogan":"At the heart of the image","answer":"Nikon"},{"title":"Company/Product","slogan":"Have more fun","answer":"Nintendo"},{"title":"Product","slogan":"Get N or Get Out","answer":"Nintendo 64"},{"title":"Company/Product","slogan":"Built for the human race","answer":"Nissan"},{"title":"Company/Product","slogan":"Innovation That Excites","answer":"Nissan"},{"title":"Company/Product","slogan":"Connecting People","answer":"Nokia"},{"title":"State","slogan":"The Tar Heel State","answer":"North Carolina"},{"title":"State","slogan":"The Peace Garden State","answer":"North Dakota"},{"title":"Product","slogan":"Take it off. Take it all off","answer":"Noxzema"},{"title":"State","slogan":"The Buckeye State","answer":"Ohio"},{"title":"State","slogan":"The Sooner State","answer":"Oklahoma"},{"title":"Company","slogan":"Love the skin you\u2019re in","answer":"Olay"},{"title":"Product","slogan":"Smell like a man, man","answer":"Old Spice"},{"title":"Product","slogan":"The Man Your Man Could Smell Like","answer":"Old Spice"},{"title":"Product","slogan":"The Original If Your Grandfather Hadn\u2019t Worn It, You Wouldn\u2019t Exist","answer":"Old Spice"},{"title":"Company/Product","slogan":"This is not your father\u2019s [??????????]","answer":"Oldsmobile"},{"title":"Company","slogan":"A Passion for Italy","answer":"Olive Garden"},{"title":"Podcast","slogan":"Conversations that matter","answer":"On Being"},{"title":"Product","slogan":"Your digital notebook","answer":"OneNote"},{"title":"TV Show","slogan":"Some stories can\u2019t be contained","answer":"Orange Is the New Black"},{"title":"State","slogan":"The Beaver State","answer":"Oregon"},{"title":"Product","slogan":"Milk\u2019s Favorite Cookie","answer":"Oreo"},{"title":"Product","slogan":"Oh! Oh! [????]","answer":"Oreo"},{"title":"Company/Product","slogan":"I Wish I Were an [???????????] Wiener","answer":"Oscar Mayer"},{"title":"Product","slogan":"Oscar Mayer has a way with B-O-L-O-G-N-A","answer":"Oscar Mayer Bologna"},{"title":"Product","slogan":"I'd love to be an [??????????????????]","answer":"Oscar Mayer Wiener"},{"title":"Product","slogan":"Tastes More Chocolaty","answer":"Ovaltine"},{"title":"Organization","slogan":"The power of people against poverty","answer":"Oxfam"},{"title":"Product","slogan":"Gets the tough stains out","answer":"Oxiclean"},{"title":"TV Show","slogan":"No one gets away clean","answer":"Ozark"},{"title":"Company/Product","slogan":"The Greatest Show on Earth","answer":"P.T. Barnum Circus"},{"title":"Company","slogan":"Catch our smile","answer":"Pacific Southwest Airlines (PSA)"},{"title":"Product","slogan":"You\u2019re soaking in it!","answer":"Palmolive dish soap"},{"title":"Product","slogan":"Keep that schoolgirl complexion","answer":"Palmolive soap"},{"title":"Company/Product","slogan":"Ideas for Life","answer":"Panasonic"},{"title":"Company/Product","slogan":"Find your next favorite music","answer":"Pandora"},{"title":"Company","slogan":"You Pick Two","answer":"Panera Bread"},{"title":"Company","slogan":"Food as it should be","answer":"Panera Bread"},{"title":"Movie","slogan":"What happens when make-believe believes it\u2019s real?","answer":"Pan's Labyrinth"},{"title":"Company","slogan":"Better Ingredients. Better Pizza.","answer":"Papa John\u2019s"},{"title":"Company","slogan":"Take 'n' Bake Pizza","answer":"Papa Murphy's"},{"title":"City","slogan":"City of Light","answer":"Paris"},{"title":"Product","slogan":"The flavor says butter!","answer":"Parkay margerine"},{"title":"TV Show","slogan":"Laugh more","answer":"Parks and Recreation"},{"title":"Organization","slogan":"This is your brain. This is your brain on drugs. Any questions?","answer":"Partnership for a Drug-Free America"},{"title":"Company/Product","slogan":"We're in business to save our home planet","answer":"Patagonia"},{"title":"Product","slogan":"We will sell no wine before its time","answer":"Paul Masson"},{"title":"Company/Product","slogan":"Make payments simple and secure","answer":"PayPal"},{"title":"Company/Product","slogan":"Together we go far","answer":"Peloton"},{"title":"Company/Product","slogan":"Motivation that moves you","answer":"Peloton"},{"title":"State","slogan":"The Keystone State","answer":"Pennsylvania"},{"title":"Company/Product","slogan":"[???????????????] remembers","answer":"Pepperidge Farm"},{"title":"Product","slogan":"Come alive! You\u2019re in the [?????] generation","answer":"Pepsi"},{"title":"Product","slogan":"For those who think young","answer":"Pepsi"},{"title":"Product","slogan":"Refresh Everything","answer":"Pepsi"},{"title":"Product","slogan":"The Choice of a New Generation","answer":"Pepsi"},{"title":"Product","slogan":"You\u2019ve Got a Lot to Live, and [?????]\u2019s Got a Lot to Give","answer":"Pepsi"},{"title":"Product","slogan":"You\u2019ll wonder where the yellow went when you brush your teeth with [?????????]!","answer":"Pepsodent"},{"title":"Company/Product","slogan":"It takes a tough man to make a tender chicken","answer":"Perdue Chicken"},{"title":"TV Show","slogan":"You\u2019re being watched","answer":"Person of Interest"},{"title":"Product","slogan":"Everybody Loves Spoonfuls of [?????????]","answer":"Peter Pan"},{"title":"City","slogan":"The City of Brotherly Love","answer":"Philadelphia"},{"title":"Company","slogan":"Nothin' says lovin' like somethin' from the oven","answer":"Pillsbury"},{"title":"Product","slogan":"The scent o\u2019 real clean","answer":"Pine-Sol"},{"title":"Company","slogan":"Pinning Hilarious Moments","answer":"Pinterest"},{"title":"City","slogan":"Steel City","answer":"Pittsburgh"},{"title":"Company","slogan":"No One Out Pizzas the Hut","answer":"Pizza Hut"},{"title":"Company","slogan":"Judgment Free Zone","answer":"Planet Fitness"},{"title":"Company","slogan":"No Gymtimidation","answer":"Planet Fitness"},{"title":"Podcast","slogan":"The economy explained","answer":"Planet Money"},{"title":"Organization","slogan":"Care No matter what","answer":"Planned Parenthood"},{"title":"Product","slogan":"Instinctively Good","answer":"Planters"},{"title":"Movie","slogan":"The first casualty of war is innocence.","answer":"Platoon"},{"title":"Product","slogan":"Live in Your World, Play in Ours","answer":"PlayStation"},{"title":"Product","slogan":"Lifts and separates","answer":"Playtex Cross-Your-Heart Bra"},{"title":"Movie","slogan":"They\u2019re here.","answer":"Poltergeist"},{"title":"Company","slogan":"Louisiana Fast","answer":"Popeyes"},{"title":"Company","slogan":"Love That Chicken from [???????]","answer":"Popeyes"},{"title":"Product","slogan":"Crazy Good","answer":"Pop-Tarts"},{"title":"Company/Product","slogan":"There is No Substitute","answer":"Porsche"},{"title":"Product","slogan":"Ever eat a pine tree? Many parts are edible","answer":"Post Grape Nuts"},{"title":"Product","slogan":"Go Stronger for Longer","answer":"Powerade"},{"title":"Product","slogan":"Power Through","answer":"Powerade"},{"title":"Product","slogan":"The Complete Sports Drink","answer":"Powerade"},{"title":"Product","slogan":"There\u2019s power in every game","answer":"Powerade"},{"title":"Movie","slogan":"He's in town with a few days to kill","answer":"Predator 2"},{"title":"TV Show","slogan":"Murder loves company","answer":"Pretty Little Liars"},{"title":"Company","slogan":"Name Your Own Price","answer":"Priceline"},{"title":"Company","slogan":"We negotiate so you don't have to","answer":"Priceline"},{"title":"Product","slogan":"Once You Pop, You Can't Stop","answer":"Pringles"},{"title":"Product","slogan":"Other Potato Chips Just Don't Stack Up","answer":"Pringles"},{"title":"Company","slogan":"Name Your Price","answer":"Progressive"},{"title":"Company","slogan":"Move Forward","answer":"Progressive"},{"title":"Company","slogan":"Get a piece of the rock","answer":"Prudential"},{"title":"Movie","slogan":"Check in. Unpack. Relax. Take A Shower","answer":"Psycho"},{"title":"Product","slogan":"I'm a Big Kid Now!","answer":"Pull-Ups"},{"title":"Company/Product","slogan":"Go Humans Go","answer":"Quaker Oats"},{"title":"Movie","slogan":"Fifty million people watching and no one saw a thing","answer":"Quiz Show"},{"title":"Podcast","slogan":"Stories that matter","answer":"Radiolab"},{"title":"Product","slogan":"[????] kills bugs dead","answer":"RAID"},{"title":"Company","slogan":"You'll find more of what you are hankerin'","answer":"Red Barn (restaurant)"},{"title":"Product","slogan":"It Gives You Wiiings","answer":"Red Bull"},{"title":"Company/Product","slogan":"I Am What I Am","answer":"Reebok"},{"title":"Product","slogan":"Not Sorry","answer":"Reese\u2019s Peanut Butter Cups"},{"title":"Product","slogan":"There\u2019s No Wrong Way to Eat a Reese\u2019s","answer":"Reese\u2019s Peanut Butter Cups"},{"title":"Product","slogan":"You got peanut butter in my chocolate!","answer":"Reese\u2019s Peanut Butter Cups"},{"title":"Product","slogan":"I liked it so much, I bought the company","answer":"Remington shavers"},{"title":"Podcast","slogan":"The internet\u2019s most interesting conversations","answer":"Reply All"},{"title":"Company/Product","slogan":"On a bad day there's always lipstick","answer":"Revlon"},{"title":"Company/Product","slogan":"The most unforgettable women in the world wear [??????]","answer":"Revlon"},{"title":"State","slogan":"The Ocean State","answer":"Rhode Island"},{"title":"Product","slogan":"Snap! Crackle! Pop!","answer":"Rice Krispies"},{"title":"Product","slogan":"The San Francisco Treat","answer":"Rice-A-Roni"},{"title":"Product","slogan":"Open for Fun","answer":"Ritz Crackers"},{"title":"Product","slogan":"Roaches check in\u2026but they don't check out","answer":"Roach motel insect traps"},{"title":"Company","slogan":"Investing for everyone","answer":"Robinhood"},{"title":"Comedian","slogan":"I don't get no respect","answer":"Rodney Dangerfield"},{"title":"Product","slogan":"How do you spell relief?","answer":"Rolaids"},{"title":"Product","slogan":"Pretzels with a Purpose","answer":"Rold Gold"},{"title":"Company/Product","slogan":"At 60 miles an hour the loudest noise in this new [???????????] comes from the electric clock","answer":"Rolls-Royce"},{"title":"Company/Product","slogan":"The Best Car in the World","answer":"Rolls-Royce"},{"title":"Company","slogan":"The Last Honest Pizza","answer":"Round Table Pizza"},{"title":"Product","slogan":"[???????] have ridges","answer":"Ruffles"},{"title":"Company/Product","slogan":"Do What You Can\u2019t","answer":"Samsung"},{"title":"Company/Product","slogan":"The future is now","answer":"Samsung"},{"title":"City","slogan":"The City by the Bay","answer":"San Francisco"},{"title":"City","slogan":"The Golden Gate","answer":"San Francisco"},{"title":"Company/Product","slogan":"Nobody Doesn't Like [????????]","answer":"Sara Lee"},{"title":"Company/Product","slogan":"A Different Kind of Company.","answer":"Saturn"},{"title":"Movie","slogan":"The mission is a man","answer":"Saving Private Ryan"},{"title":"TV Show","slogan":"The truth hurts","answer":"Scandal"},{"title":"Movie","slogan":"The power of one man to change the world.","answer":"Schindler\u2019s List"},{"title":"Product","slogan":"The Beer That Made Milwaukee Famous","answer":"Schlitz"},{"title":"Product","slogan":"Get kissably close","answer":"Scope"},{"title":"Movie","slogan":"An epic of epic epicness","answer":"Scott Pilgrim Vs The World"},{"title":"Company","slogan":"Come see the softer side of [?????]","answer":"Sears"},{"title":"Company","slogan":"There's More for Your Life at [?????]","answer":"Sears"},{"title":"City","slogan":"Emerald City","answer":"Seattle"},{"title":"Product","slogan":"Strong Enough for a Man, But Made for a Woman","answer":"Secret Deodorant"},{"title":"Product","slogan":"#1 dentist recommended brand for sensitive teeth","answer":"Sensodyne"},{"title":"Podcast","slogan":"True crime True stories","answer":"Serial"},{"title":"Movie","slogan":"[?????] deadly sins. [?????] ways to die.","answer":"Seven"},{"title":"Product","slogan":"It\u2019s Where The Girl Ends And The Woman Begins","answer":"Seventeen Magazine"},{"title":"TV Show","slogan":"The city is their playground","answer":"Sex and the City"},{"title":"Company","slogan":"Stand for something good","answer":"Shake Shack"},{"title":"City","slogan":"Pearl of the Orient","answer":"Shanghai"},{"title":"Movie","slogan":"The greatest fairy tale never told","answer":"Shrek"},{"title":"Movie","slogan":"The world\u2019s most unlikely hero.","answer":"Shrek"},{"title":"Product","slogan":"Spread the Love","answer":"Skippy"},{"title":"Product","slogan":"Taste the rainbow","answer":"Skittles"},{"title":"Company","slogan":"Where work happens","answer":"Slack"},{"title":"Product","slogan":"Snap into a [????????]","answer":"Slim Jim"},{"title":"TV Show","slogan":"Heroes aren\u2019t born They\u2019re made","answer":"Smallville"},{"title":"Company/Product","slogan":"Open Your Mind","answer":"Smart"},{"title":"Company","slogan":"We make the money the old-fashioned way\u2014we earn it","answer":"Smith Barney"},{"title":"Company/Product","slogan":"With a name like Smucker\u2019s, it has to be good","answer":"Smucker 's"},{"title":"Company","slogan":"Discover and share the world's stories","answer":"Snapchat"},{"title":"Company","slogan":"Life\u2019s More Fun When You Live in the Moment","answer":"Snapchat"},{"title":"Product","slogan":"Made from the Best Stuff on Earth","answer":"Snapple"},{"title":"Product","slogan":"Hungry? Grab a [????????]","answer":"Snickers"},{"title":"Product","slogan":"Hungry? Why wait?","answer":"Snickers"},{"title":"Product","slogan":"Maybe you just need a [????????]","answer":"Snickers"},{"title":"Product","slogan":"You\u2019re Not You When You\u2019re Hungry","answer":"Snickers"},{"title":"Company","slogan":"America\u2019s Drive-In","answer":"Sonic"},{"title":"Company/Product","slogan":"Be Moved","answer":"Sony"},{"title":"Company/Product","slogan":"Make Believe","answer":"Sony"},{"title":"State","slogan":"The Palmetto State","answer":"South Carolina"},{"title":"State","slogan":"Mount Rushmore State","answer":"South Dakota"},{"title":"Company","slogan":"Just Plane Smart","answer":"Southwest"},{"title":"Company","slogan":"Somebody Else Up There Who Loves You","answer":"Southwest"},{"title":"Company","slogan":"You Are Now Free to Move About the Country","answer":"Southwest"},{"title":"Product","slogan":"Uh-oh! [????????????]!","answer":"Spaghetti-Os"},{"title":"Product","slogan":"Don't knock it until you've fried it","answer":"Spam"},{"title":"Product","slogan":"Sizzle. Pork. And. MMM","answer":"Spam"},{"title":"TV Show","slogan":"Power is primal","answer":"Spartacus: Blood and Sand"},{"title":"Company/Product","slogan":"Born in the water","answer":"Speedo"},{"title":"Movie","slogan":"With great power comes great responsibility.","answer":"Spider-Man"},{"title":"Company","slogan":"Listen to your favorite music and podcasts","answer":"Spotify"},{"title":"Product","slogan":"Obey your thirst","answer":"Sprite"},{"title":"Organization","slogan":"Finding cures Saving children","answer":"St. Jude Children\u2019s Research Hospital"},{"title":"Company","slogan":"That was easy","answer":"Staples"},{"title":"Movie","slogan":"A long time ago in a galaxy far, far away\u2026","answer":"Star Wars"},{"title":"Movie","slogan":"The adventure continues","answer":"Star Wars: The Empire Strikes Back"},{"title":"Company","slogan":"Think Coffee","answer":"Starbucks"},{"title":"Company","slogan":"To Inspire and Nurture the Human Spirit","answer":"Starbucks"},{"title":"Product","slogan":"Unexplainably Juicy","answer":"Starburst"},{"title":"Company/Product","slogan":"Sorry Charlie but only the best tasting tuna gets to be [????????]","answer":"Starkist"},{"title":"Company/Product","slogan":"Sorry, Charlie. [????????] wants tuna that tastes good, not tuna with good taste","answer":"Starkist"},{"title":"Company/Product","slogan":"The first name in Tuna","answer":"Starkist"},{"title":"Company","slogan":"Like a good neighbor [??????????] is there","answer":"State Farm"},{"title":"TV Show","slogan":"Fear the unknown","answer":"Stranger Things"},{"title":"Podcast","slogan":"Stay curious","answer":"Stuff You Should Know"},{"title":"Company/Product","slogan":"Confidence in Motion","answer":"Subaru"},{"title":"Company/Product","slogan":"Think. Feel, Drive.","answer":"Subaru"},{"title":"Company","slogan":"Eat Fresh","answer":"Subway"},{"title":"Company","slogan":"Eat Fresh Refresh","answer":"Subway"},{"title":"Product","slogan":"Whole Grain Snacking","answer":"Sun Chips"},{"title":"Movie","slogan":"You\u2019ll believe a man can fly.","answer":"Superman"},{"title":"Product","slogan":"Raise Your Hand If You\u2019re Sure","answer":"Sure Deodorant"},{"title":"TV Show","slogan":"Outwit Outplay Outlast","answer":"Survivor"},{"title":"TV Show","slogan":"The game is real","answer":"Survivor"},{"title":"Company/Product","slogan":"Way of Life","answer":"Suzuki"},{"title":"Product","slogan":"Stop cleaning. Start [???????]ing","answer":"Swiffer"},{"title":"Product","slogan":"[???????]. The quicker, cleaner upper","answer":"Swiffer"},{"title":"Movie","slogan":"Cocktails first. Questions later","answer":"Swingers"},{"title":"Festival","slogan":"Where music film and tech converge","answer":"SXSW"},{"title":"City","slogan":"The Harbour City","answer":"Sydney"},{"title":"Company","slogan":"Live Mas","answer":"Taco Bell"},{"title":"Company","slogan":"Make a Run for the Border","answer":"Taco Bell"},{"title":"Company","slogan":"Think outside the bun","answer":"Taco Bell"},{"title":"Company","slogan":"You quiero [?????????]","answer":"Taco Bell"},{"title":"Company/Product","slogan":"Don\u2019t Crack Under Pressure","answer":"Tag Heuer"},{"title":"Company","slogan":"Expect More Pay Less","answer":"Target"},{"title":"Movie","slogan":"On every street in every city, there's a nobody who dreams of being a somebody","answer":"Taxi Driver"},{"title":"Organization","slogan":"One day, all children will have access to excellent education","answer":"Teach For America"},{"title":"Podcast","slogan":"Ideas worth spreading","answer":"TED Talks Daily"},{"title":"State","slogan":"The Volunteer State","answer":"Tennessee"},{"title":"Movie","slogan":"The end begins.","answer":"Terminator 3: Rise of the Machines"},{"title":"Company/Product","slogan":"Accelerating the world's transition to sustainable energy","answer":"Tesla"},{"title":"Company/Product","slogan":"Zero emissions. Zero compromise.","answer":"Tesla"},{"title":"Company","slogan":"You can trust your car to the man that wears the star","answer":"Texaco gasoline"},{"title":"State","slogan":"The Lone Star State","answer":"Texas"},{"title":"Movie","slogan":"The longer you wait, the harder it gets.","answer":"The 40-Year-Old Virgin"},{"title":"TV Show","slogan":"The revolution will be televised","answer":"The Americans"},{"title":"Movie","slogan":"Some assembly required.","answer":"The Avengers"},{"title":"TV Show","slogan":"One rose One chance","answer":"The Bachelor"},{"title":"TV Show","slogan":"Smart is the new sexy","answer":"The Big Bang Theory"},{"title":"Podcast","slogan":"News without the noise","answer":"The Daily"},{"title":"Movie","slogan":"The night is darkest before the dawn","answer":"The Dark Knight"},{"title":"Movie","slogan":"Why so serious?","answer":"The Dark Knight"},{"title":"Movie","slogan":"Somewhere between science and superstition, there is another world. The world of darkness","answer":"The Exorcist"},{"title":"Podcast","slogan":"Ideas that shape our world","answer":"The Ezra Klein Show"},{"title":"Movie","slogan":"Be afraid. Be very afraid","answer":"The Fly"},{"title":"Movie","slogan":"An offer you can\u2019t refuse","answer":"The Godfather"},{"title":"Movie","slogan":"All the power on earth can't change destiny","answer":"The Godfather Part III"},{"title":"Movie","slogan":"For three men, the Civil War wasn't hell. It was practice","answer":"The Good, the Bad and the Ugly"},{"title":"Movie","slogan":"This is Benjamin. He's a little worried about his future","answer":"The Graduate"},{"title":"Podcast","slogan":"Science\u2011based tools for everyday life","answer":"The Huberman Lab"},{"title":"Movie","slogan":"One ring to rule them all","answer":"The Lord of the Rings"},{"title":"Movie","slogan":"Reality is a thing of the past.","answer":"The Matrix"},{"title":"Organization","slogan":"Protecting nature Preserving life","answer":"The Nature Conservancy"},{"title":"TV Show","slogan":"The truth is worth fighting for","answer":"The Newsroom"},{"title":"Company/Product","slogan":"Never Stop Exploring","answer":"The North Face"},{"title":"TV Show","slogan":"Work sucks","answer":"The Office (US promos)"},{"title":"Movie","slogan":"Family isn't a word. It's a sentence","answer":"The Royal Tenenbaums"},{"title":"Movie","slogan":"Fear can hold you prisoner. Hope can set you free.","answer":"The Shawshank Redemption"},{"title":"Movie","slogan":"To enter the mind of a killer...","answer":"The Silence of the Lambs"},{"title":"Movie","slogan":"You don't get to 500 million friends without making a few enemies","answer":"The Social Network"},{"title":"Movie","slogan":"Who will survive and what will be left of them?","answer":"The Texas Chainsaw Massacre"},{"title":"Movie","slogan":"Man is the warmest place to hide","answer":"The Thing"},{"title":"Movie","slogan":"On the air. Unaware","answer":"The Truman Show"},{"title":"Movie","slogan":"Unchanged men in a changing land","answer":"The Wild Bunch"},{"title":"TV Show","slogan":"The best show you\u2019re not watching","answer":"The Wire"},{"title":"TV Show","slogan":"The truth is out there","answer":"The X-Files"},{"title":"TV Show","slogan":"Trust no one","answer":"The X-Files"},{"title":"TV Show","slogan":"Same planet Different world","answer":"Third Rock from the Sun"},{"title":"Product/Company","slogan":"Pepsi","answer":"Thirsty for more"},{"title":"Podcast","slogan":"Stories of everyday people","answer":"This American Life"},{"title":"TV Show","slogan":"The family you thought you knew","answer":"This is Us"},{"title":"Company","slogan":"Don\u2019t Just Book It, [???????????] It","answer":"Thomas Cook"},{"title":"Product","slogan":"If it\u2019s got to be clean, it\u2019s got to be [????]","answer":"Tide"},{"title":"Company","slogan":"Make every second count","answer":"TikTok"},{"title":"Company","slogan":"Make Your Day","answer":"TikTok"},{"title":"Company/Product","slogan":"Extraordinary dairy","answer":"Tillamook"},{"title":"Company/Product","slogan":"It Takes a Licking and Keeps on Ticking","answer":"Timex"},{"title":"Movie","slogan":"Nothing on Earth could come between them.","answer":"Titanic"},{"title":"Movie","slogan":"If at first you don't succeed, lower your standards","answer":"Tommy Boy"},{"title":"Product","slogan":"How Many Licks Does It Take?","answer":"Tootsie Pop"},{"title":"City","slogan":"The 6ix","answer":"Toronto"},{"title":"Company/Product","slogan":"I Love What You Do For Me","answer":"Toyota"},{"title":"Company/Product","slogan":"Let's go places","answer":"Toyota"},{"title":"Company/Product","slogan":"Moving Forward","answer":"Toyota"},{"title":"Company/Product","slogan":"Oh, What a Feeling!","answer":"Toyota"},{"title":"Company/Product","slogan":"Start your Impossible","answer":"Toyota"},{"title":"Company/Product","slogan":"You Asked For It, You Got It","answer":"Toyota"},{"title":"Company","slogan":"I Don't Want to Grow Up, I'm a Toys 'R' Us Kid","answer":"Toys R Us"},{"title":"Company/Product","slogan":"Create and organize projects","answer":"Trello"},{"title":"TV Show","slogan":"Life\u2019s tough in the big easy","answer":"Treme"},{"title":"Product","slogan":"Four out of five dentists surveyed recommend sugarless gum for their patients who chew gum","answer":"Trident gum"},{"title":"Product","slogan":"Made for More","answer":"Triscuit"},{"title":"Product","slogan":"Silly Rabbit, [????] Are For Kids!","answer":"Trix"},{"title":"Company/Product","slogan":"Sip Your Sunshine","answer":"Tropicana"},{"title":"TV Show","slogan":"Man is the cruelest animal","answer":"True Detective"},{"title":"Movie","slogan":"When he said I do, he never said what he did","answer":"True Lies"},{"title":"TV Show","slogan":"A town where everyone knows everyone\u2026 and nothing is what it seems","answer":"Twin Peaks"},{"title":"Company","slogan":"You are live","answer":"Twitch"},{"title":"Company","slogan":"What's happening?","answer":"Twitter"},{"title":"Company","slogan":"It's what's happening","answer":"Twitter"},{"title":"Product","slogan":"Chew it Over with [????]","answer":"Twix"},{"title":"Product","slogan":"It's All in the Mix","answer":"Twix"},{"title":"Product","slogan":"Need a Moment?","answer":"Twix"},{"title":"Product","slogan":"Try Both. Pick a Side","answer":"Twix"},{"title":"Product","slogan":"Two for me, None for you","answer":"Twix"},{"title":"Organization","slogan":"Be All You Can Be","answer":"U.S. Army"},{"title":"Organization","slogan":"We\u2019re Looking for a Few Good Men","answer":"U.S. Marine Corps"},{"title":"Organization","slogan":"The Few. The Proud. The Marines.","answer":"U.S. Marine Corps"},{"title":"Organization","slogan":"It\u2019s not a job. It\u2019s an adventure","answer":"U.S. Navy"},{"title":"Organization","slogan":"The toughest job you\u2019ll ever love","answer":"U.S. Peace Corps"},{"title":"Company","slogan":"Move the Way You Want","answer":"Uber"},{"title":"Company","slogan":"The food you love, delivered","answer":"Uber Eats"},{"title":"Company/Product","slogan":"Protect This House","answer":"Under Armour"},{"title":"Company/Product","slogan":"I Will","answer":"Under Armour"},{"title":"Company/Product","slogan":"The Only Way Is Through","answer":"Under Armour"},{"title":"Organization","slogan":"For every child","answer":"UNICEF"},{"title":"Company","slogan":"Fly the friendly skies","answer":"United"},{"title":"Organization","slogan":"The mind is a terrible thing to wast","answer":"United Negro College Fund"},{"title":"Organization","slogan":"Only you can prevent forest fires","answer":"United States Forest Service"},{"title":"Company","slogan":"The spirit of \u201976","answer":"Unocal"},{"title":"Company","slogan":"Moving at the Speed of Business","answer":"UPS"},{"title":"Company","slogan":"Moving Our World Forward by Delivering What Matters","answer":"UPS"},{"title":"Company","slogan":"United Problem Solvers","answer":"UPS"},{"title":"Company","slogan":"What Can Brown Do for You?","answer":"UPS"},{"title":"State","slogan":"The Beehive State","answer":"Utah"},{"title":"Company/Product","slogan":"The mark of a man","answer":"Van Heusen"},{"title":"City","slogan":"Hollywood North","answer":"Vancouver"},{"title":"Product","slogan":"It slices! It dices!","answer":"Veg-O-Matic"},{"title":"Company","slogan":"Send money instantly","answer":"Venmo"},{"title":"Company","slogan":"Can you hear me now?","answer":"Verizon"},{"title":"State","slogan":"The Green Mountain State","answer":"Vermont"},{"title":"Company","slogan":"More experience than our name suggests","answer":"Virgin Atlantic"},{"title":"State","slogan":"The Old Dominion State","answer":"Virginia"},{"title":"Company","slogan":"It\u2019s Everywhere You Want to Be","answer":"Visa"},{"title":"Company","slogan":"Life takes [????]","answer":"Visa"},{"title":"Product","slogan":"Hydrate the Hustle","answer":"Vitaminwater"},{"title":"Company","slogan":"Make the Most of Now","answer":"Vodafone"},{"title":"Company/Product","slogan":"Das Auto","answer":"Volkswagen"},{"title":"Company/Product","slogan":"Drivers wanted","answer":"Volkswagen"},{"title":"Company/Product","slogan":"Think Small","answer":"Volkswagen"},{"title":"Podcast","slogan":"Laugh your way through the week","answer":"Wait Wait Don\u2019t Tell Me"},{"title":"Company","slogan":"Always Low Prices. Always","answer":"Walmart"},{"title":"Company","slogan":"Save money Live better","answer":"Walmart"},{"title":"Company","slogan":"We Sell for Less","answer":"Walmart"},{"title":"Organization","slogan":"Loose lips sink ships","answer":"War Advertising Council"},{"title":"State","slogan":"The Evergreen State","answer":"Washington"},{"title":"Company","slogan":"Democracy Dies in Darkness","answer":"Washington Post"},{"title":"Company","slogan":"[???????], you've got just what I need","answer":"Wayfair"},{"title":"Company","slogan":"Change Everything Without Changing Yourself","answer":"Weight Watchers"},{"title":"Company","slogan":"Together We'll go far","answer":"Wells Fargo"},{"title":"Company","slogan":"Square\u2019s the Beef","answer":"Wendy\u2019s"},{"title":"Company","slogan":"Where\u2019s the Beef?","answer":"Wendy\u2019s"},{"title":"State","slogan":"The Mountain State","answer":"West Virginia"},{"title":"Company","slogan":"It's the only way to fly","answer":"Western Airlines"},{"title":"TV Show","slogan":"Welcome to the new frontier","answer":"Westworld"},{"title":"Company","slogan":"Chat with friends anywhere for free","answer":"WhatsApp"},{"title":"Product","slogan":"Whole Grain, Whole Life","answer":"Wheat Chex"},{"title":"Product","slogan":"Do What You Thin!","answer":"Wheat Thins"},{"title":"Product","slogan":"The breakfast of champions","answer":"Wheaties"},{"title":"Company","slogan":"What You Crave","answer":"White Castle"},{"title":"Product","slogan":"Streak-Free Shine","answer":"Windex"},{"title":"Magazine","slogan":"Mailed Back From The Future","answer":"Wired"},{"title":"Magazine","slogan":"Where tomorrow is realized","answer":"Wired"},{"title":"State","slogan":"The Badger State","answer":"Wisconsin"},{"title":"Product","slogan":"Ring around the collar","answer":"Wisk Laundry Detergent"},{"title":"Product","slogan":"Builds strong bodies 12 ways","answer":"Wonder bread"},{"title":"Festival","slogan":"Three days of peace and music","answer":"Woodstock"},{"title":"Organization","slogan":"For a living planet.","answer":"World Wildlife Fund (WWF)"},{"title":"Company/Product","slogan":"There\u2019s a Bit of The West in All of Us","answer":"Wrangler"},{"title":"Product","slogan":"Pure chewing satisfaction.","answer":"Wrigley\u2019s Spearmint"},{"title":"TV Show","slogan":"The longest running weekly episodic television show in history","answer":"WWE Raw"},{"title":"State","slogan":"The Equality State","answer":"Wyoming"},{"title":"Company/Product","slogan":"Jump In","answer":"Xbox"},{"title":"Company/Product","slogan":"Power Your Dreams","answer":"Xbox"},{"title":"Product","slogan":"Let your fingers do the walking","answer":"Yellow Pages"},{"title":"Product","slogan":"Let Your Fingers Do the Walking","answer":"Yellow Pages"},{"title":"Product","slogan":"Taste the [???????] Difference","answer":"Yoplait"},{"title":"Product","slogan":"Get the Sensation","answer":"York Peppermint Pattie"},{"title":"Product","slogan":"Broadcast Yourself","answer":"YouTube"},{"title":"Product","slogan":"Watch videos, connect with communities","answer":"YouTube"},{"title":"Movie","slogan":"There's more than one way to lose your life to a killer","answer":"Zodiac"},{"title":"Company/Product","slogan":"The heart of human connection","answer":"Zoom"},{"title":"Company/Product","slogan":"We deliver happiness","answer":"Zoom"}];
+
+const DATE_OVERRIDES = {};
+const KEYBOARD_ROWS = [
+  ['Q','W','E','R','T','Y','U','I','O','P'],
+  ['A','S','D','F','G','H','J','K','L'],
+  ['ENTER','\u232B','Z','X','C','V','B','N','M']
+];
+
+// ── Wix integration globals ─────────────────────────────────────────────────
+let wixLeaderboardData = null;
+let wixMemberId = null;
+let wixPageUrl  = '';
+let wixResultSent = false;
+
+// ── State ──────────────────────────────────────────────────────────────────
+let puzzleIndex     = 0;
+let puzzle          = null;
+let answer          = '';
+let answerClean     = '';
+let currentGuess    = [];
+let cursorPos       = 0;
+let revealedLetters = new Set();
+let hitLetters      = new Set();
+let wrongLetters    = new Set();
+let revealCount     = 0;
+let wrongCount      = 0;
+let gameOver        = false;
+let animating       = false;
+let streak          = 0;
+let elapsedSeconds  = 0;
+let timerInterval   = null;
+let startTime       = 0;
+
+function isAutoFill(ch) { return !/[A-Z0-9]/i.test(ch); }
+function formatTime(s) { return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+
+// ── Day calculation ──────────────────────────────────────────────────────────
+function getDayPuzzleIndex() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (DATE_OVERRIDES[today] !== undefined) return DATE_OVERRIDES[today];
+  const base = new Date('2026-01-01T00:00:00');
+  const diff = Math.floor((Date.now() - base) / 86400000);
+  return ((diff % PUZZLES.length) + PUZZLES.length) % PUZZLES.length;
+}
+
+// ── Storage ──────────────────────────────────────────────────────────────────
+const STATE_KEY = 'orijinzSlogansState';
+const STATS_KEY = 'orijinzSlogansStats';
+const LB_KEY    = 'orijinzSlogansLeaderboard';
+
+function safeGetState() { try { return JSON.parse(localStorage.getItem(STATE_KEY) || '{}'); } catch(e) { return {}; } }
+function safeSaveState(obj) { try { localStorage.setItem(STATE_KEY, JSON.stringify(obj)); } catch(e) {} }
+
+function loadStats() {
+  try { return JSON.parse(localStorage.getItem(STATS_KEY) || 'null'); } catch(e) { return null; }
+}
+function saveStats(s) { try { localStorage.setItem(STATS_KEY, JSON.stringify(s)); } catch(e) {} }
+function getStats() {
+  const s = loadStats();
+  if (s) return s;
+  return {
+    gamesPlayed: 0, longestStreak: 0, pureWins: 0,
+    totalReveals: 0, totalWrong: 0, totalTime: 0, totalScore: 0,
+    bestTime: null, bestScore: null, lastPuzzleDate: null
+  };
+}
+
+function recordGameResult(won) {
+  const s = getStats();
+  const todayKey = new Date().toDateString();
+  if (won) {
+    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+    if (s.lastPuzzleDate !== todayKey) s.gamesPlayed++;
+    s.totalReveals += revealCount;
+    s.totalWrong   += wrongCount;
+    s.totalTime    += elapsedSeconds;
+    s.totalScore   += score;
+    if (s.bestTime  === null || elapsedSeconds < s.bestTime)  s.bestTime  = elapsedSeconds;
+    if (s.bestScore === null || score          < s.bestScore) s.bestScore = score;
+    if (streak > s.longestStreak) s.longestStreak = streak;
+    if (revealCount === 0) s.pureWins++;
+  }
+  s.lastPuzzleDate = todayKey;
+  saveStats(s);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+function initGame() {
+  const stored   = safeGetState();
+  puzzleIndex    = (stored.devPuzzleIndex !== undefined) ? stored.devPuzzleIndex : getDayPuzzleIndex();
+  const todayKey = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 864e5).toDateString();
+  const lastPlayed = stored.lastPlayed || null;
+  streak = (lastPlayed === todayKey || lastPlayed === yesterday) ? (stored.streak || 0) : 0;
+
+  if (stored.lastPlayed === todayKey && stored.puzzleIndex === puzzleIndex) {
+    revealedLetters = new Set(stored.revealed    || []);
+    hitLetters      = new Set(stored.hitLetters  || []);
+    wrongLetters    = new Set(stored.wrongLetters|| []);
+    revealCount     = stored.revealCount  || 0;
+    wrongCount      = stored.wrongCount   || 0;
+    gameOver        = stored.gameOver     || false;
+    elapsedSeconds  = stored.elapsed      || 0;
+  }
+
+  puzzle      = PUZZLES[puzzleIndex];
+  answer      = puzzle.answer.toUpperCase();
+  answerClean = answer.split('').filter(ch => ch !== ' ' && !isAutoFill(ch)).join('');
+
+  const now = new Date();
+  document.getElementById('dateBadge').innerHTML =
+    now.toLocaleDateString('en-US', {month:'short', day:'numeric'}) + '<br>' + now.getFullYear();
+  document.getElementById('puzzleNum').textContent = 'Puzzle #' + (puzzleIndex + 1);
+
+  document.getElementById('sloganText').innerHTML =
+    puzzle.slogan.replace(/\[(\?+)\]/g, '<span class="slogan-blank">[$1]</span>');
+
+  document.getElementById('catPill').textContent         = puzzle.title;
+  document.getElementById('instructionText').textContent = 'Guess the ' + puzzle.title.toLowerCase();
+
+  // Restore settings
+  const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
+  const cb = document.getElementById('settingShowOnLeaderboard');
+  if (cb) cb.checked = showOnLB;
+
+  buildKeyboard();
+  updateCurrentInputDisplay();
+  updateRevealBtn();
+
+  if (gameOver) {
+    document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
+    showResult(true);
+    sendResultToWix();
+  } else {
+    startTimer();
+  }
+
+  initDevTap();
+}
+
+function saveState() {
+  const existing = safeGetState();
+  safeSaveState({
+    streak, lastPlayed: new Date().toDateString(), puzzleIndex,
+    revealed:     [...revealedLetters],
+    hitLetters:   [...hitLetters],
+    wrongLetters: [...wrongLetters],
+    revealCount, wrongCount, gameOver, elapsed: elapsedSeconds,
+    ...(existing.devPuzzleIndex !== undefined ? { devPuzzleIndex: existing.devPuzzleIndex } : {})
+  });
+}
+
+// ── Timer ─────────────────────────────────────────────────────────────────────
+function startTimer() {
+  startTime = Date.now() - elapsedSeconds * 1000;
+  timerInterval = setInterval(() => {
+    elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
+  }, 500);
+}
+function stopTimer()  { clearInterval(timerInterval); timerInterval = null; }
+function pauseTimer() {
+  if (timerInterval === null) return;
+  elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+  clearInterval(timerInterval); timerInterval = null;
+}
+function resumeTimer() {
+  if (timerInterval !== null || gameOver) return;
+  startTimer();
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) pauseTimer(); else resumeTimer();
+});
+
+// ── Keyboard ──────────────────────────────────────────────────────────────────
+function buildKeyboard() {
+  const kb = document.getElementById('keyboard');
+  kb.innerHTML = '';
+  KEYBOARD_ROWS.forEach(row => {
+    const div = document.createElement('div');
+    div.className = 'kb-row';
+    row.forEach(key => {
+      const btn = document.createElement('button');
+      btn.className   = 'kb-key' + (key.length > 1 ? ' wide' : '');
+      btn.textContent = key;
+      btn.dataset.key = key;
+      btn.addEventListener('click', () => handleKey(key));
+      div.appendChild(btn);
+    });
+    kb.appendChild(div);
+  });
+  refreshKeyboard();
+}
+
+function refreshKeyboard() {
+  document.querySelectorAll('.kb-key[data-key]').forEach(btn => {
+    const k = btn.dataset.key;
+    if (k && k.length === 1) {
+      btn.classList.toggle('hit',  hitLetters.has(k));
+      btn.classList.toggle('miss', wrongLetters.has(k) && !hitLetters.has(k));
+    }
+  });
+}
+
+// ── Tile rendering ────────────────────────────────────────────────────────────
+function fitWordGroups() {
+  const display = document.getElementById('currentInputDisplay');
+  if (!display) return;
+  const availW = display.clientWidth || 340;
+  display.querySelectorAll('.word-group').forEach(g => {
+    g.style.zoom = '';
+    if (g.scrollWidth > availW * 0.97) g.style.zoom = String(availW / g.scrollWidth);
+  });
+}
+
+function updateCurrentInputDisplay() {
+  const display = document.getElementById('currentInputDisplay');
+  display.innerHTML = '';
+
+  if (gameOver) {
+    const wrap = document.createElement('div');
+    wrap.className = 'answer-reveal';
+    const txt = document.createElement('div');
+    txt.className   = 'answer-reveal-text';
+    txt.textContent = puzzle.answer;
+    wrap.appendChild(txt);
+    display.appendChild(wrap);
+    return;
+  }
+
+  let inputSlot = 0;
+  let group = null;
+
+  for (let i = 0; i < answer.length; i++) {
+    const ch = answer[i];
+
+    if (ch === ' ') {
+      group = null;
+      const s = document.createElement('div');
+      s.className   = 'letter-tile space-tile';
+      s.textContent = '\u00B7';
+      display.appendChild(s);
+      continue;
+    }
+
+    if (!group) {
+      group = document.createElement('div');
+      group.className = 'word-group';
+      display.appendChild(group);
+    }
+
+    if (isAutoFill(ch)) {
+      const tile = document.createElement('div');
+      tile.className   = 'letter-tile prefilled-tile';
+      tile.textContent = ch;
+      group.appendChild(tile);
+      continue;
+    }
+
+    const tile = document.createElement('div');
+    tile.className = 'letter-tile';
+
+    if (revealedLetters.has(i)) {
+      tile.textContent = ch;
+      tile.classList.add('revealed');
+    } else {
+      tile.textContent = currentGuess[inputSlot] || '';
+      if (inputSlot === cursorPos) tile.classList.add('active');
+      const capturedSlot = inputSlot;
+      tile.style.cursor = 'pointer';
+      tile.addEventListener('click', () => {
+        if (gameOver) return;
+        cursorPos = capturedSlot;
+        updateCurrentInputDisplay();
+      });
+      inputSlot++;
+    }
+    group.appendChild(tile);
+  }
+  requestAnimationFrame(fitWordGroups);
+}
+
+// ── Input handling ────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === ']') { e.preventDefault(); devNext();  return; }
+  if (e.ctrlKey && e.key === '[') { e.preventDefault(); devReset(); return; }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if      (e.key === 'Enter')     handleKey('ENTER');
+  else if (e.key === 'Backspace') handleKey('\u232B');
+  else if (/^[a-zA-Z0-9]$/.test(e.key)) handleKey(e.key.toUpperCase());
+});
+
+function countAvailable() {
+  let n = 0;
+  for (let i = 0; i < answer.length; i++) {
+    if (answer[i] !== ' ' && !isAutoFill(answer[i]) && !revealedLetters.has(i)) n++;
+  }
+  return n;
+}
+
+function handleKey(key) {
+  if (gameOver || animating) return;
+  const available = countAvailable();
+
+  if (key === '\u232B' || key === 'BACKSPACE') {
+    if (cursorPos > 0) { cursorPos--; currentGuess[cursorPos] = ''; }
+    else { currentGuess[0] = ''; }
+    updateCurrentInputDisplay();
+    updateRevealBtn();
+
+  } else if (key === 'ENTER') {
+    submitGuess();
+
+  } else if (/^[A-Z0-9]$/.test(key)) {
+    if (cursorPos < available) {
+      currentGuess[cursorPos] = key;
+      cursorPos = Math.min(cursorPos + 1, available);
+      updateCurrentInputDisplay();
+      updateRevealBtn();
+      const filled = currentGuess.slice(0, available).filter(c => c).length;
+      if (filled === available) setTimeout(submitGuess, 200);
+    }
+  }
+}
+
+// ── Submit guess ──────────────────────────────────────────────────────────────
+function submitGuess() {
+  if (gameOver || animating) return;
+
+  const available = countAvailable();
+  const filled    = currentGuess.slice(0, available).filter(c => c).length;
+  if (filled < available) {
+    showToast('Not enough letters!');
+    const d = document.getElementById('currentInputDisplay');
+    d.classList.add('row-shake');
+    setTimeout(() => d.classList.remove('row-shake'), 600);
+    return;
+  }
+
+  let fullGuess = '';
+  let inputIdx  = 0;
+  for (let i = 0; i < answer.length; i++) {
+    if (answer[i] === ' ' || isAutoFill(answer[i])) continue;
+    fullGuess += revealedLetters.has(i) ? answer[i] : (currentGuess[inputIdx++] || '');
+  }
+
+  const won = fullGuess === answerClean;
+
+  for (let i = 0; i < answerClean.length; i++) {
+    if (fullGuess[i] === answerClean[i]) {
+      hitLetters.add(answerClean[i]);
+    } else if (fullGuess[i]) {
+      wrongLetters.add(fullGuess[i]);
+      wrongCount++;
+    }
+  }
+
+  if (won) {
+    for (let i = 0; i < answer.length; i++) {
+      if (answer[i] !== ' ' && !isAutoFill(answer[i])) revealedLetters.add(i);
+    }
+    gameOver = true;
+    streak++;
+    stopTimer();
+    recordGameResult(true);
+    saveState();
+    updateCurrentInputDisplay();
+    refreshKeyboard();
+    launchConfetti();
+    setTimeout(() => { showResult(true); sendResultToWix(); }, 600);
+
+  } else {
+    let slot = 0;
+    for (let i = 0; i < answer.length; i++) {
+      if (answer[i] === ' ' || isAutoFill(answer[i])) continue;
+      if (!revealedLetters.has(i) && fullGuess[slot] === answerClean[slot]) {
+        revealedLetters.add(i);
+        hitLetters.add(answerClean[slot]);
+      }
+      slot++;
+    }
+    currentGuess = []; cursorPos = 0;
+    saveState();
+    updateCurrentInputDisplay();
+    refreshKeyboard();
+    updateRevealBtn();
+    showToast('Not quite \u2014 keep trying!', 1800);
+  }
+}
+
+// ── Reveal a Letter ───────────────────────────────────────────────────────────
+function updateRevealBtn() {
+  const btn = document.getElementById('revealBtn');
+  if (!btn) return;
+  btn.disabled = gameOver || countAvailable() === 0;
+  const used = document.getElementById('revealUsed');
+  if (used) used.textContent = revealCount > 0 ? '(' + revealCount + ')' : '';
+}
+
+function revealLetter() {
+  if (gameOver) return;
+  for (let i = 0; i < answer.length; i++) {
+    if (answer[i] !== ' ' && !isAutoFill(answer[i]) && !revealedLetters.has(i)) {
+      revealedLetters.add(i);
+      hitLetters.add(answer[i]);
+      revealCount++;
+      currentGuess = []; cursorPos = 0;
+      // Check if all letters are now revealed → puzzle complete
+      if (countAvailable() === 0) {
+        gameOver = true;
+        streak++;
+        stopTimer();
+        recordGameResult(true);
+        saveState();
+        updateCurrentInputDisplay();
+        refreshKeyboard();
+        launchConfetti();
+        setTimeout(() => { showResult(true); sendResultToWix(); }, 600);
+        return;
+      }
+      saveState();
+      updateCurrentInputDisplay();
+      refreshKeyboard();
+      updateRevealBtn();
+      return;
+    }
+  }
+}
+
+// ── Result panel ──────────────────────────────────────────────────────────────
+function showResult(won) {
+  stopTimer();
+  document.getElementById('instructionText').style.display = 'none';
+  document.getElementById('timerDisplay').style.display    = 'none';
+
+  const kb      = document.getElementById('keyboard');
+  const divider = document.querySelector('.section-divider');
+  const cs      = document.querySelector('.clue-section');
+  const rp      = document.getElementById('resultPanel');
+
+  kb.classList.add('fading');
+  if (divider) divider.classList.add('fading');
+  if (cs)      cs.classList.add('fading');
+  rp.classList.add('visible');
+  setTimeout(() => {
+    kb.style.display = 'none';
+    if (divider) divider.style.display = 'none';
+  }, 1200);
+
+  document.getElementById('resultAnswer').textContent = puzzle.answer;
+
+  const score   = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+  const timeStr = formatTime(elapsedSeconds);
+  const e = document.getElementById('resultEmoji');
+  const h = document.getElementById('resultHeadline');
+
+  if (won) {
+    if      (score < 20)  { e.textContent='\uD83C\uDFC6'; h.textContent='Legendary!'; }
+    else if (score < 40)  { e.textContent='\uD83C\uDF0C'; h.textContent='Otherworldly!'; }
+    else if (score < 60)  { e.textContent='\uD83D\uDD2E'; h.textContent='Uncanny!'; }
+    else if (score < 90)  { e.textContent='\uD83C\uDFAF'; h.textContent='Brilliant!'; }
+    else if (score < 120) { e.textContent='\uD83D\uDD25'; h.textContent='Epic!'; }
+    else if (score < 150) { e.textContent='\u2728';       h.textContent='Miraculous!'; }
+    else if (score < 180) { e.textContent='\uD83C\uDF1F'; h.textContent='Extraordinary!'; }
+    else if (score < 210) { e.textContent='\u2B50';       h.textContent='Impressive!'; }
+    else if (score < 270) { e.textContent='\u26A1';       h.textContent='Terrific!'; }
+    else if (score < 330) { e.textContent='\uD83D\uDCAA'; h.textContent='Tenacious!'; }
+    else                  { e.textContent='\uD83C\uDF31'; h.textContent='You Got It!'; }
+    const revStr = revealCount > 0 ? ' \u00B7 ' + revealCount + ' letter' + (revealCount===1?'':'s') + ' revealed' : '';
+    const wrgStr = wrongCount  > 0 ? ' \u00B7 ' + wrongCount  + ' wrong' + (wrongCount===1?' guess':' guesses') : '';
+    document.getElementById('resultMsg').innerHTML =
+      'Solved in ' + timeStr + revStr + wrgStr + '.<br>Share the fun with friends!';
+  } else {
+    e.textContent = '\uD83D\uDCDA';
+    h.textContent = 'Better Luck Tomorrow!';
+    document.getElementById('resultMsg').textContent =
+      'Today\u2019s answer was \u201C' + puzzle.answer + '\u201D. Come back tomorrow for a new slogan!';
+  }
+
+  if (puzzle.tidbit) {
+    document.getElementById('tidbitText').innerHTML = puzzle.tidbit;
+    document.getElementById('tidbitPanel').classList.add('visible');
+  }
+
+  const s = getStats();
+  document.getElementById('rs-played').textContent = s.gamesPlayed;
+  document.getElementById('rs-streak').textContent = streak;
+  document.getElementById('rs-score').textContent  = score;
+}
+
+// ── Score info popover ────────────────────────────────────────────────────────
+function toggleScoreInfo(e) {
+  e.stopPropagation();
+  document.getElementById('scorePopover').classList.toggle('visible');
+}
+document.addEventListener('click', function() {
+  const p = document.getElementById('scorePopover');
+  if (p) p.classList.remove('visible');
+});
+
+// ── Menu ──────────────────────────────────────────────────────────────────────
+function openMenu() {
+  const overlay = document.getElementById('menuOverlay');
+  const panel   = document.getElementById('menuPanel');
+  overlay.classList.add('open');
+  requestAnimationFrame(() => { overlay.classList.add('visible'); panel.classList.add('open'); });
+}
+function closeMenu() {
+  const overlay = document.getElementById('menuOverlay');
+  const panel   = document.getElementById('menuPanel');
+  overlay.classList.remove('visible');
+  panel.classList.remove('open');
+  setTimeout(() => overlay.classList.remove('open'), 300);
+}
+function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
+function menuHelp()     { closeMenu(); openHelp(); }
+function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
+function menuSettings() { closeMenu(); openSettings(); }
+
+// ── Modal helpers ─────────────────────────────────────────────────────────────
+function openModal(id) {
+  const el = document.getElementById(id);
+  el.classList.add('open');
+  requestAnimationFrame(() => el.classList.add('visible'));
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('visible');
+  setTimeout(() => el.classList.remove('open'), 350);
+}
+function handleModalOverlayClick(e, id, closeFn) {
+  if (e.target === document.getElementById(id)) closeFn();
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); closeHelp(); closeSettings(); }
+});
+
+function openStats()     { populateStats(); openModal('statsOverlay'); }
+function closeStats()    { closeModal('statsOverlay'); }
+function openSettings()  { openModal('settingsOverlay'); }
+function closeSettings() { closeModal('settingsOverlay'); }
+function openHelp()      { openModal('helpOverlay'); }
+function closeHelp()     { closeModal('helpOverlay'); }
+
+function saveLeaderboardSetting(val) {
+  localStorage.setItem('showOnLeaderboard', val ? 'true' : 'false');
+}
+
+// ── Statistics panel ──────────────────────────────────────────────────────────
+function populateStats() {
+  const wixStats = wixLeaderboardData ? wixLeaderboardData.playerStats : null;
+  let played, curStreak, longestStr, pureWins,
+      totalReveals, avgReveals, totalWrong, avgWrong,
+      totalTimeFmt, avgTime, bestTime, avgScore, bestScore;
+
+  if (wixStats) {
+    played       = wixStats.gamesPlayed   || 0;
+    curStreak    = wixStats.currentStreak || 0;
+    longestStr   = wixStats.longestStreak || 0;
+    pureWins     = wixStats.pureWins      || 0;
+    totalReveals = wixStats.totalReveals  || 0;
+    avgReveals   = played > 0 ? (totalReveals / played).toFixed(1) : '0.0';
+    totalWrong   = wixStats.totalWrongLetters || 0;
+    avgWrong     = played > 0 ? (totalWrong / played).toFixed(1) : '0.0';
+    const tt     = wixStats.totalTimeSecs || 0;
+    totalTimeFmt = formatTime(tt);
+    avgTime      = played > 0 ? formatTime(Math.round(tt / played)) : '0:00';
+    bestTime     = wixStats.bestTimeSecs != null ? formatTime(wixStats.bestTimeSecs) : '--';
+    avgScore     = played > 0 ? Math.round((wixStats.totalScore || 0) / played) : '--';
+    bestScore    = wixStats.bestScore != null ? wixStats.bestScore : '--';
+  } else {
+    const s      = getStats();
+    played       = s.gamesPlayed;
+    curStreak    = streak;
+    longestStr   = Math.max(s.longestStreak, streak);
+    pureWins     = s.pureWins;
+    totalReveals = s.totalReveals;
+    avgReveals   = played > 0 ? (s.totalReveals / played).toFixed(1) : '0.0';
+    totalWrong   = s.totalWrong;
+    avgWrong     = played > 0 ? (s.totalWrong / played).toFixed(1) : '0.0';
+    totalTimeFmt = formatTime(s.totalTime);
+    avgTime      = played > 0 ? formatTime(Math.round(s.totalTime / played)) : '0:00';
+    bestTime     = s.bestTime  !== null ? formatTime(s.bestTime)  : '--';
+    avgScore     = played > 0 ? Math.round(s.totalScore / played) : '--';
+    bestScore    = s.bestScore !== null ? s.bestScore             : '--';
+  }
+
+  document.getElementById('st-played').textContent        = played;
+  document.getElementById('st-streak').textContent        = curStreak;
+  document.getElementById('st-longest-streak').textContent= longestStr;
+  document.getElementById('st-pure-wins').textContent     = pureWins;
+  document.getElementById('st-reveals').textContent       = totalReveals;
+  document.getElementById('st-avg-reveals').textContent   = avgReveals;
+  document.getElementById('st-wrong').textContent         = totalWrong;
+  document.getElementById('st-avg-wrong').textContent     = avgWrong;
+  document.getElementById('st-total-time').textContent    = totalTimeFmt;
+  document.getElementById('st-avg-time').textContent      = avgTime;
+  document.getElementById('st-best-time').textContent     = bestTime;
+  document.getElementById('st-avg-score').textContent     = avgScore;
+  document.getElementById('st-best-score').textContent    = bestScore;
+}
+
+function shareStats() {
+  const ws       = wixLeaderboardData ? wixLeaderboardData.playerStats : null;
+  const s        = ws ? null : getStats();
+  const played   = ws ? (ws.gamesPlayed   || 0) : s.gamesPlayed;
+  const curStr   = ws ? (ws.currentStreak || 0) : streak;
+  const longStr  = ws ? (ws.longestStreak || 0) : Math.max(s.longestStreak, streak);
+  const pureWins = ws ? (ws.pureWins      || 0) : s.pureWins;
+  const avgTime  = played > 0
+    ? (ws ? formatTime(Math.round((ws.totalTimeSecs || 0) / played)) : formatTime(Math.round(s.totalTime / played))) : '--';
+  const bestTime = ws ? (ws.bestTimeSecs != null ? formatTime(ws.bestTimeSecs) : '--') : (s.bestTime !== null ? formatTime(s.bestTime) : '--');
+  const bestScore= ws ? (ws.bestScore != null ? ws.bestScore : '--') : (s.bestScore !== null ? s.bestScore : '--');
+  const lines = [
+    'Orijinz Daily Slogans \u2014 My Stats \uD83D\uDCCA', '',
+    '\uD83D\uDCC5 Days Played:    ' + played,
+    '\uD83D\uDD25 Current Streak: ' + curStr,
+    '\uD83C\uDFC6 Longest Streak: ' + longStr,
+    '\u2B50 Pure Wins:      ' + pureWins, '',
+    '\u23F1\uFE0F Best Time:      ' + bestTime,
+    '\u23F1\uFE0F Avg Time:       ' + avgTime,
+    '\uD83C\uDFAF Best Score:     ' + bestScore, '',
+    'https://www.entspire.com/orijinz-daily',
+  ];
+  openSharePopup(lines.join('\n'));
+}
+
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+let lbSortBy = 'score';
+
+function getLbData() { try { return JSON.parse(localStorage.getItem(LB_KEY) || '{}'); } catch(e) { return {}; } }
+function saveLbData(d) { try { localStorage.setItem(LB_KEY, JSON.stringify(d)); } catch(e) {} }
+
+function lbTierEmoji(score) {
+  if      (score < 20)  return '\uD83C\uDFC6';
+  else if (score < 40)  return '\uD83C\uDF0C';
+  else if (score < 60)  return '\uD83D\uDD2E';
+  else if (score < 90)  return '\uD83C\uDFAF';
+  else if (score < 120) return '\uD83D\uDD25';
+  else if (score < 150) return '\u2728';
+  else if (score < 180) return '\uD83C\uDF1F';
+  else if (score < 210) return '\u2B50';
+  else if (score < 270) return '\u26A1';
+  else if (score < 330) return '\uD83D\uDCAA';
+  else                  return '\uD83C\uDF31';
+}
+
+function openLeaderboard() {
+  openModal('lbOverlay');
+  renderLeaderboard();
+}
+function closeLeaderboard() { closeModal('lbOverlay'); }
+
+function setLbSort(field) {
+  lbSortBy = field;
+  ['score','played','streak'].forEach(f => {
+    document.getElementById('lbTab-' + f).classList.toggle('active', f === field);
+  });
+  renderLeaderboard();
+}
+
+function getDeviceId() {
+  let id = localStorage.getItem('orijinzDeviceId');
+  if (!id) { id = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('orijinzDeviceId', id); }
+  return id;
+}
+
+function renderLeaderboard() {
+  const list = document.getElementById('lbList');
+  const form = document.getElementById('lbEntryForm');
+  const hdr  = document.getElementById('lbListHeader');
+
+  if (wixLeaderboardData) {
+    form.style.display = 'none';
+    if (lbSortBy === 'score') {
+      const entries = wixLeaderboardData.scores || [];
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
+      if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">No scores yet today \u2014 be the first!</div>'; return; }
+      list.innerHTML = entries.map((e, i) => {
+        const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location||'') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
+      }).join('');
+    } else if (lbSortBy === 'played') {
+      const players = [...(wixLeaderboardData.stats||[])].sort((a,b) => b.gamesPlayed - a.gamesPlayed);
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-played lb-col-active">Played</span><span class="lb-col-streak" style="color:var(--text-muted)">Streak</span>';
+      list.innerHTML = players.map((e,i) => {
+        const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location||'') + '</span><span class="lb-row-played">' + (e.gamesPlayed||0) + '</span><span class="lb-row-streak">' + (e.currentStreak||0) + '</span></div>';
+      }).join('');
+    } else {
+      const players = [...(wixLeaderboardData.stats||[])].sort((a,b) => b.currentStreak - a.currentStreak);
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-streak lb-col-active">Streak</span><span class="lb-col-played" style="color:var(--text-muted)">Played</span>';
+      list.innerHTML = players.map((e,i) => {
+        const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location||'') + '</span><span class="lb-row-streak">' + (e.currentStreak||0) + '</span><span class="lb-row-played">' + (e.gamesPlayed||0) + '</span></div>';
+      }).join('');
+    }
+    return;
+  }
+
+  // Local leaderboard (no Wix)
+  form.style.display = '';
+  const d = getLbData();
+  const puzzleKey = 'puzzle_' + puzzleIndex;
+  const entries = ((d[puzzleKey] || {}).entries || []).sort((a,b) => a.score - b.score);
+  hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
+  if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">No entries yet \u2014 be the first!</div>'; }
+  else {
+    list.innerHTML = entries.map((e,i) => {
+      const mine = e.deviceId === getDeviceId() ? ' lb-mine' : '';
+      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location||'') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
+    }).join('');
+  }
+  // Pre-fill name if returning
+  const deviceId = getDeviceId();
+  for (const key of Object.keys(d)) {
+    for (const e of ((d[key]||{}).entries||[])) {
+      if (e.deviceId === deviceId && e.name) {
+        document.getElementById('lbName').value     = e.name;
+        document.getElementById('lbLocation').value = e.location || '';
+        break;
+      }
+    }
+  }
+}
+
+function submitLeaderboardEntry() {
+  const name     = document.getElementById('lbName').value.trim()     || 'Anonymous';
+  const location = document.getElementById('lbLocation').value.trim() || '';
+  const score    = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+  const todayKey = new Date().toDateString();
+  const puzzleKey = 'puzzle_' + puzzleIndex;
+  const deviceId = getDeviceId();
+  const st = getStats();
+
+  const d = getLbData();
+  if (!d[puzzleKey]) d[puzzleKey] = { date: todayKey, entries: [] };
+  d[puzzleKey].entries = d[puzzleKey].entries.filter(e => e.deviceId !== deviceId);
+  d[puzzleKey].entries.push({ name, location, score, played: st.gamesPlayed, streak, deviceId });
+  saveLbData(d);
+
+  // Post to Wix if available
+  const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
+  if (showOnLB) {
+    window.parent.postMessage({
+      type: 'orijinz_result', game: 'slogans',
+      puzzleNumber: puzzleIndex, puzzleDate: new Date().toISOString().slice(0,10),
+      score, timeSecs: elapsedSeconds, lettersRevealed: revealCount,
+      definitionUsed: false, wrongLetters: wrongCount, wonGame: true,
+      name, location, showOnLeaderboard: true
+    }, '*');
+  }
+
+  showToast('Posted! \uD83C\uDFC6', 2000);
+  renderLeaderboard();
+}
+
+// ── Wix postMessage ────────────────────────────────────────────────────────────
+function sendResultToWix() {
+  if (wixResultSent) return;
+  wixResultSent = true;
+  const score    = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+  const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
+  window.parent.postMessage({
+    type:             'orijinz_result',
+    game:             'slogans',
+    puzzleNumber:     puzzleIndex,
+    puzzleDate:       new Date().toISOString().slice(0,10),
+    score,
+    timeSecs:         elapsedSeconds,
+    lettersRevealed:  revealCount,
+    definitionUsed:   false,
+    wrongLetters:     wrongCount,
+    wonGame:          true,
+    showOnLeaderboard: showOnLB
+  }, '*');
+}
+
+window.addEventListener('message', function(event) {
+  if (!event.data) return;
+  if (event.data.type === 'orijinz_pageurl') {
+    wixPageUrl = event.data.url;
+  } else if (event.data.type === 'orijinz_leaderboard') {
+    wixLeaderboardData = event.data;
+    wixMemberId = event.data.memberId || null;
+    if (event.data.memberName) {
+      const footer = document.getElementById('menuFooter');
+      const nameEl = document.getElementById('menuMemberName');
+      if (footer && nameEl) { nameEl.textContent = event.data.memberName; footer.style.display = 'flex'; }
+    }
+    const overlay = document.getElementById('lbOverlay');
+    if (overlay && overlay.classList.contains('open')) renderLeaderboard();
+  }
+});
+
+// ── Share ──────────────────────────────────────────────────────────────────────
+let _shareText = '', _shareUrl = '';
+
+function openSharePopup(text) {
+  const url  = wixPageUrl || document.referrer || window.location.href;
+  _shareText = text;
+  _shareUrl  = url;
+  const encFull = encodeURIComponent(text + '\n' + url);
+  const encUrl  = encodeURIComponent(url);
+  document.getElementById('shareEmail').href    = 'mailto:?subject=Orijinz%20Daily%20Slogans&body=' + encFull;
+  document.getElementById('shareMessages').href = 'sms:?&body=' + encFull;
+  document.getElementById('shareWhatsApp').href = 'https://wa.me/?text=' + encFull;
+  document.getElementById('shareFacebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encUrl;
+  document.getElementById('shareBluesky').href  = 'https://bsky.app/intent/compose?text=' + encFull;
+  document.getElementById('shareTwitter').href  = 'https://twitter.com/intent/tweet?text=' + encFull;
+  document.getElementById('shareOverlay').classList.add('open');
+}
+function closeSharePopup() { document.getElementById('shareOverlay').classList.remove('open'); }
+function handleShareOverlayClick(e) { if (e.target === document.getElementById('shareOverlay')) closeSharePopup(); }
+function sharePopupCopy() {
+  try {
+    const el = document.createElement('textarea');
+    el.value = _shareText + '\n' + _shareUrl;
+    el.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+  } catch(e) {
+    window.parent.postMessage({ type: 'orijinz_copy', text: _shareText + '\n' + _shareUrl }, '*');
+  }
+  closeSharePopup();
+  showToast('Copied! \uD83D\uDCCB', 2000);
+}
+
+function shareResult() {
+  const timeStr = formatTime(elapsedSeconds);
+  openSharePopup('Orijinz Daily Slogans #' + (puzzleIndex + 1) + ' \u23F1\uFE0F ' + timeStr);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, duration) {
+  duration = duration || 1800;
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ── Confetti ───────────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const COLORS  = ['#ff8820','#ffa840','#ffd050','#ffffff','#d86808','#ffcc70'];
+  const pieces  = Array.from({length: 90}, () => ({
+    x: Math.random() * canvas.width, y: -10 - Math.random() * 200,
+    r: 4 + Math.random() * 6,        d: 2 + Math.random() * 3,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    tilt: 0, tiltAngle: 0, tiltInc: 0.07 + Math.random() * 0.05,
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.tiltAngle += p.tiltInc; p.y += p.d; p.tilt = 15 * Math.sin(p.tiltAngle);
+      ctx.beginPath(); ctx.lineWidth = p.r; ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+      ctx.stroke();
+    });
+    if (++frame < 160) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  draw();
+}
+
+// ── Dev tools ──────────────────────────────────────────────────────────────────
+function showMenu() {}
+
+let tapCount = 0, tapTimer;
+function initDevTap() {
+  const el = document.getElementById('puzzleNum');
+  if (!el) return;
+  el.addEventListener('click', () => {
+    if (++tapCount >= 3) { clearTimeout(tapTimer); tapCount = 0; devNext(); return; }
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => { tapCount = 0; }, 500);
+  });
+  el.addEventListener('contextmenu', e => { e.preventDefault(); devReset(); });
+}
+
+function devReset() {
+  try { localStorage.removeItem(STATE_KEY); localStorage.removeItem(STATS_KEY); localStorage.removeItem(LB_KEY); } catch(e) {}
+  location.reload();
+}
+function devNext() {
+  const existing = safeGetState();
+  safeSaveState({ ...existing, devPuzzleIndex: (puzzleIndex + 1) % PUZZLES.length, lastPlayed: null });
+  location.reload();
+}
+
+// ── Start ──────────────────────────────────────────────────────────────────────
+initGame();
+</script>
+</body>
+</html>
