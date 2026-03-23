@@ -2490,6 +2490,17 @@ function launchConfetti() {
 // =================================================================
 let videoTimer = null;
 let hintShown  = false;
+let ytPlayer   = null;
+let ytApiReady = false;
+
+// Load YouTube IFrame API
+(function() {
+  var tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+})();
+
+function onYouTubeIframeAPIReady() { ytApiReady = true; }
 
 function updateClueButtons() {
   if (!puzzle) return;
@@ -2512,27 +2523,55 @@ function watchTrailer() {
   if (!puzzle || !puzzle.youtube_id || gameOver) return;
   const seconds = selectedDuration;
   stopClip();
-  document.getElementById('ytIframeContainer').innerHTML =
-    '<iframe src="https://www.youtube.com/embed/' + puzzle.youtube_id +
-    '?controls=1&modestbranding=1&rel=0" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
+  // create a target div for YT.Player to replace
+  const container = document.getElementById('ytIframeContainer');
+  container.innerHTML = '<div id="ytPlayerDiv" style="width:100%;height:100%;"></div>';
   document.getElementById('videoCard').style.display = '';
   document.getElementById('synopsisCardWrap').style.display = 'none';
   listenPenalty += seconds * 2;
   saveState();
-  let remaining = seconds;
   const timerEl = document.getElementById('videoTimer');
-  if (timerEl) timerEl.textContent = remaining + 's remaining';
-  if (videoTimer) clearInterval(videoTimer);
-  videoTimer = setInterval(() => {
-    remaining--;
-    if (remaining <= 0) { stopClip(); return; }
-    if (timerEl) timerEl.textContent = remaining + 's remaining';
-  }, 1000);
+  if (timerEl) timerEl.textContent = 'Press ▶ to start';
   updateTrailerBtn();
+
+  const startTimer = () => {
+    let remaining = seconds;
+    if (timerEl) timerEl.textContent = remaining + 's remaining';
+    if (videoTimer) clearInterval(videoTimer);
+    videoTimer = setInterval(() => {
+      remaining--;
+      if (remaining <= 0) { stopClip(); return; }
+      if (timerEl) timerEl.textContent = remaining + 's remaining';
+    }, 1000);
+  };
+
+  const createPlayer = () => {
+    var playerReady = false;
+    ytPlayer = new YT.Player('ytPlayerDiv', {
+      videoId: puzzle.youtube_id,
+      playerVars: { controls: 1, modestbranding: 1, rel: 0 },
+      width: '100%', height: '100%',
+      events: {
+        onReady: function() { playerReady = true; },
+        onStateChange: function(e) {
+          if (playerReady && e.data === YT.PlayerState.PLAYING && !videoTimer) startTimer();
+        }
+      }
+    });
+  };
+
+  if (ytApiReady) {
+    createPlayer();
+  } else {
+    var wait = setInterval(function() {
+      if (ytApiReady) { clearInterval(wait); createPlayer(); }
+    }, 100);
+  }
 }
 
 function stopClip() {
   if (videoTimer) { clearInterval(videoTimer); videoTimer = null; }
+  if (ytPlayer) { try { ytPlayer.destroy(); } catch(e) {} ytPlayer = null; }
   const c = document.getElementById('ytIframeContainer');
   if (c) c.innerHTML = '';
   document.getElementById('videoCard').style.display = 'none';
