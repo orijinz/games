@@ -2719,7 +2719,7 @@ function showResult(won) {
   const moviePanel = document.getElementById('playMoviePanel');
   if (imdbDiv && moviePanel) {
     if (puzzle.imdb_url) {
-      imdbDiv.innerHTML = 'Learn more about <a href="' + puzzle.imdb_url + '" target="_blank" rel="noopener" style="color:var(--white);text-decoration:underline;">' + answer + '</a>.';
+      imdbDiv.innerHTML = 'Learn more about <a href="' + puzzle.imdb_url + '" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;text-underline-offset:3px;">' + answer + '</a>.';
     } else {
       imdbDiv.innerHTML = 'Learn more about ' + answer + '.';
     }
