@@ -2073,7 +2073,7 @@ function initGame() {
   document.getElementById('dateBadge').innerHTML =
     now.toLocaleDateString('en-US', {month:'short', day:'numeric'}) + '<br>' + now.getFullYear();
   document.getElementById('puzzleNum').textContent = 'Puzzle #' + (puzzleIndex + 1);
-  document.getElementById('synopsisText').innerHTML = puzzle.song;
+  document.getElementById('synopsisText').innerHTML = puzzle.synopsis;
 
   const synCard = document.getElementById('synopsisCard');
   const synWrap = document.getElementById('synopsisCardWrap');
