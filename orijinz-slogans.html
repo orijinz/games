@@ -178,6 +178,11 @@ main {
   border-color: var(--accent); background: var(--tile-active-bg);
   box-shadow: 0 0 0 3px var(--accent-ring), 0 2px 8px rgba(0,0,0,0.5);
 }
+body.page-blur .letter-tile.active {
+  border-color: var(--letter-border);
+  background: var(--letter-bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
 .letter-tile.revealed {
   background: var(--accent-dark); border-color: var(--accent-dark); color: #fff;
 }
@@ -1693,7 +1698,10 @@ function devNext() {
 }
 
 // ── Start ──────────────────────────────────────────────────────────────────────
+window.addEventListener('blur',  () => document.body.classList.add('page-blur'));
+window.addEventListener('focus', () => document.body.classList.remove('page-blur'));
 initGame();
+try { window.focus(); } catch(e) {}
 </script>
 </body>
 </html>

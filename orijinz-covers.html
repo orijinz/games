@@ -2507,6 +2507,7 @@ function safeInit() {
     const el = document.getElementById('coverCredit');
     if (el) el.textContent = '\u26A0\uFE0F Could not load puzzle: ' + e.message;
   }
+  try { window.focus(); } catch(e) {}
 }
 document.addEventListener('DOMContentLoaded', safeInit);
 if (document.readyState !== 'loading') safeInit();

@@ -227,6 +227,11 @@
     background: rgba(240,204,56,0.08);
     box-shadow: 0 0 0 3px rgba(240,204,56,0.2);
   }
+  body.page-blur .letter-tile.active {
+    border-color: var(--letter-border);
+    background: transparent;
+    box-shadow: none;
+  }
 
   @keyframes tileBounce {
     0%   { transform: translateY(0) scale(1); }
@@ -1915,9 +1920,12 @@ function safeInit() {
     const el = document.getElementById('quoteText');
     if (el) el.textContent = '\u26A0\uFE0F Could not load puzzle: ' + e.message;
   }
+  try { window.focus(); } catch(e) {}
 }
 document.addEventListener('DOMContentLoaded', safeInit);
 if (document.readyState !== 'loading') safeInit();
+window.addEventListener('blur',  () => document.body.classList.add('page-blur'));
+window.addEventListener('focus', () => document.body.classList.remove('page-blur'));
 window.addEventListener('resize', fitWordGroups);
 </script>
 

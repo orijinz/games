@@ -274,6 +274,11 @@
     background: rgba(200,146,42,0.08);
     box-shadow: 0 0 0 3px rgba(200,146,42,0.2);
   }
+  body.page-blur .letter-tile.active {
+    border-color: var(--letter-border);
+    background: transparent;
+    box-shadow: none;
+  }
   .timer-display {
     font-family: 'Space Mono', monospace;
     font-size: 1.1rem;
@@ -1089,6 +1094,17 @@
     font-family: 'Nunito Sans', sans-serif;
   }
 
+  /* SETTINGS MODAL */
+  .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; gap: 16px; }
+  .settings-row-label { font-size: 0.9rem; color: var(--text); margin-bottom: 2px; }
+  .settings-row-desc  { font-size: 0.75rem; color: var(--text-muted); }
+  .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-track { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--border); border-radius: 24px; transition: 0.2s; }
+  .toggle-switch input:checked + .toggle-track { background: var(--accent); }
+  .toggle-track::before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+  .toggle-switch input:checked + .toggle-track::before { transform: translateX(20px); }
+
   /* result-actions row */
   .result-actions {
     display: flex;
@@ -1410,12 +1426,12 @@ function closeMenu() {
   panel.classList.remove('open');
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); closeHelp(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); closeHelp(); closeSettings(); } });
 
 function menuHome()     { closeMenu(); window.location.href = 'https://www.entspire.com'; }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
-function menuSettings() { closeMenu(); /* TODO: show advanced settings */ }
+function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }
 
 // =================================================================
 // STATISTICS
@@ -1669,29 +1685,49 @@ function renderLeaderboard() {
   const hdr      = document.getElementById('lbListHeader');
 
   if (lbSortBy === 'score') {
-    const d = getLbData();
-    const puzzleKey = 'puzzle_' + puzzleIndex;
-    const entries = (d[puzzleKey] && d[puzzleKey].entries) ? [...d[puzzleKey].entries] : [];
-    entries.sort((a, b) => a.score - b.score);
-    const alreadySubmitted = entries.some(e => e.deviceId === deviceId);
-    form.style.display = alreadySubmitted ? 'none' : '';
+    // Use Wix data if available, else fall back to localStorage
+    let entries;
+    if (wixLeaderboardData && wixLeaderboardData.scores && wixLeaderboardData.scores.length > 0) {
+      form.style.display = 'none';
+      entries = wixLeaderboardData.scores.map(r => ({
+        name: r.name, location: r.location, score: r.score,
+        deviceId: r.memberId === wixLeaderboardData.memberId ? deviceId : r.memberId
+      }));
+    } else {
+      const d = getLbData();
+      const puzzleKey = 'puzzle_' + puzzleIndex;
+      entries = (d[puzzleKey] && d[puzzleKey].entries) ? [...d[puzzleKey].entries] : [];
+      entries.sort((a, b) => a.score - b.score);
+      const alreadySubmitted = entries.some(e => e.deviceId === deviceId);
+      form.style.display = alreadySubmitted ? 'none' : '';
+    }
     hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
     if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">No scores yet today \u2014 be the first!</div>'; return; }
     list.innerHTML = entries.map((e, i) => {
       const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
+      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
     }).join('');
 
   } else {
     form.style.display = 'none';
-    const players = getAllPlayerStats();
+    // Use Wix data if available, else fall back to localStorage
+    let players;
+    if (wixLeaderboardData && wixLeaderboardData.stats && wixLeaderboardData.stats.length > 0) {
+      players = wixLeaderboardData.stats.map(s => ({
+        name: s.name, location: s.location,
+        played: s.gamesPlayed, streak: s.currentStreak,
+        deviceId: s.memberId === wixLeaderboardData.memberId ? deviceId : s.memberId
+      }));
+    } else {
+      players = getAllPlayerStats();
+    }
     if (lbSortBy === 'played') {
       players.sort((a, b) => b.played - a.played);
       hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-played">Played</span><span class="lb-col-streak" style="color:var(--text-muted)">Streak</span>';
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
       list.innerHTML = players.map((e, i) => {
         const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span><span class="lb-row-streak">' + e.streak + '</span></div>';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span><span class="lb-row-streak">' + e.streak + '</span></div>';
       }).join('');
     } else {
       players.sort((a, b) => b.streak - a.streak);
@@ -1699,7 +1735,7 @@ function renderLeaderboard() {
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
       list.innerHTML = players.map((e, i) => {
         const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span><span class="lb-row-played">' + e.played + '</span></div>';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span><span class="lb-row-played">' + e.played + '</span></div>';
       }).join('');
     }
   }
@@ -1729,6 +1765,7 @@ function isAutoFill(ch) { return ch === "'" || ch === '&' || ch === '-' || ch ==
 
 let puzzle, answer, answerClean;
 let currentGuess = [], cursorPos = 0, guesses = [], gameOver = false;
+let wixResultSent = false, wixLeaderboardData = null;
 let animating = false;
 let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount = 0;
 let streak = 0, puzzleIndex = 0;
@@ -2395,6 +2432,8 @@ function showResult(won) {
   document.getElementById('rs-streak').textContent = streak;
   const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (defShown ? 30 : 0);
   document.getElementById('rs-score').textContent = score;
+
+  sendResultToWix(won);
 }
 
 function toggleScoreInfo(e) {
@@ -2404,6 +2443,32 @@ function toggleScoreInfo(e) {
 document.addEventListener('click', function() {
   const p = document.getElementById('scorePopover');
   if (p) p.classList.remove('visible');
+});
+
+function sendResultToWix(won) {
+  if (wixResultSent) return;
+  wixResultSent = true;
+  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (defShown ? 30 : 0);
+  const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
+  window.parent.postMessage({
+    type:             'orijinz_result',
+    game:             'wordsandphrases',
+    puzzleNumber:     puzzleIndex,
+    puzzleDate:       new Date().toISOString().slice(0, 10),
+    score,
+    timeSecs:         elapsedSeconds,
+    lettersRevealed:  revealCount,
+    definitionUsed:   defShown,
+    wrongLetters:     wrongCount,
+    wonGame:          won,
+    showOnLeaderboard: showOnLB
+  }, '*');
+}
+
+window.addEventListener('message', function(event) {
+  if (!event.data || event.data.type !== 'orijinz_leaderboard') return;
+  wixLeaderboardData = event.data;
+  renderLeaderboard();
 });
 
 function shareResult() {
@@ -2510,9 +2575,12 @@ function safeInit() {
     const el = document.getElementById('originText');
     if (el) el.textContent = '\u26A0\uFE0F Could not load puzzle: ' + e.message;
   }
+  try { window.focus(); } catch(e) {}
 }
 document.addEventListener('DOMContentLoaded', safeInit);
 if (document.readyState !== 'loading') safeInit();
+window.addEventListener('blur',  () => document.body.classList.add('page-blur'));
+window.addEventListener('focus', () => document.body.classList.remove('page-blur'));
 window.addEventListener('resize', fitWordGroups);
 
 // =================================================================
@@ -2531,6 +2599,26 @@ function closeHelp() {
 }
 function handleHelpOverlayClick(e) {
   if (e.target === document.getElementById('helpOverlay')) closeHelp();
+}
+
+function openSettings() {
+  const overlay = document.getElementById('settingsOverlay');
+  const cb = document.getElementById('settingShowOnLeaderboard');
+  if (cb) cb.checked = localStorage.getItem('showOnLeaderboard') !== 'false';
+  overlay.classList.add('open');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+function closeSettings() {
+  const overlay = document.getElementById('settingsOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.remove('open'), 300);
+}
+function handleSettingsOverlayClick(e) {
+  if (e.target === document.getElementById('settingsOverlay')) closeSettings();
+}
+function saveLeaderboardSetting(val) {
+  localStorage.setItem('showOnLeaderboard', val ? 'true' : 'false');
 }
 </script>
 
