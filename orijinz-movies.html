@@ -2498,24 +2498,35 @@ function watchTrailer() {
   if (!puzzle || !puzzle.youtube_id || gameOver) return;
   const seconds = selectedDuration;
   stopClip();
-  // mute=1 ensures autoplay works in embedded/Wix iframes; user unmutes via player controls
+  // show video card with tap-to-play prompt; don't load iframe until user taps (user gesture = autoplay with sound allowed)
   document.getElementById('ytIframeContainer').innerHTML =
-    '<iframe src="https://www.youtube.com/embed/' + puzzle.youtube_id +
-    '?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
+    '<div onclick="playWithSound(' + seconds + ')" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:12px;">' +
+    '<div style="width:64px;height:64px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">▶</div>' +
+    '<div style="font-family:\'Space Mono\',monospace;font-size:0.75rem;color:var(--gold);letter-spacing:0.1em;">TAP TO PLAY</div>' +
+    '</div>';
   document.getElementById('videoCard').style.display = '';
   document.getElementById('synopsisCardWrap').style.display = 'none';
   listenPenalty += seconds * 2;
   saveState();
-  // countdown + unmute hint
+  const timerEl = document.getElementById('videoTimer');
+  if (timerEl) timerEl.textContent = '';
+  updateTrailerBtn();
+}
+
+function playWithSound(seconds) {
+  // user gesture — browser allows autoplay with sound
+  document.getElementById('ytIframeContainer').innerHTML =
+    '<iframe src="https://www.youtube.com/embed/' + puzzle.youtube_id +
+    '?autoplay=1&controls=1&modestbranding=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
   let remaining = seconds;
   const timerEl = document.getElementById('videoTimer');
-  if (timerEl) timerEl.innerHTML = '<span style="margin-right:10px;opacity:0.7;">🔊 unmute in player</span>' + remaining + 's remaining';
+  if (timerEl) timerEl.textContent = remaining + 's remaining';
+  if (videoTimer) clearInterval(videoTimer);
   videoTimer = setInterval(() => {
     remaining--;
     if (remaining <= 0) { stopClip(); return; }
-    if (timerEl) timerEl.innerHTML = '<span style="margin-right:10px;opacity:0.7;">🔊 unmute in player</span>' + remaining + 's remaining';
+    if (timerEl) timerEl.textContent = remaining + 's remaining';
   }, 1000);
-  updateTrailerBtn();
 }
 
 function stopClip() {
