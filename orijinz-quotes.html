@@ -657,6 +657,18 @@
     transition: color 0.15s;
   }
   .stats-close:hover { color: var(--text); }
+
+  /* SETTINGS MODAL */
+  .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; gap: 16px; }
+  .settings-row-label { font-size: 0.9rem; color: var(--text); margin-bottom: 2px; }
+  .settings-row-desc  { font-size: 0.75rem; color: var(--text-muted); }
+  .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-track { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--border); border-radius: 24px; transition: 0.2s; }
+  .toggle-switch input:checked + .toggle-track { background: var(--accent); }
+  .toggle-track::before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+  .toggle-switch input:checked + .toggle-track::before { transform: translateX(20px); }
+
   .stats-section-label {
     font-family: 'Space Mono', monospace; font-size: 0.58rem;
     letter-spacing: 0.2em; text-transform: uppercase;
@@ -1023,7 +1035,7 @@ function closeMenu() {
 function menuHome()     { closeMenu(); }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
-function menuSettings() { closeMenu(); }
+function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }
 
 // =================================================================
 // STATISTICS
@@ -1115,6 +1127,56 @@ function handleHelpOverlayClick(e) {
   if (e.target === document.getElementById('helpOverlay')) closeHelp();
 }
 
+function openSettings() {
+  const overlay = document.getElementById('settingsOverlay');
+  const cb = document.getElementById('settingShowOnLeaderboard');
+  if (cb) cb.checked = localStorage.getItem('showOnLeaderboard') !== 'false';
+  overlay.classList.add('open');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+function closeSettings() {
+  const overlay = document.getElementById('settingsOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.remove('open'), 300);
+}
+function handleSettingsOverlayClick(e) {
+  if (e.target === document.getElementById('settingsOverlay')) closeSettings();
+}
+function saveLeaderboardSetting(val) {
+  localStorage.setItem('showOnLeaderboard', val ? 'true' : 'false');
+}
+
+function sendResultToWix(won) {
+  if (wixResultSent) return;
+  wixResultSent = true;
+  const score = elapsedSeconds + (hintShown ? 30 : 0) + (revealCount * 15) + (wrongCount * 5);
+  const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
+  window.parent.postMessage({
+    type:              'orijinz_result',
+    game:              'quotes',
+    puzzleNumber:      puzzleIndex,
+    puzzleDate:        new Date().toISOString().slice(0, 10),
+    score,
+    timeSecs:          elapsedSeconds,
+    lettersRevealed:   revealCount,
+    definitionUsed:    hintShown,
+    wrongLetters:      wrongCount,
+    wonGame:           won,
+    showOnLeaderboard: showOnLB
+  }, '*');
+}
+
+window.addEventListener('message', function(event) {
+  if (!event.data) return;
+  if (event.data.type === 'orijinz_pageurl') {
+    wixPageUrl = event.data.url;
+  } else if (event.data.type === 'orijinz_leaderboard') {
+    wixLeaderboardData = event.data;
+    renderLeaderboard();
+  }
+});
+
 function shareStats() {
   const s   = getStats();
   const txt = 'Orijinz Quotes Stats\nPlayed: ' + s.gamesPlayed + ' \u00B7 Streak: ' + s.streak + '\nBest score: ' + (s.bestScore !== null ? s.bestScore : '--') + '\nhttps://www.entspire.com/orijinz-quotes';
@@ -1200,11 +1262,28 @@ function getDeviceId() {
   } catch(e) { return 'anon'; }
 }
 function renderLeaderboard() {
-  const all   = getAllPlayerStats();
   const devId = getDeviceId();
   const field = lbSortField;
+  const form  = document.getElementById('lbEntryForm');
+  const list  = document.getElementById('lbList');
+  let all;
+  if (field === 'score' && wixLeaderboardData && wixLeaderboardData.scores && wixLeaderboardData.scores.length > 0) {
+    if (form) form.style.display = 'none';
+    all = wixLeaderboardData.scores.map(r => ({
+      name: r.name, location: r.location, score: r.score, played: 0, streak: 0,
+      deviceId: r.memberId === wixLeaderboardData.memberId ? devId : r.memberId
+    }));
+  } else if (field !== 'score' && wixLeaderboardData && wixLeaderboardData.stats && wixLeaderboardData.stats.length > 0) {
+    if (form) form.style.display = 'none';
+    all = wixLeaderboardData.stats.map(s => ({
+      name: s.name, location: s.location, score: 0,
+      played: s.gamesPlayed, streak: s.currentStreak,
+      deviceId: s.memberId === wixLeaderboardData.memberId ? devId : s.memberId
+    }));
+  } else {
+    all = getAllPlayerStats();
+  }
   const sorted = [...all].sort((a, b) => field === 'score' ? (a.score - b.score) : field === 'played' ? (b.played - a.played) : (b.streak - a.streak));
-  const list   = document.getElementById('lbList');
   if (!sorted.length) { list.innerHTML = '<div class="lb-empty">No results yet. Play and submit your score!</div>'; return; }
   list.innerHTML = sorted.map((e, i) => {
     const isMe = e.deviceId === devId;
@@ -1245,6 +1324,7 @@ let puzzle, answer, answerClean;
 let currentGuess = [], cursorPos = 0, guesses = [], gameOver = false;
 let revealedLetters = new Set(), revealCount = 0, wrongCount = 0;
 let streak = 0, puzzleIndex = 0;
+let wixResultSent = false, wixPageUrl = '', wixLeaderboardData = null;
 let timerInterval = null, startTime = null, elapsedSeconds = 0;
 let hintShown = false;
 let animating = false;
@@ -1834,6 +1914,7 @@ function showResult(won) {
   document.getElementById('rs-played').textContent = s.gamesPlayed;
   document.getElementById('rs-streak').textContent = streak;
   document.getElementById('rs-score').textContent  = score;
+  sendResultToWix(won);
 }
 
 function shareResult() {
@@ -1928,6 +2009,27 @@ window.addEventListener('blur',  () => document.body.classList.add('page-blur'))
 window.addEventListener('focus', () => document.body.classList.remove('page-blur'));
 window.addEventListener('resize', fitWordGroups);
 </script>
+
+<!-- Settings modal -->
+<div class="stats-overlay" id="settingsOverlay" onclick="handleSettingsOverlayClick(event)">
+  <div class="stats-panel" style="max-width:420px;">
+    <div class="stats-panel-header">
+      <span class="stats-title">Settings</span>
+      <button class="stats-close" onclick="closeSettings()">&#x2715;</button>
+    </div>
+    <div class="stats-section-label">Leaderboard</div>
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">Show me on the leaderboard</div>
+        <div class="settings-row-desc">Your name and score will appear in today's results</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="settingShowOnLeaderboard" onchange="saveLeaderboardSetting(this.checked)" checked>
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </div>
+</div>
 
 <!-- Help modal -->
 <div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">

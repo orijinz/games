@@ -1765,7 +1765,7 @@ function isAutoFill(ch) { return ch === "'" || ch === '&' || ch === '-' || ch ==
 
 let puzzle, answer, answerClean;
 let currentGuess = [], cursorPos = 0, guesses = [], gameOver = false;
-let wixResultSent = false, wixLeaderboardData = null;
+let wixResultSent = false, wixPageUrl = '', wixLeaderboardData = null;
 let animating = false;
 let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount = 0;
 let streak = 0, puzzleIndex = 0;
@@ -2466,9 +2466,13 @@ function sendResultToWix(won) {
 }
 
 window.addEventListener('message', function(event) {
-  if (!event.data || event.data.type !== 'orijinz_leaderboard') return;
-  wixLeaderboardData = event.data;
-  renderLeaderboard();
+  if (!event.data) return;
+  if (event.data.type === 'orijinz_pageurl') {
+    wixPageUrl = event.data.url;
+  } else if (event.data.type === 'orijinz_leaderboard') {
+    wixLeaderboardData = event.data;
+    renderLeaderboard();
+  }
 });
 
 function shareResult() {
@@ -2621,6 +2625,27 @@ function saveLeaderboardSetting(val) {
   localStorage.setItem('showOnLeaderboard', val ? 'true' : 'false');
 }
 </script>
+
+<!-- Settings modal -->
+<div class="stats-overlay" id="settingsOverlay" onclick="handleSettingsOverlayClick(event)">
+  <div class="stats-panel" style="max-width:420px;">
+    <div class="stats-panel-header">
+      <span class="stats-title">Settings</span>
+      <button class="stats-close" onclick="closeSettings()">&#x2715;</button>
+    </div>
+    <div class="stats-section-label">Leaderboard</div>
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">Show me on the leaderboard</div>
+        <div class="settings-row-desc">Your name and score will appear in today's results</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="settingShowOnLeaderboard" onchange="saveLeaderboardSetting(this.checked)" checked>
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </div>
+</div>
 
 <!-- Help modal -->
 <div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">
