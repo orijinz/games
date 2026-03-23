@@ -2498,24 +2498,38 @@ function watchTrailer() {
   if (!puzzle || !puzzle.youtube_id || gameOver) return;
   const seconds = selectedDuration;
   stopClip();
-  // inject iframe
+  // inject iframe with enablejsapi so we can unmute via postMessage
   document.getElementById('ytIframeContainer').innerHTML =
-    '<iframe src="https://www.youtube.com/embed/' + puzzle.youtube_id +
-    '?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
+    '<iframe id="ytIframe" src="https://www.youtube.com/embed/' + puzzle.youtube_id +
+    '?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0&enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
   document.getElementById('videoCard').style.display = '';
   document.getElementById('synopsisCardWrap').style.display = 'none';
   listenPenalty += seconds * 2;
   saveState();
-  // countdown
+  // show unmute prompt — timer starts when user unmutes
+  const timerEl = document.getElementById('videoTimer');
+  if (timerEl) {
+    timerEl.innerHTML = '<span onclick="unmuteAndStart(' + seconds + ')" style="cursor:pointer;color:var(--gold);text-decoration:underline;font-family:\'Space Mono\',monospace;font-size:0.7rem;letter-spacing:0.05em;">🔊 Tap to unmute</span>';
+  }
+  updateTrailerBtn();
+}
+
+function unmuteAndStart(seconds) {
+  // unmute via YouTube iframe API postMessage
+  const iframe = document.getElementById('ytIframe');
+  if (iframe && iframe.contentWindow) {
+    iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+  }
+  // start countdown
   let remaining = seconds;
   const timerEl = document.getElementById('videoTimer');
   if (timerEl) timerEl.textContent = remaining + 's remaining';
+  if (videoTimer) clearInterval(videoTimer);
   videoTimer = setInterval(() => {
     remaining--;
     if (remaining <= 0) { stopClip(); return; }
     if (timerEl) timerEl.textContent = remaining + 's remaining';
   }, 1000);
-  updateTrailerBtn();
 }
 
 function stopClip() {
