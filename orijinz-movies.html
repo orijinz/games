@@ -364,6 +364,7 @@
     border-color: var(--accent);
     color: #fff;
     flex: 1;
+    white-space: nowrap;
   }
   .listen-wrap {
     flex: 1;
@@ -419,6 +420,33 @@
   #listenBtn:disabled {
     background: transparent;
   }
+  #trailerBtn {
+    width: 100%;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--gold);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  #trailerBtn:hover:not(:disabled) {
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+    box-shadow: 0 4px 12px rgba(154,170,184,0.25);
+  }
+  #trailerBtn:disabled { background: transparent; }
+  #hintBtn {
+    width: 100%;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--gold);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  #hintBtn:hover:not(:disabled) {
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+  }
+  #hintBtn:disabled { opacity: 0.5; cursor: default; }
   .listen-progress {
     margin: 8px auto 0;
     width: 180px;
@@ -460,6 +488,30 @@
   .dur-opt.selected { color: var(--accent-light); border-bottom-color: var(--accent-light); }
   .dur-sep { color: var(--border); font-family: 'Space Mono', monospace; font-size: 0.58rem; }
 
+  /* HINT PANEL */
+  .hint-panel {
+    width: 100%;
+    background: rgba(154,170,184,0.06);
+    border: 1px solid rgba(154,170,184,0.22);
+    border-radius: 3px;
+    padding: 14px 18px;
+    display: none;
+    animation: cardReveal 0.4s ease-out;
+  }
+  .hint-panel.visible { display: block; }
+  .hint-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .hint-body {
+    font-size: 0.95rem;
+    color: var(--white);
+    line-height: 1.6;
+  }
   /* TOAST */
   .toast {
     position: fixed;
@@ -1348,14 +1400,33 @@
     </div>
   </div>
 
+  <!-- Hint panel (shown below synopsis when hint is used) -->
+  <div class="hint-panel" id="hintPanel">
+    <div class="hint-label">Hint</div>
+    <div class="hint-body" id="hintBody"></div>
+  </div>
+
+  <!-- Video card (shown while trailer plays, hidden otherwise) -->
+  <div id="videoCard" style="display:none; width:100%; border-radius:8px; overflow:hidden; border:1px solid var(--border); border-top:2px solid var(--accent-light);">
+    <div style="position:relative; width:100%; padding-top:56.25%;">
+      <div id="ytIframeContainer" style="position:absolute;top:0;left:0;width:100%;height:100%;"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:13%;background:#000;z-index:2;pointer-events:none;"></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px 8px;">
+      <span id="videoTimer" style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--gold);letter-spacing:0.05em;"></span>
+      <button class="clue-btn" onclick="stopClip()" style="padding:5px 14px;font-size:0.62rem;">&#x25A0; Stop</button>
+    </div>
+  </div>
+
   <!-- Clue buttons -->
   <div class="clue-section">
     <button class="clue-btn" id="revealBtn" onclick="revealLetter()">
       &#x1F521; Reveal a Letter
       <span class="clue-count" id="revealUsed"></span>
     </button>
-    <div class="listen-wrap" id="listenWrap" style="display:none">
-      <button class="clue-btn" id="listenBtn" onclick="playClip()">&#x1F3A7; Listen</button>
+    <!-- Trailer wrap (shown when youtube_id present) -->
+    <div class="listen-wrap" id="trailerWrap" style="display:none">
+      <button class="clue-btn" id="trailerBtn" onclick="watchTrailer()">&#x25B6; Watch Trailer</button>
       <div class="duration-pick" id="durationPick">
         <button class="dur-opt selected" id="dur10" onclick="selectDuration(10)">10s</button>
         <span class="dur-sep">·</span>
@@ -1364,9 +1435,11 @@
         <button class="dur-opt" id="dur30" onclick="selectDuration(30)">30s</button>
       </div>
     </div>
+    <!-- Hint wrap (shown when hint present but no youtube_id) -->
+    <div class="listen-wrap" id="hintWrap" style="display:none">
+      <button class="clue-btn" id="hintBtn" onclick="useHint()">&#x1F4A1; Hint</button>
+    </div>
   </div>
-  <div class="listen-progress" id="listenProgress" style="display:none">
-    <div class="listen-progress-bar" id="listenProgressBar"></div>
   </div>
 
   <!-- Game zone: tiles + keyboard fixed together on mobile -->
@@ -2013,10 +2086,12 @@ function initGame() {
   updateRevealBtn();
   updateClueButtons();
   if (hintShown && puzzle.hint) {
-    const ht = document.getElementById('hintText');
-    if (ht) { ht.textContent = puzzle.hint; ht.style.display = ''; }
+    const hp = document.getElementById('hintPanel');
+    const hb2 = document.getElementById('hintBody');
+    if (hb2) hb2.textContent = puzzle.hint;
+    if (hp) hp.classList.add('visible');
     const hb = document.getElementById('hintBtn');
-    if (hb) hb.disabled = true;
+    if (hb) { hb.disabled = true; hb.innerHTML = '&#x1F4A1; Hint (used)'; }
   }
   initDevTap();
   if (!gameOver && window.innerWidth <= 480) {
@@ -2468,10 +2543,12 @@ function updateTrailerBtn() {
 function useHint() {
   if (!puzzle || !puzzle.hint || hintShown || gameOver) return;
   hintShown = true;
-  const ht = document.getElementById('hintText');
-  if (ht) { ht.textContent = puzzle.hint; ht.style.display = ''; }
+  const hp = document.getElementById('hintPanel');
+  const hb2 = document.getElementById('hintBody');
+  if (hb2) hb2.textContent = puzzle.hint;
+  if (hp) hp.classList.add('visible');
   const hb = document.getElementById('hintBtn');
-  if (hb) { hb.disabled = true; hb.innerHTML = '&#x1F4A1; Hint'; }
+  if (hb) { hb.disabled = true; hb.innerHTML = '&#x1F4A1; Hint (used)'; }
   saveState();
 }
 
