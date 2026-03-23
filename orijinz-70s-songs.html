@@ -1582,10 +1582,10 @@ function closeMenu() {
   panel.classList.remove('open');
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); closeHelp(); } });
 
-function menuHome()     { closeMenu(); /* TODO: navigate home */ }
-function menuHelp()     { closeMenu(); /* TODO: show help modal */ }
+function menuHome()     { closeMenu(); window.location.href = 'https://www.entspire.com'; }
+function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); /* TODO: show advanced settings */ }
 
@@ -2729,6 +2729,51 @@ function safeInit() {
 document.addEventListener('DOMContentLoaded', safeInit);
 if (document.readyState !== 'loading') safeInit();
 window.addEventListener('resize', fitWordGroups);
+
+// =================================================================
+// HELP MODAL
+// =================================================================
+function openHelp() {
+  const overlay = document.getElementById('helpOverlay');
+  overlay.classList.add('open');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+function closeHelp() {
+  const overlay = document.getElementById('helpOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.remove('open'), 300);
+}
+function handleHelpOverlayClick(e) {
+  if (e.target === document.getElementById('helpOverlay')) closeHelp();
+}
 </script>
+
+<!-- Help modal -->
+<div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">
+  <div class="stats-panel" id="helpPanel" style="max-width:420px;">
+    <div class="stats-panel-header">
+      <span class="stats-title">How to Play</span>
+      <button class="stats-close" onclick="closeHelp()">&#x2715;</button>
+    </div>
+    <div id="helpContent" style="padding:20px 24px;font-size:0.9rem;color:var(--text-muted);line-height:1.7;">
+      <p style="margin:0 0 12px;">Read the song title and guess the <strong style="color:var(--text);">artist</strong>.</p>
+      <p style="margin:0 0 12px;">You have <strong style="color:var(--text);">6 guesses</strong>. After each guess the tiles change colour:</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin:0 0 16px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:34px;height:34px;background:#7d5db4;border-radius:5px;flex-shrink:0;"></div>
+          <span>Right letter, <strong style="color:var(--text);">right</strong> position</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:34px;height:34px;background:#3a3060;border-radius:5px;flex-shrink:0;"></div>
+          <span>Letter not in the answer</span>
+        </div>
+      </div>
+      <p style="margin:0 0 8px;">Spaces and punctuation fill in automatically.</p>
+      <p style="margin:0;">Optional clues (Reveal a Letter, Listen) are available but each adds to your score. A new song every day!</p>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
