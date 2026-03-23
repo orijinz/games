@@ -250,7 +250,7 @@
     text-align: center;
     line-height: 1.2;
   }
-  body:not(.window-blurred) .letter-tile.active {
+  .letter-tile.active {
     border-color: var(--gold);
     background: rgba(200,146,42,0.08);
     box-shadow: 0 0 0 3px rgba(200,146,42,0.2);
@@ -332,7 +332,6 @@
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: flex-start;
     overflow: hidden;
     max-height: 120px;
     transition: opacity 0.7s ease, max-height 0.9s ease, margin 0.9s ease;
@@ -363,18 +362,6 @@
     background: var(--accent);
     border-color: var(--accent);
     color: #fff;
-    flex: 1;
-    white-space: nowrap;
-  }
-  .listen-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
-  }
-  #listenBtn {
-    width: 100%;
   }
   .clue-btn:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -397,8 +384,8 @@
   .clue-count {
     font-size: 0.6rem;
     opacity: 0.7;
-    display: inline;
-    margin-left: 5px;
+    display: block;
+    margin-top: 2px;
   }
 
   /* LISTEN CLUE */
@@ -461,32 +448,6 @@
     background: var(--gold);
     border-radius: 2px;
   }
-
-  /* DURATION PICKER */
-  .duration-pick {
-    display: flex;
-    gap: 0;
-    align-items: center;
-    justify-content: center;
-  }
-  .dur-opt {
-    background: none;
-    border: none;
-    border-bottom: 1.5px solid transparent;
-    padding: 8px 10px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: color 0.12s, border-color 0.12s;
-    min-width: 44px;
-    text-align: center;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .dur-opt:hover { color: var(--accent-light); border-bottom-color: var(--accent-light); }
-  .dur-opt.selected { color: var(--accent-light); border-bottom-color: var(--accent-light); }
-  .dur-sep { color: var(--border); font-family: 'Space Mono', monospace; font-size: 0.58rem; }
 
   /* PLAY SONG / LEARN MORE PANEL overrides */
   .play-song-panel {
@@ -1260,78 +1221,6 @@
     box-shadow: 0 6px 16px rgba(154,170,184,0.2);
   }
 
-  .share-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 3000;
-    align-items: center;
-    justify-content: center;
-  }
-  .share-overlay.open { display: flex; }
-  .share-popup {
-    background: #161820;
-    border: 1px solid #2a3040;
-    border-radius: 14px;
-    padding: 20px 16px;
-    min-width: 260px;
-    max-width: 320px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-  }
-  @media (max-width: 480px) {
-    .share-overlay { align-items: flex-end; }
-    .share-popup { max-width: 100%; width: 100%; border-radius: 16px 16px 0 0; padding-bottom: 28px; }
-  }
-  .share-popup-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 4px;
-  }
-  .share-popup-title {
-    color: #4ecdc4;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .share-close {
-    background: none;
-    border: none;
-    color: #7aafc4;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 0 2px;
-    line-height: 1;
-  }
-  .share-close:hover { color: #ffffff; }
-  .share-option {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 11px 14px;
-    border-radius: 8px;
-    background: #0d1018;
-    color: #ffffff;
-    border: 1px solid #2a3040;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 14px;
-    text-decoration: none;
-    transition: background 0.15s;
-    text-align: left;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .share-option:hover { background: #1a2030; }
-
   /* RESPONSIVE */
   @media (max-width: 480px) {
     .kb-key      { height: 46px; font-size: 0.82rem; }
@@ -1461,7 +1350,7 @@
 
   <!-- Current input display -->
   <div class="input-section">
-    <p class="instruction" id="instructionText">Guess the movie</p>
+    <p class="instruction" id="instructionText">Name the artist</p>
     <div class="current-input-display" id="currentInputDisplay"></div>
     <div class="timer-display" id="timerDisplay">0:00</div>
   </div>
@@ -1521,23 +1410,6 @@
     <button onclick="devGoTo(prompt('Go to puzzle #:'))" style="-webkit-appearance:none;appearance:none;background:#2e1850;color:#f0c860;border:1px solid #f0c860;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#8594; Go To #</button>
   </div>
 </main>
-
-<!-- Share popup -->
-<div class="share-overlay" id="shareOverlay" onclick="handleShareOverlayClick(event)">
-  <div class="share-popup" id="sharePopup">
-    <div class="share-popup-header">
-      <div class="share-popup-title">Share</div>
-      <button class="share-close" onclick="closeSharePopup()">&#10005;</button>
-    </div>
-    <a class="share-option" id="shareEmail" href="#" target="_blank" rel="noopener">&#128140; Email</a>
-    <a class="share-option" id="shareMessages" href="#" target="_blank" rel="noopener">&#128172; Messages</a>
-    <a class="share-option" id="shareWhatsApp" href="#" target="_blank" rel="noopener">&#128518; WhatsApp</a>
-    <button class="share-option" onclick="sharePopupCopy()">&#128203; Copy to clipboard</button>
-    <a class="share-option" id="shareFacebook" href="#" target="_blank" rel="noopener">&#128420; Facebook</a>
-    <a class="share-option" id="shareBluesky" href="#" target="_blank" rel="noopener">&#127756; Bluesky</a>
-    <a class="share-option" id="shareTwitter" href="#" target="_blank" rel="noopener">&#120143; Post on X / Twitter</a>
-  </div>
-</div>
 
 <!-- Statistics modal -->
 <div class="stats-overlay" id="statsOverlay" onclick="handleStatsOverlayClick(event)">
@@ -1646,6 +1518,44 @@
   </div>
 </div>
 
+<!-- Help modal -->
+<div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">
+  <div class="stats-panel" id="helpPanel" style="max-width:460px;">
+    <div class="stats-panel-header">
+      <span class="stats-title">Help</span>
+      <button class="stats-close" onclick="closeHelp()">&#x2715;</button>
+    </div>
+    <div style="padding:20px 24px;font-size:0.9rem;color:var(--text-muted);line-height:1.7;overflow-y:auto;max-height:70vh;">
+      <p style="margin:0 0 16px;color:var(--text);font-weight:700;font-size:1.05rem;">Orijinz Movies</p>
+      <p style="margin:0 0 16px;">One of the many fun and fascinating Orijinz games!</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">How do you play?</p>
+      <p style="margin:0 0 16px;">Every day there&#39;s a new puzzle. Read the clue about a movie and guess the film title. Type your answer using the on-screen keyboard &#8212; a timer starts when you begin.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">What is the Watch Trailer button?</p>
+      <p style="margin:0 0 16px;">Tap &#34;Watch Trailer&#34; to see a clip from the film. Choose 10, 20, or 30 seconds &#8212; you can pick any duration and watch as many times as you like. Each second of viewing adds 2 seconds to your score. The IMDb link is hidden until you solve the puzzle.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">What is Reveal a Letter?</p>
+      <p style="margin:0 0 16px;">Tap &#34;Reveal a Letter&#34; and a random letter from the film title is shown. You can reveal as many letters as you like &#8212; even the full answer if you&#39;re stuck. Each reveal adds 15 seconds to your score.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">How is my score calculated?</p>
+      <p style="margin:0 0 16px;">Lower is better. Score = your time + 2&#215; seconds of trailer watched + 15 seconds per letter revealed + 5 seconds per wrong guess.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Where do I see everyone&#39;s scores?</p>
+      <p style="margin:0 0 16px;">After you play tap the &#34;Results&#34; button to view your results and the results of other players on the Orijinz leaderboard. There are three tabs &#8212; Score, Games Played, and Streak (Games played in a row). Tap the &#34;Share&#34; button to share your results with friends or family. To remove your name from the leaderboard, click the &#34;Hamburger&#34; three-line menu, choose &#34;Settings&#34; and toggle off &#34;Show me on the leaderboard.&#34;</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Can I view my statistics over time?</p>
+      <p style="margin:0 0 16px;">Yes &#8212; click the &#34;Hamburger&#34; three-line menu and choose &#34;Statistics.&#34;</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Is there a way to play earlier puzzles?</p>
+      <p style="margin:0 0 16px;">Unfortunately, not. If you want access to lots more, get the full Orijinz App.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Can we send you feedback or ideas?</p>
+      <p style="margin:0;">Of course &#8212; email <a href="mailto:orijinzgames@outlook.com" style="color:var(--accent-light);">orijinzgames@outlook.com</a>.</p>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <canvas id="confettiCanvas"></canvas>
 
@@ -1671,7 +1581,7 @@ function closeMenu() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); closeHelp(); } });
 
-function menuHome()     { closeMenu(); window.location.href = 'https://www.entspire.com'; }
+function menuHome()     { closeMenu(); /* TODO: navigate home */ }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); /* TODO: show advanced settings */ }
@@ -1775,6 +1685,21 @@ function handleStatsOverlayClick(e) {
   if (e.target === document.getElementById('statsOverlay')) closeStats();
 }
 
+function openHelp() {
+  const overlay = document.getElementById('helpOverlay');
+  overlay.classList.add('open');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+function closeHelp() {
+  const overlay = document.getElementById('helpOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.remove('open'), 300);
+}
+function handleHelpOverlayClick(e) {
+  if (e.target === document.getElementById('helpOverlay')) closeHelp();
+}
+
 function shareStats() {
   const s        = getStats();
   const played   = s.gamesPlayed;
@@ -1798,8 +1723,17 @@ function shareStats() {
     'https://www.entspire.com/orijinz-movies',
   ];
   const text = lines.join('\n');
+  const url  = 'https://www.entspire.com/orijinz-movies';
 
-  openSharePopup(text);
+  if (navigator.share) {
+    navigator.share({ title: 'Orijinz Daily 70s Songs Stats', text, url })
+      .catch(err => {
+        if (err.name !== 'AbortError')
+          navigator.clipboard.writeText(text).then(() => showToast('Copied! \uD83D\uDCCB', 2000));
+      });
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast('Copied! \uD83D\uDCCB', 2000));
+  }
 }
 
 // =================================================================
@@ -1972,8 +1906,9 @@ let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount =
 let streak = 0, puzzleIndex = 0;
 let timerInterval = null, startTime = null, elapsedSeconds = 0;
 let clipTimer = null;
-let listenPenalty = 0;
-let selectedDuration = 10;
+let listenStep = 0, listenPenalty = 0;
+const LISTEN_PENALTIES = [20, 40, 60];
+const LISTEN_LABELS = ['Listen for 10 seconds', 'Listen for 20 seconds', 'Listen for 30 seconds'];
 
 function formatTime(sec) {
   const h = Math.floor(sec / 3600);
@@ -2028,8 +1963,6 @@ function resumeTimer() {
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { pauseTimer(); } else { resumeTimer(); }
 });
-window.addEventListener('blur',  () => document.body.classList.add('window-blurred'));
-window.addEventListener('focus', () => document.body.classList.remove('window-blurred'));
 
 // =================================================================
 // INIT
@@ -2061,6 +1994,7 @@ function initGame() {
     wrongCount      = stored.wrongCount  || 0;
     gameOver        = stored.gameOver   || false;
     elapsedSeconds  = stored.elapsed    || 0;
+    listenStep      = stored.listenStep    || 0;
     listenPenalty   = stored.listenPenalty || 0;
     hintShown       = stored.hintShown  || false;
   }
@@ -2098,14 +2032,10 @@ function initGame() {
     startTimer();
   }
   updateRevealBtn();
-  updateClueButtons();
-  if (hintShown && puzzle.hint) {
-    const hp = document.getElementById('hintPanel');
-    const hb2 = document.getElementById('hintBody');
-    if (hb2) hb2.textContent = puzzle.hint;
-    if (hp) hp.classList.add('visible');
-    const hb = document.getElementById('hintBtn');
-    if (hb) { hb.disabled = true; hb.innerHTML = '&#x1F4A1; Hint (used)'; }
+  const listenBtn = document.getElementById('listenBtn');
+  if (listenBtn) {
+    listenBtn.style.display = (puzzle.preview_url && !gameOver) ? '' : 'none';
+    updateListenBtn();
   }
   initDevTap();
   if (!gameOver && window.innerWidth <= 480) {
@@ -2121,8 +2051,8 @@ function saveState() {
   safeSaveState({
     streak, lastPlayed: new Date().toDateString(),
     guesses, revealed: [...revealedLetters],
-    revealCount, wrongCount, gameOver, elapsed: elapsedSeconds,
-    listenPenalty, hintShown,
+    defShown: false, revealCount, wrongCount, gameOver, elapsed: elapsedSeconds,
+    listenStep, listenPenalty,
     ...(existing.devPuzzleIndex !== undefined ? { devPuzzleIndex: existing.devPuzzleIndex } : {})
   });
 }
@@ -2646,10 +2576,56 @@ function updateRevealBtn() {
   btn.querySelector('.clue-count').textContent = revealCount > 0 ? '(used ' + revealCount + '\xD7)' : '';
 }
 
-function selectDuration(secs) {
-  if (videoTimer) return;
-  selectedDuration = secs;
-  updateTrailerBtn();
+function playClip() {
+  if (!puzzle || !puzzle.preview_url) return;
+  if (gameOver || listenStep >= 3) return;
+  const seconds = [10, 20, 30][listenStep];
+  if (audioEl) { audioEl.pause(); audioEl.currentTime = 0; }
+  if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
+  if (!audioEl) audioEl = new Audio(puzzle.preview_url);
+  audioEl.currentTime = 0;
+  audioEl.play().catch(() => {});
+  const btn = document.getElementById('listenBtn');
+  if (btn) { btn.classList.add('playing'); document.getElementById('listenBtnText').textContent = 'Playing\u2026'; }
+  const prog = document.getElementById('listenProgress');
+  const bar  = document.getElementById('listenProgressBar');
+  if (prog && bar) {
+    prog.style.display = 'block';
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      bar.style.transition = 'width ' + seconds + 's linear';
+      bar.style.width = '100%';
+    }));
+  }
+  listenStep++;
+  listenPenalty = LISTEN_PENALTIES[listenStep - 1];
+  saveState();
+  clipTimer = setTimeout(() => {
+    if (audioEl) audioEl.pause();
+    clipTimer = null;
+    updateListenBtn();
+  }, seconds * 1000);
+}
+
+function stopClip() {
+  if (audioEl) { audioEl.pause(); audioEl.currentTime = 0; }
+  if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
+  updateListenBtn();
+}
+
+function updateListenBtn() {
+  const btn = document.getElementById('listenBtn');
+  if (!btn) return;
+  btn.classList.remove('playing');
+  const textEl = document.getElementById('listenBtnText');
+  if (listenStep >= 3) {
+    btn.disabled = true;
+    if (textEl) textEl.textContent = 'Listened';
+  } else {
+    btn.disabled = gameOver;
+    if (textEl) textEl.textContent = LISTEN_LABELS[listenStep];
+  }
 }
 
 // =================================================================
@@ -2658,10 +2634,10 @@ function selectDuration(secs) {
 function showResult(won) {
   stopTimer();
   stopClip();
-  const tw2 = document.getElementById('trailerWrap');
-  if (tw2) tw2.style.display = 'none';
-  const hw2 = document.getElementById('hintWrap');
-  if (hw2) hw2.style.display = 'none';
+  const lb = document.getElementById('listenBtn');
+  if (lb) lb.style.display = 'none';
+  const lp = document.getElementById('listenProgress');
+  if (lp) lp.style.display = 'none';
   document.getElementById('instructionText').style.display = 'none';
 
   const kb      = document.getElementById('keyboard');
@@ -2742,56 +2718,23 @@ document.addEventListener('click', function() {
   if (p) p.classList.remove('visible');
 });
 
-let _shareText = '', _shareUrl = '';
-let wixPageUrl = 'https://www.entspire.com/orijinz-movies';
-
-function openSharePopup(text) {
-  const url  = wixPageUrl;
-  _shareText = text;
-  _shareUrl  = url;
-  const encFull = encodeURIComponent(text + '\n' + url);
-  const encUrl  = encodeURIComponent(url);
-  document.getElementById('shareEmail').href    = 'mailto:?subject=Orijinz%20Movies&body=' + encFull;
-  document.getElementById('shareMessages').href = 'sms:?&body=' + encFull;
-  document.getElementById('shareWhatsApp').href = 'https://wa.me/?text=' + encFull;
-  document.getElementById('shareFacebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encUrl;
-  document.getElementById('shareBluesky').href  = 'https://bsky.app/intent/compose?text=' + encFull;
-  document.getElementById('shareTwitter').href  = 'https://twitter.com/intent/tweet?text=' + encFull;
-  document.getElementById('shareOverlay').classList.add('open');
-}
-function closeSharePopup() {
-  document.getElementById('shareOverlay').classList.remove('open');
-}
-function handleShareOverlayClick(e) {
-  if (e.target === document.getElementById('shareOverlay')) closeSharePopup();
-}
-function sharePopupCopy() {
-  try {
-    const el = document.createElement('textarea');
-    el.value = _shareText + '\n' + _shareUrl;
-    el.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-  } catch(e) {
-    window.parent.postMessage({ type: 'orijinz_copy', text: _shareText + '\n' + _shareUrl }, '*');
-  }
-  closeSharePopup();
-  showToast('Copied! \uD83D\uDCCB', 2000);
-}
-
-if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-  const el = document.getElementById('shareMessages');
-  if (el) el.style.display = 'none';
-}
-
 function shareResult() {
   const timeStr  = formatTime(elapsedSeconds);
   const shareText = 'Orijinz Daily Movies #' + (puzzleIndex + 1) + ' \u23F1\uFE0F ' + timeStr;
   const shareUrl  = 'https://www.entspire.com/orijinz-movies';
 
-  openSharePopup(shareText);
+  if (navigator.share) {
+    navigator.share({ title: 'Orijinz Daily 70s Songs', text: shareText, url: shareUrl })
+      .catch(err => {
+        if (err.name !== 'AbortError') {
+          navigator.clipboard.writeText(shareText + '\n' + shareUrl)
+            .then(() => showToast('Copied to clipboard! \uD83D\uDCCB', 2000));
+        }
+      });
+  } else {
+    navigator.clipboard.writeText(shareText + '\n' + shareUrl)
+      .then(() => showToast('Copied to clipboard! \uD83D\uDCCB', 2000));
+  }
 }
 
 // =================================================================
@@ -2819,8 +2762,8 @@ function devNext() {
     ...state,
     devPuzzleIndex: randIdx,
     lastPlayed: null, guesses: [], revealed: [],
-    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenPenalty: 0, hintShown: false
+    defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
+    listenStep: 0, listenPenalty: 0
   });
   location.reload();
 }
@@ -2831,8 +2774,8 @@ function devGoTo(n) {
     ...state,
     devPuzzleIndex: idx,
     lastPlayed: null, guesses: [], revealed: [],
-    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenPenalty: 0, hintShown: false
+    defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
+    listenStep: 0, listenPenalty: 0
   });
   location.reload();
 }
@@ -2883,51 +2826,6 @@ function safeInit() {
 document.addEventListener('DOMContentLoaded', safeInit);
 if (document.readyState !== 'loading') safeInit();
 window.addEventListener('resize', fitWordGroups);
-
-// =================================================================
-// HELP MODAL
-// =================================================================
-function openHelp() {
-  const overlay = document.getElementById('helpOverlay');
-  overlay.classList.add('open');
-  requestAnimationFrame(() => overlay.classList.add('visible'));
-}
-function closeHelp() {
-  const overlay = document.getElementById('helpOverlay');
-  if (!overlay) return;
-  overlay.classList.remove('visible');
-  setTimeout(() => overlay.classList.remove('open'), 300);
-}
-function handleHelpOverlayClick(e) {
-  if (e.target === document.getElementById('helpOverlay')) closeHelp();
-}
 </script>
-
-<!-- Help modal -->
-<div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">
-  <div class="stats-panel" id="helpPanel" style="max-width:420px;">
-    <div class="stats-panel-header">
-      <span class="stats-title">How to Play</span>
-      <button class="stats-close" onclick="closeHelp()">&#x2715;</button>
-    </div>
-    <div id="helpContent" style="padding:20px 24px;font-size:0.9rem;color:var(--text-muted);line-height:1.7;">
-      <p style="margin:0 0 12px;">Read the synopsis and guess the <strong style="color:var(--text);">movie</strong>.</p>
-      <p style="margin:0 0 12px;">You have <strong style="color:var(--text);">6 guesses</strong>. After each guess the tiles change colour:</p>
-      <div style="display:flex;flex-direction:column;gap:10px;margin:0 0 16px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:34px;height:34px;background:#6a7a88;border-radius:5px;flex-shrink:0;"></div>
-          <span>Right letter, <strong style="color:var(--text);">right</strong> position</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:34px;height:34px;background:#1e2530;border-radius:5px;flex-shrink:0;"></div>
-          <span>Letter not in the answer</span>
-        </div>
-      </div>
-      <p style="margin:0 0 8px;">Spaces and punctuation fill in automatically.</p>
-      <p style="margin:0;">Optional clues (Reveal a Letter, Watch Trailer) are available but each adds to your score. A new film every day!</p>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>

@@ -1366,6 +1366,41 @@
   </div>
 </div>
 
+<!-- Help modal -->
+<div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">
+  <div class="stats-panel" id="helpPanel" style="max-width:460px;">
+    <div class="stats-panel-header">
+      <span class="stats-title">Help</span>
+      <button class="stats-close" onclick="closeHelp()">&#x2715;</button>
+    </div>
+    <div style="padding:20px 24px;font-size:0.9rem;color:var(--text-muted);line-height:1.7;overflow-y:auto;max-height:70vh;">
+      <p style="margin:0 0 16px;color:var(--text);font-weight:700;font-size:1.05rem;">Orijinz Covers</p>
+      <p style="margin:0 0 16px;">One of the many fun and fascinating Orijinz games!</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">How do you play?</p>
+      <p style="margin:0 0 16px;">Every day there&#39;s a new puzzle. Listen to a cover version of a famous song and guess the original artist. Type your answer using the on-screen keyboard &#8212; a timer starts when you begin.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">What is Reveal a Letter?</p>
+      <p style="margin:0 0 16px;">Tap &#34;Reveal a Letter&#34; and a random letter from the artist&#39;s name is shown. You can reveal as many letters as you like &#8212; even the full answer if you&#39;re stuck. Each reveal adds 15 seconds to your score.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">How is my score calculated?</p>
+      <p style="margin:0 0 16px;">Lower is better. Score = your time + 15 seconds per letter revealed + 5 seconds per wrong guess.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Where do I see everyone&#39;s scores?</p>
+      <p style="margin:0 0 16px;">After you play tap the &#34;Results&#34; button to view your results and the results of other players on the Orijinz leaderboard. There are three tabs &#8212; Score, Games Played, and Streak (Games played in a row). Tap the &#34;Share&#34; button to share your results with friends or family. To remove your name from the leaderboard, click the &#34;Hamburger&#34; three-line menu, choose &#34;Settings&#34; and toggle off &#34;Show me on the leaderboard.&#34;</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Can I view my statistics over time?</p>
+      <p style="margin:0 0 16px;">Yes &#8212; click the &#34;Hamburger&#34; three-line menu and choose &#34;Statistics.&#34;</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Is there a way to play earlier puzzles?</p>
+      <p style="margin:0 0 16px;">Unfortunately, not. If you want access to lots more, get the full Orijinz App.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Can we send you feedback or ideas?</p>
+      <p style="margin:0;">Of course &#8212; email <a href="mailto:orijinzgames@outlook.com" style="color:var(--accent-light);">orijinzgames@outlook.com</a>.</p>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <canvas id="confettiCanvas"></canvas>
 
@@ -1389,10 +1424,10 @@ function closeMenu() {
   panel.classList.remove('open');
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); closeHelp(); } });
 
 function menuHome()     { closeMenu(); /* TODO: navigate home */ }
-function menuHelp()     { closeMenu(); /* TODO: show help modal */ }
+function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); /* TODO: show advanced settings */ }
 
@@ -1503,6 +1538,21 @@ function closeStats() {
 
 function handleStatsOverlayClick(e) {
   if (e.target === document.getElementById('statsOverlay')) closeStats();
+}
+
+function openHelp() {
+  const overlay = document.getElementById('helpOverlay');
+  overlay.classList.add('open');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+function closeHelp() {
+  const overlay = document.getElementById('helpOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.remove('open'), 300);
+}
+function handleHelpOverlayClick(e) {
+  if (e.target === document.getElementById('helpOverlay')) closeHelp();
 }
 
 function shareStats() {
