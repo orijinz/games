@@ -2531,7 +2531,7 @@ function watchTrailer() {
   listenPenalty += seconds * 2;
   saveState();
   const timerEl = document.getElementById('videoTimer');
-  if (timerEl) timerEl.textContent = 'Press ▶ to start';
+  if (timerEl) timerEl.innerHTML = 'Press <svg height="13" viewBox="0 0 90 63" style="vertical-align:middle;margin:0 3px 1px"><rect rx="14" ry="14" width="90" height="63" fill="#ff0000"/><polygon points="36,16 66,31.5 36,47" fill="#fff"/></svg> in the player above to start';
   updateTrailerBtn();
 
   const startTimer = () => {
