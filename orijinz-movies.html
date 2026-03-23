@@ -332,8 +332,9 @@
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
     overflow: hidden;
-    max-height: 120px;
+    max-height: 140px;
     transition: opacity 0.7s ease, max-height 0.9s ease, margin 0.9s ease;
   }
   .clue-section.fading {
@@ -362,6 +363,8 @@
     background: var(--accent);
     border-color: var(--accent);
     color: #fff;
+    flex: 1;
+    white-space: nowrap;
   }
   .clue-btn:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -406,6 +409,38 @@
   }
   #listenBtn:disabled {
     background: transparent;
+  }
+  .listen-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  #listenBtn { width: 100%; }
+  .duration-pick {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dur-opt {
+    background: transparent;
+    border: none;
+    padding: 2px 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .dur-opt.selected {
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .dur-opt:hover:not(.selected) { color: var(--text); }
+  .dur-sep {
+    color: var(--border);
+    font-size: 0.8rem;
   }
   #trailerBtn {
     width: 100%;
@@ -1350,7 +1385,7 @@
 
   <!-- Current input display -->
   <div class="input-section">
-    <p class="instruction" id="instructionText">Name the artist</p>
+    <p class="instruction" id="instructionText">Guess the movie</p>
     <div class="current-input-display" id="currentInputDisplay"></div>
     <div class="timer-display" id="timerDisplay">0:00</div>
   </div>
@@ -1405,7 +1440,7 @@
 
   <!-- Dev toolbar (only shown on github.io or local) -->
   <div id="devToolbar" style="display:none; margin-top:18px; display:none; gap:10px; justify-content:center; flex-wrap:wrap;">
-    <button onclick="devNext()"  style="-webkit-appearance:none;appearance:none;background:#2e1850;color:#f0c860;border:1px solid #f0c860;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#9654; Random Song</button>
+    <button onclick="devNext()"  style="-webkit-appearance:none;appearance:none;background:#2e1850;color:#f0c860;border:1px solid #f0c860;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#9654; Random Movie</button>
     <button onclick="devReset()" style="-webkit-appearance:none;appearance:none;background:#2e1850;color:#f0c860;border:1px solid #f0c860;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#8635; Reset</button>
     <button onclick="devGoTo(prompt('Go to puzzle #:'))" style="-webkit-appearance:none;appearance:none;background:#2e1850;color:#f0c860;border:1px solid #f0c860;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#8594; Go To #</button>
   </div>
@@ -1906,9 +1941,7 @@ let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount =
 let streak = 0, puzzleIndex = 0;
 let timerInterval = null, startTime = null, elapsedSeconds = 0;
 let clipTimer = null;
-let listenStep = 0, listenPenalty = 0;
-const LISTEN_PENALTIES = [20, 40, 60];
-const LISTEN_LABELS = ['Listen for 10 seconds', 'Listen for 20 seconds', 'Listen for 30 seconds'];
+let selectedDuration = 10, listenPenalty = 0;
 
 function formatTime(sec) {
   const h = Math.floor(sec / 3600);
@@ -1994,7 +2027,6 @@ function initGame() {
     wrongCount      = stored.wrongCount  || 0;
     gameOver        = stored.gameOver   || false;
     elapsedSeconds  = stored.elapsed    || 0;
-    listenStep      = stored.listenStep    || 0;
     listenPenalty   = stored.listenPenalty || 0;
     hintShown       = stored.hintShown  || false;
   }
@@ -2032,10 +2064,14 @@ function initGame() {
     startTimer();
   }
   updateRevealBtn();
-  const listenBtn = document.getElementById('listenBtn');
-  if (listenBtn) {
-    listenBtn.style.display = (puzzle.preview_url && !gameOver) ? '' : 'none';
-    updateListenBtn();
+  updateClueButtons();
+  if (hintShown && puzzle.hint) {
+    const hp = document.getElementById('hintPanel');
+    const hb2 = document.getElementById('hintBody');
+    if (hb2) hb2.textContent = puzzle.hint;
+    if (hp) hp.classList.add('visible');
+    const hb = document.getElementById('hintBtn');
+    if (hb) { hb.disabled = true; hb.innerHTML = '&#x1F4A1; Hint (used)'; }
   }
   initDevTap();
   if (!gameOver && window.innerWidth <= 480) {
@@ -2051,8 +2087,8 @@ function saveState() {
   safeSaveState({
     streak, lastPlayed: new Date().toDateString(),
     guesses, revealed: [...revealedLetters],
-    defShown: false, revealCount, wrongCount, gameOver, elapsed: elapsedSeconds,
-    listenStep, listenPenalty,
+    revealCount, wrongCount, gameOver, elapsed: elapsedSeconds,
+    listenPenalty, hintShown,
     ...(existing.devPuzzleIndex !== undefined ? { devPuzzleIndex: existing.devPuzzleIndex } : {})
   });
 }
@@ -2486,6 +2522,17 @@ function watchTrailer() {
           // wait until we've seen unstarted/paused/cued — then the next PLAYING is a real user press
           if (e.data === YT.PlayerState.UNSTARTED || e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.CUED) seenIdle = true;
           if (seenIdle && e.data === YT.PlayerState.PLAYING && !videoTimer) startTimer();
+        },
+        onError: function(e) {
+          if (videoTimer) { clearInterval(videoTimer); videoTimer = null; }
+          try { if (ytPlayer) ytPlayer.destroy(); } catch(ex) {} ytPlayer = null;
+          const ytUrl = 'https://www.youtube.com/watch?v=' + puzzle.youtube_id;
+          const c = document.getElementById('ytIframeContainer');
+          if (c) c.innerHTML = '<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#111;gap:12px;">'
+            + '<span style="color:#aaa;font-size:0.85rem;">This trailer cannot be embedded</span>'
+            + '<a href="' + ytUrl + '" target="_blank" rel="noopener" style="color:var(--gold);font-size:1rem;font-weight:700;text-decoration:underline;text-underline-offset:3px;">&#x25B6; Watch on YouTube</a>'
+            + '</div>';
+          if (timerEl) timerEl.textContent = '';
         }
       }
     });
@@ -2576,56 +2623,10 @@ function updateRevealBtn() {
   btn.querySelector('.clue-count').textContent = revealCount > 0 ? '(used ' + revealCount + '\xD7)' : '';
 }
 
-function playClip() {
-  if (!puzzle || !puzzle.preview_url) return;
-  if (gameOver || listenStep >= 3) return;
-  const seconds = [10, 20, 30][listenStep];
-  if (audioEl) { audioEl.pause(); audioEl.currentTime = 0; }
-  if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
-  if (!audioEl) audioEl = new Audio(puzzle.preview_url);
-  audioEl.currentTime = 0;
-  audioEl.play().catch(() => {});
-  const btn = document.getElementById('listenBtn');
-  if (btn) { btn.classList.add('playing'); document.getElementById('listenBtnText').textContent = 'Playing\u2026'; }
-  const prog = document.getElementById('listenProgress');
-  const bar  = document.getElementById('listenProgressBar');
-  if (prog && bar) {
-    prog.style.display = 'block';
-    bar.style.transition = 'none';
-    bar.style.width = '0%';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      bar.style.transition = 'width ' + seconds + 's linear';
-      bar.style.width = '100%';
-    }));
-  }
-  listenStep++;
-  listenPenalty = LISTEN_PENALTIES[listenStep - 1];
-  saveState();
-  clipTimer = setTimeout(() => {
-    if (audioEl) audioEl.pause();
-    clipTimer = null;
-    updateListenBtn();
-  }, seconds * 1000);
-}
-
-function stopClip() {
-  if (audioEl) { audioEl.pause(); audioEl.currentTime = 0; }
-  if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
-  updateListenBtn();
-}
-
-function updateListenBtn() {
-  const btn = document.getElementById('listenBtn');
-  if (!btn) return;
-  btn.classList.remove('playing');
-  const textEl = document.getElementById('listenBtnText');
-  if (listenStep >= 3) {
-    btn.disabled = true;
-    if (textEl) textEl.textContent = 'Listened';
-  } else {
-    btn.disabled = gameOver;
-    if (textEl) textEl.textContent = LISTEN_LABELS[listenStep];
-  }
+function selectDuration(secs) {
+  if (videoTimer) return;
+  selectedDuration = secs;
+  updateTrailerBtn();
 }
 
 // =================================================================
@@ -2634,10 +2635,10 @@ function updateListenBtn() {
 function showResult(won) {
   stopTimer();
   stopClip();
-  const lb = document.getElementById('listenBtn');
-  if (lb) lb.style.display = 'none';
-  const lp = document.getElementById('listenProgress');
-  if (lp) lp.style.display = 'none';
+  const tw2 = document.getElementById('trailerWrap');
+  if (tw2) tw2.style.display = 'none';
+  const hw2 = document.getElementById('hintWrap');
+  if (hw2) hw2.style.display = 'none';
   document.getElementById('instructionText').style.display = 'none';
 
   const kb      = document.getElementById('keyboard');
@@ -2694,10 +2695,11 @@ function showResult(won) {
   const imdbDiv = document.getElementById('imdbPanel');
   const moviePanel = document.getElementById('playMoviePanel');
   if (imdbDiv && moviePanel) {
+    const displayName = answer.split(' ').map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' ');
     if (puzzle.imdb_url) {
-      imdbDiv.innerHTML = 'Learn more about <a href="' + puzzle.imdb_url + '" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;text-underline-offset:3px;">' + answer + '</a>.';
+      imdbDiv.innerHTML = 'Learn more about <a href="' + puzzle.imdb_url + '" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;text-underline-offset:3px;">' + displayName + '</a>.';
     } else {
-      imdbDiv.innerHTML = 'Learn more about ' + answer + '.';
+      imdbDiv.innerHTML = 'Learn more about ' + displayName + '.';
     }
     moviePanel.classList.add('visible');
   }
@@ -2762,8 +2764,8 @@ function devNext() {
     ...state,
     devPuzzleIndex: randIdx,
     lastPlayed: null, guesses: [], revealed: [],
-    defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenStep: 0, listenPenalty: 0
+    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
+    listenPenalty: 0, hintShown: false
   });
   location.reload();
 }
@@ -2774,8 +2776,8 @@ function devGoTo(n) {
     ...state,
     devPuzzleIndex: idx,
     lastPlayed: null, guesses: [], revealed: [],
-    defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenStep: 0, listenPenalty: 0
+    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
+    listenPenalty: 0, hintShown: false
   });
   location.reload();
 }
