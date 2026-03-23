@@ -2512,30 +2512,13 @@ function watchTrailer() {
   if (!puzzle || !puzzle.youtube_id || gameOver) return;
   const seconds = selectedDuration;
   stopClip();
-  // show video card with tap-to-play prompt; use createElement+addEventListener (not innerHTML onclick) to work under CSP
-  const container = document.getElementById('ytIframeContainer');
-  const tapDiv = document.createElement('div');
-  tapDiv.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:12px;';
-  tapDiv.innerHTML =
-    '<div style="width:64px;height:64px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">&#x25B6;</div>' +
-    '<div style="font-family:monospace;font-size:0.75rem;color:var(--gold);letter-spacing:0.1em;">TAP TO PLAY</div>';
-  tapDiv.addEventListener('click', function() { playWithSound(seconds); });
-  container.innerHTML = '';
-  container.appendChild(tapDiv);
+  document.getElementById('ytIframeContainer').innerHTML =
+    '<iframe src="https://www.youtube.com/embed/' + puzzle.youtube_id +
+    '?controls=1&modestbranding=1&rel=0" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
   document.getElementById('videoCard').style.display = '';
   document.getElementById('synopsisCardWrap').style.display = 'none';
   listenPenalty += seconds * 2;
   saveState();
-  const timerEl = document.getElementById('videoTimer');
-  if (timerEl) timerEl.textContent = '';
-  updateTrailerBtn();
-}
-
-function playWithSound(seconds) {
-  // user gesture — browser allows autoplay with sound
-  document.getElementById('ytIframeContainer').innerHTML =
-    '<iframe src="https://www.youtube.com/embed/' + puzzle.youtube_id +
-    '?autoplay=1&controls=1&modestbranding=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
   let remaining = seconds;
   const timerEl = document.getElementById('videoTimer');
   if (timerEl) timerEl.textContent = remaining + 's remaining';
@@ -2545,6 +2528,7 @@ function playWithSound(seconds) {
     if (remaining <= 0) { stopClip(); return; }
     if (timerEl) timerEl.textContent = remaining + 's remaining';
   }, 1000);
+  updateTrailerBtn();
 }
 
 function stopClip() {
