@@ -2073,7 +2073,7 @@ function initGame() {
   document.getElementById('dateBadge').innerHTML =
     now.toLocaleDateString('en-US', {month:'short', day:'numeric'}) + '<br>' + now.getFullYear();
   document.getElementById('puzzleNum').textContent = 'Puzzle #' + (puzzleIndex + 1);
-  document.getElementById('synopsisText').innerHTML = puzzle.synopsis;
+  document.getElementById('synopsisText').innerHTML = puzzle.song;
 
   const synCard = document.getElementById('synopsisCard');
   const synWrap = document.getElementById('synopsisCardWrap');
@@ -2848,7 +2848,7 @@ function safeInit() {
   if (_initialized) return;
   _initialized = true;
   try { initGame(); } catch(e) {
-    const el = document.getElementById('songTitleText');
+    const el = document.getElementById('synopsisText');
     if (el) el.textContent = '\u26A0\uFE0F Could not load movie puzzle: ' + e.message;
   }
 }
