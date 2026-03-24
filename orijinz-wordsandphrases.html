@@ -807,6 +807,7 @@
     background: var(--border);
     margin: 8px 20px;
   }
+  .menu-section-label { padding: 4px 20px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
 
   /* STATISTICS MODAL */
   .stats-overlay {
@@ -1201,6 +1202,28 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
     </button>
+    <div class="menu-divider"></div>
+    <div class="menu-section-label">More Games</div>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/od70s-songs')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      70s Songs
+    </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odcovers')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Covers
+    </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odmovies')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Movies
+    </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odquotes')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Quotes
+    </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odslogans')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Slogans
+    </button>
   </div>
 </nav>
 
@@ -1432,6 +1455,7 @@ function menuHome()     { closeMenu(); window.location.href = 'https://www.entsp
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }
+function menuGame(url)   { closeMenu(); try { window.top.location.href = url; } catch(e) { window.location.href = url; } }
 
 // =================================================================
 // STATISTICS
@@ -2659,7 +2683,7 @@ function saveLeaderboardSetting(val) {
       <p style="margin:0 0 16px;">One of the many fun and fascinating origins games!</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">How do you play?</p>
-      <p style="margin:0 0 16px;">It&#39;s easy! Every day there is a new puzzle. Just guess what word or phrase matches the origin and type in your answer. If you type in the wrong answer, any correct letters will stay in place, but incorrect letters will turn red and then erase, so you can keep trying. A timer begins once you start and pauses if you close the browser or switch tabs.</p>
+      <p style="margin:0 0 16px;">Read the origin story of a word or phrase and guess what it is by typing in your answer &#8212; a timer starts when you begin.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">What are the Definition and Reveal a Letter buttons?</p>
       <p style="margin:0 0 16px;">For many cards, you can select the &#34;Definition&#34; button to get a clue. For more help, choose &#34;Reveal a Letter&#34; and a random letter from the answer is revealed. You can choose &#34;Reveal a Letter&#34; as many times as you want, even to show the full answer.</p>
