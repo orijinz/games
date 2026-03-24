@@ -818,9 +818,9 @@
     z-index: 300;
     opacity: 0;
     transition: opacity 0.25s ease;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 12px 12px env(safe-area-inset-bottom, 12px);
+    padding: max(10vh, 60px) 12px 12px;
   }
   .stats-overlay.open    { display: flex; }
   .stats-overlay.visible { opacity: 1; }
@@ -1265,10 +1265,13 @@
   <!-- Game zone: tiles + keyboard fixed together on mobile -->
   <div class="game-zone" id="gameZone">
 
-  <!-- Hidden input for native keyboard mode (must stay in viewport so iOS doesn't scroll away) -->
-  <input id="nativeInput" type="text"
-    autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
-    style="position:fixed;bottom:50%;left:50%;width:1px;height:1px;opacity:0;pointer-events:none;border:none;outline:none;background:transparent;color:transparent;caret-color:transparent;">
+  <!-- Hidden textarea for native keyboard mode.
+       - textarea avoids Android keyCode-229 bug that affects <input type="text">
+       - opacity:0 prevents iOS Safari from scrolling the page to bring it into view
+       - autocapitalize="none" reduces the iOS predictive/autofill suggestion bar -->
+  <textarea id="nativeInput"
+    autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+    style="position:fixed;bottom:50%;left:50%;width:1px;height:1px;opacity:0;pointer-events:none;border:none;outline:none;background:transparent;color:transparent;caret-color:transparent;resize:none;overflow:hidden;"></textarea>
 
   <!-- Current input display -->
   <div class="input-section">
