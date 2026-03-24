@@ -2411,6 +2411,8 @@ function showResult(won) {
   const rp      = document.getElementById('resultPanel');
   const cs      = document.querySelector('.clue-section');
   const ow      = document.getElementById('originCardWrap');
+  const hint    = document.getElementById('tapToTypeHint');
+  const ni      = document.getElementById('nativeInput');
 
   // Fade out keyboard + divider + clue buttons + origin card
   kb.classList.add('fading');
@@ -2427,6 +2429,8 @@ function showResult(won) {
     if (divider) divider.style.display = 'none';
     if (cs) cs.style.display = 'none';
     if (ow) ow.style.display = 'none';
+    if (hint) hint.style.display = 'none';
+    if (ni) ni.style.display = 'none';
   }, 1200);
 
   const emoji = document.getElementById('resultEmoji');
