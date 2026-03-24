@@ -820,6 +820,7 @@
     transition: opacity 0.25s ease;
     align-items: center;
     justify-content: center;
+    padding: 12px 12px env(safe-area-inset-bottom, 12px);
   }
   .stats-overlay.open    { display: flex; }
   .stats-overlay.visible { opacity: 1; }
@@ -1264,10 +1265,10 @@
   <!-- Game zone: tiles + keyboard fixed together on mobile -->
   <div class="game-zone" id="gameZone">
 
-  <!-- Hidden input for native keyboard mode -->
+  <!-- Hidden input for native keyboard mode (must stay in viewport so iOS doesn't scroll away) -->
   <input id="nativeInput" type="text"
     autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
-    style="position:fixed;top:-200px;left:-200px;width:1px;height:1px;opacity:0;pointer-events:none;">
+    style="position:fixed;bottom:50%;left:50%;width:1px;height:1px;opacity:0;pointer-events:none;border:none;outline:none;background:transparent;color:transparent;caret-color:transparent;">
 
   <!-- Current input display -->
   <div class="input-section">
@@ -2080,6 +2081,7 @@ function updateKeyboard() {
 // INPUT HANDLING
 // =================================================================
 document.addEventListener('keydown', e => {
+  if (document.activeElement === document.getElementById('nativeInput')) return;
   if (e.ctrlKey && e.key === ']') { e.preventDefault(); devNext();  return; }
   if (e.ctrlKey && e.key === '[') { e.preventDefault(); devReset(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
