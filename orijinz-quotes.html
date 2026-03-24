@@ -120,7 +120,8 @@
   }
 
   /* ── QUOTE CARD ── */
-  .quote-card-wrap { width: 100%; }
+  .quote-card-wrap { width: 100%; transition: opacity 0.7s ease; }
+  .quote-card-wrap.fading { opacity: 0; pointer-events: none; }
 
   .quote-card {
     width: 100%;
@@ -633,7 +634,8 @@
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.55); z-index: 300;
     opacity: 0; transition: opacity 0.25s ease;
-    align-items: center; justify-content: center;
+    align-items: flex-start; justify-content: center;
+    padding: max(10vh, 60px) 12px 12px;
   }
   .stats-overlay.open    { display: flex; }
   .stats-overlay.visible { opacity: 1; }
@@ -1882,15 +1884,19 @@ function showResult(won) {
   const divider  = document.querySelector('.section-divider');
   const rp       = document.getElementById('resultPanel');
   const clueSection = document.querySelector('.clue-section');
+  const qw       = document.getElementById('quoteCardWrap');
 
   kb.classList.add('fading');
   if (divider)     divider.classList.add('fading');
   if (clueSection) clueSection.classList.add('fading');
+  if (qw)          qw.classList.add('fading');
   rp.classList.add('visible');
 
   setTimeout(() => {
     kb.style.display = 'none';
     if (divider) divider.style.display = 'none';
+    if (clueSection) clueSection.style.display = 'none';
+    if (qw) qw.style.display = 'none';
   }, 1200);
 
   const emoji = document.getElementById('resultEmoji');
@@ -1978,7 +1984,10 @@ function devNext() {
   location.reload();
 }
 function devGoTo(n) {
-  const idx   = Math.max(0, Math.min(n - 1, PUZZLES.length - 1));
+  n = parseInt(n, 10);
+  if (!n) return;
+  const idx = PUZZLES.findIndex(p => p.id === n);
+  if (idx === -1) { alert('Puzzle #' + n + ' not found'); return; }
   const state = safeGetState();
   safeSaveState({ ...state, devPuzzleIndex: idx, lastPlayed: null, guesses: [], revealed: [], revealCount: 0, wrongCount: 0, hintShown: false, gameOver: false, elapsed: 0 });
   location.reload();

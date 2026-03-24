@@ -1145,7 +1145,8 @@
     .kb-key.wide { font-size: 0.68rem; }
     .origin-card { padding: 18px 18px; max-height: 200px; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; }
     .origin-card::-webkit-scrollbar { display: none; }
-    .origin-card-wrap { position: relative; }
+    .origin-card-wrap { position: relative; transition: opacity 0.7s ease; }
+    .origin-card-wrap.fading { opacity: 0; pointer-events: none; }
     .origin-card-wrap::after {
       content: '';
       position: absolute;
@@ -2409,11 +2410,13 @@ function showResult(won) {
   const divider = document.querySelector('.section-divider');
   const rp      = document.getElementById('resultPanel');
   const cs      = document.querySelector('.clue-section');
+  const ow      = document.getElementById('originCardWrap');
 
-  // Fade out keyboard + divider + clue buttons
+  // Fade out keyboard + divider + clue buttons + origin card
   kb.classList.add('fading');
   if (divider) divider.classList.add('fading');
   if (cs) cs.classList.add('fading');
+  if (ow) ow.classList.add('fading');
 
   // Show result panel — animation handles the fade-in
   rp.classList.add('visible');
@@ -2422,6 +2425,8 @@ function showResult(won) {
   setTimeout(() => {
     kb.style.display = 'none';
     if (divider) divider.style.display = 'none';
+    if (cs) cs.style.display = 'none';
+    if (ow) ow.style.display = 'none';
   }, 1200);
 
   const emoji = document.getElementById('resultEmoji');
@@ -2562,7 +2567,10 @@ function devNext() {
   location.reload();
 }
 function devGoTo(n) {
-  const idx = Math.max(0, Math.min(n - 1, PUZZLES.length - 1));
+  n = parseInt(n, 10);
+  if (!n) return;
+  const idx = PUZZLES.findIndex(p => p.id === n);
+  if (idx === -1) { alert('Puzzle #' + n + ' not found'); return; }
   const state = safeGetState();
   safeSaveState({
     ...state,

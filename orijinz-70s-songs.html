@@ -855,7 +855,9 @@
     z-index: 300;
     opacity: 0;
     transition: opacity 0.25s ease;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: center;
+    padding: max(10vh, 60px) 12px 12px;
     justify-content: center;
   }
   .stats-overlay.open    { display: flex; }
@@ -1213,7 +1215,8 @@
     .kb-key.wide { font-size: 0.68rem; }
     .song-card { padding: 18px 18px; max-height: 200px; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; }
     .song-card::-webkit-scrollbar { display: none; }
-    .song-card-wrap { position: relative; }
+    .song-card-wrap { position: relative; transition: opacity 0.7s ease; }
+    .song-card-wrap.fading { opacity: 0; pointer-events: none; }
     .song-card-wrap::after {
       content: '';
       position: absolute;
@@ -2613,16 +2616,20 @@ function showResult(won) {
   const divider = document.querySelector('.section-divider');
   const rp      = document.getElementById('resultPanel');
   const cs      = document.querySelector('.clue-section');
+  const scw     = document.getElementById('songCardWrap');
 
   kb.classList.add('fading');
   if (divider) divider.classList.add('fading');
   if (cs) cs.classList.add('fading');
+  if (scw) scw.classList.add('fading');
 
   rp.classList.add('visible');
 
   setTimeout(() => {
     kb.style.display = 'none';
     if (divider) divider.style.display = 'none';
+    if (cs) cs.style.display = 'none';
+    if (scw) scw.style.display = 'none';
   }, 1200);
 
   const emoji = document.getElementById('resultEmoji');
@@ -2737,7 +2744,10 @@ function devNext() {
   location.reload();
 }
 function devGoTo(n) {
-  const idx = Math.max(0, Math.min(n - 1, PUZZLES.length - 1));
+  n = parseInt(n, 10);
+  if (!n) return;
+  const idx = PUZZLES.findIndex(p => p.id === n);
+  if (idx === -1) { alert('Puzzle #' + n + ' not found'); return; }
   const state = safeGetState();
   safeSaveState({
     ...state,

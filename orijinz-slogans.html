@@ -102,7 +102,9 @@ main {
   border: 1px solid var(--border); border-top: 2px solid var(--accent);
   border-radius: 8px; padding: 18px 20px 20px;
   animation: cardReveal 0.5s ease-out;
+  transition: opacity 0.5s;
 }
+.slogan-card.fading { opacity: 0; pointer-events: none; }
 @keyframes cardReveal {
   from { transform: translateY(8px); opacity: 0.7; }
   to   { transform: translateY(0);   opacity: 1;   }
@@ -382,7 +384,8 @@ body.page-blur .letter-tile.active {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.65); z-index: 300;
   opacity: 0; transition: opacity 0.3s;
-  align-items: center; justify-content: center;
+  align-items: flex-start; justify-content: center;
+  padding: max(10vh, 60px) 12px 12px;
 }
 .modal-overlay.open { display: flex; }
 .modal-overlay.visible { opacity: 1; }
@@ -1256,14 +1259,18 @@ function showResult(won) {
   const kb      = document.getElementById('keyboard');
   const divider = document.querySelector('.section-divider');
   const cs      = document.querySelector('.clue-section');
+  const sc      = document.querySelector('.slogan-card');
   const rp      = document.getElementById('resultPanel');
 
   kb.classList.add('fading');
   if (divider) divider.classList.add('fading');
   if (cs)      cs.classList.add('fading');
+  if (sc)      sc.classList.add('fading');
   setTimeout(() => {
     kb.style.display = 'none';
     if (divider) divider.style.display = 'none';
+    if (cs)      cs.style.display = 'none';
+    if (sc)      sc.style.display = 'none';
     rp.classList.add('visible');
   }, 500);
 
