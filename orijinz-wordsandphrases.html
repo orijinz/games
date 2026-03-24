@@ -1264,10 +1264,16 @@
   <!-- Game zone: tiles + keyboard fixed together on mobile -->
   <div class="game-zone" id="gameZone">
 
+  <!-- Hidden input for native keyboard mode -->
+  <input id="nativeInput" type="text"
+    autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+    style="position:fixed;top:-200px;left:-200px;width:1px;height:1px;opacity:0;pointer-events:none;">
+
   <!-- Current input display -->
   <div class="input-section">
     <p class="instruction" id="instructionText">Type your guess using the keyboard below</p>
-    <div class="current-input-display" id="currentInputDisplay"></div>
+    <div class="current-input-display" id="currentInputDisplay" onclick="handleTilesTap()"></div>
+    <div id="tapToTypeHint" style="display:none;text-align:center;padding:8px 0 4px;font-size:0.85rem;color:var(--text-muted);cursor:pointer;" onclick="focusNativeInput()">Tap here to type your answer</div>
     <div class="timer-display" id="timerDisplay">0:00</div>
   </div>
 
@@ -1920,6 +1926,7 @@ function initGame() {
   }
 
   buildKeyboard();
+  applyKeyboardMode();
   document.getElementById('guessHistory').innerHTML = '';
   updateCurrentInputDisplay();
 
@@ -2633,6 +2640,8 @@ function openSettings() {
   const overlay = document.getElementById('settingsOverlay');
   const cb = document.getElementById('settingShowOnLeaderboard');
   if (cb) cb.checked = localStorage.getItem('showOnLeaderboard') !== 'false';
+  const cb2 = document.getElementById('settingNativeKeyboard');
+  if (cb2) cb2.checked = localStorage.getItem('nativeKeyboard') === 'true';
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
@@ -2648,6 +2657,51 @@ function handleSettingsOverlayClick(e) {
 function saveLeaderboardSetting(val) {
   localStorage.setItem('showOnLeaderboard', val ? 'true' : 'false');
 }
+function saveNativeKeyboardSetting(val) {
+  localStorage.setItem('nativeKeyboard', val ? 'true' : 'false');
+  applyKeyboardMode();
+}
+function applyKeyboardMode() {
+  const native  = localStorage.getItem('nativeKeyboard') === 'true';
+  const kb      = document.getElementById('keyboard');
+  const divider = document.querySelector('.section-divider');
+  const hint    = document.getElementById('tapToTypeHint');
+  const instr   = document.getElementById('instructionText');
+  if (native) {
+    if (kb)      { kb.style.display = 'none'; }
+    if (divider) { divider.style.display = 'none'; }
+    if (hint)    { hint.style.display = 'block'; }
+    if (instr)   { instr.textContent = 'Tap the tiles to type your answer'; }
+  } else {
+    if (kb)      { kb.style.display = ''; }
+    if (divider) { divider.style.display = ''; }
+    if (hint)    { hint.style.display = 'none'; }
+    if (instr)   { instr.textContent = 'Type your guess using the keyboard below'; }
+  }
+}
+function focusNativeInput() {
+  if (gameOver) return;
+  const input = document.getElementById('nativeInput');
+  if (input) { input.value = ''; input.focus(); }
+}
+function handleTilesTap() {
+  if (localStorage.getItem('nativeKeyboard') === 'true') focusNativeInput();
+}
+(function initNativeInput() {
+  const input = document.getElementById('nativeInput');
+  if (!input) return;
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter')     { e.preventDefault(); handleKey('ENTER'); }
+    else if (e.key === 'Backspace') { e.preventDefault(); handleKey('\u232B'); }
+  });
+  input.addEventListener('input', function() {
+    const val = input.value.toUpperCase();
+    input.value = '';
+    for (const ch of val) {
+      if (/^[A-Z]$/.test(ch)) handleKey(ch);
+    }
+  });
+})();
 </script>
 
 <!-- Settings modal -->
@@ -2656,6 +2710,17 @@ function saveLeaderboardSetting(val) {
     <div class="stats-panel-header">
       <span class="stats-title">Settings</span>
       <button class="stats-close" onclick="closeSettings()">&#x2715;</button>
+    </div>
+    <div class="stats-section-label">Keyboard</div>
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">Use native keyboard</div>
+        <div class="settings-row-desc">Use your device&#39;s built-in keyboard instead of the on-screen one</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="settingNativeKeyboard" onchange="saveNativeKeyboardSetting(this.checked)">
+        <span class="toggle-track"></span>
+      </label>
     </div>
     <div class="stats-section-label">Leaderboard</div>
     <div class="settings-row">
