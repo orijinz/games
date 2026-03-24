@@ -844,6 +844,7 @@
     background: var(--border);
     margin: 8px 20px;
   }
+  .menu-section-label { padding: 4px 20px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
 
   /* STATISTICS MODAL */
   .stats-overlay {
@@ -1270,6 +1271,28 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
     </button>
+    <div class="menu-divider"></div>
+    <div class="menu-section-label">More Games</div>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odcovers')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Covers
+    </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odmovies')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Movies
+    </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odquotes')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Quotes
+    </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odslogans')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Slogans
+    </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odwordsandphrases')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Words &amp; Phrases
+    </button>
   </div>
 </nav>
 
@@ -1517,7 +1540,7 @@
       <p style="margin:0 0 16px;">One of the many fun and fascinating Orijinz games!</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">How do you play?</p>
-      <p style="margin:0 0 16px;">Every day there&#39;s a new puzzle. Read the clue about a hit song from the 70s and guess the song title. Type your answer using the on-screen keyboard &#8212; a timer starts when you begin.</p>
+      <p style="margin:0 0 16px;">Read the clue about a hit song from the 70s and guess the song title by typing in your answer &#8212; a timer starts when you begin.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">What is the Listen button?</p>
       <p style="margin:0 0 16px;">Tap &#34;Listen&#34; to hear a clip of the song. Choose 10, 20, or 30 seconds &#8212; you can pick any duration and listen as many times as you like. Each second of listening adds 2 seconds to your score.</p>
@@ -1572,6 +1595,7 @@ function menuHome()     { closeMenu(); /* TODO: navigate home */ }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }
+function menuGame(url)   { closeMenu(); try { window.top.location.href = url; } catch(e) { window.location.href = url; } }
 
 // =================================================================
 // STATISTICS
@@ -1878,12 +1902,21 @@ function renderLeaderboard() {
   const hdr      = document.getElementById('lbListHeader');
 
   if (lbSortBy === 'score') {
-    const d = getLbData();
-    const puzzleKey = 'puzzle_' + puzzleIndex;
-    const entries = (d[puzzleKey] && d[puzzleKey].entries) ? [...d[puzzleKey].entries] : [];
-    entries.sort((a, b) => a.score - b.score);
-    const alreadySubmitted = entries.some(e => e.deviceId === deviceId);
-    form.style.display = alreadySubmitted ? 'none' : '';
+    let entries;
+    if (wixLeaderboardData && wixLeaderboardData.scores && wixLeaderboardData.scores.length > 0) {
+      form.style.display = 'none';
+      entries = wixLeaderboardData.scores.map(r => ({
+        name: r.name, location: r.location, score: r.score,
+        deviceId: r.memberId === wixLeaderboardData.memberId ? deviceId : r.memberId
+      }));
+    } else {
+      const d = getLbData();
+      const puzzleKey = 'puzzle_' + puzzleIndex;
+      entries = (d[puzzleKey] && d[puzzleKey].entries) ? [...d[puzzleKey].entries] : [];
+      entries.sort((a, b) => a.score - b.score);
+      const alreadySubmitted = entries.some(e => e.deviceId === deviceId);
+      form.style.display = alreadySubmitted ? 'none' : '';
+    }
     hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
     if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">No scores yet today \u2014 be the first!</div>'; return; }
     list.innerHTML = entries.map((e, i) => {
@@ -1893,7 +1926,16 @@ function renderLeaderboard() {
 
   } else {
     form.style.display = 'none';
-    const players = getAllPlayerStats();
+    let players;
+    if (wixLeaderboardData && wixLeaderboardData.stats && wixLeaderboardData.stats.length > 0) {
+      players = wixLeaderboardData.stats.map(s => ({
+        name: s.name, location: s.location,
+        played: s.gamesPlayed, streak: s.currentStreak,
+        deviceId: s.memberId === wixLeaderboardData.memberId ? deviceId : s.memberId
+      }));
+    } else {
+      players = getAllPlayerStats();
+    }
     if (lbSortBy === 'played') {
       players.sort((a, b) => b.played - a.played);
       hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-played">Played</span><span class="lb-col-streak" style="color:var(--text-muted)">Streak</span>';
