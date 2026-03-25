@@ -434,6 +434,15 @@ body.page-blur .letter-tile.active {
   .game-accord.open .game-accord-body { display: block; }
   #allGamesSection .stats-section-label { margin-top: 0; }
   #allGamesSection .stats-row { padding-left: 24px; padding-right: 24px; }
+  .stats-sub-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.54rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 12px 24px 4px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
 
 /* Help panel */
 .help-q { font-weight: 700; color: var(--text); padding: 14px 20px 4px; font-size: 0.9rem; }
@@ -702,27 +711,6 @@ body.page-blur .letter-tile.active {
     </div>
 
     <div id="allGamesSection"></div>
-    <div class="stats-section-label" style="margin-top:4px;">Slogans</div>
-    <div class="stats-section-label">Games</div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Days played</span>          <span class="stats-stat-value" id="st-played">0</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Current streak</span>        <span class="stats-stat-value" id="st-streak">0</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Longest streak</span>        <span class="stats-stat-value" id="st-longest-streak">0</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Pure wins (no hints)</span>  <span class="stats-stat-value" id="st-pure-wins">0</span></div>
-    <div class="stats-section-label">Hints &amp; Mistakes</div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Letters revealed</span>      <span class="stats-stat-value" id="st-reveals">0</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Avg reveals per game</span>  <span class="stats-stat-value" id="st-avg-reveals">0.0</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Wrong letters total</span>   <span class="stats-stat-value" id="st-wrong">0</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Avg wrong per game</span>    <span class="stats-stat-value" id="st-avg-wrong">0.0</span></div>
-    <div class="stats-section-label">Time</div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Total time</span>            <span class="stats-stat-value" id="st-total-time">0:00</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Avg time per game</span>     <span class="stats-stat-value" id="st-avg-time">0:00</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Best time</span>             <span class="stats-stat-value" id="st-best-time">--</span></div>
-    <div class="stats-section-label">Score</div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Avg score per game</span>    <span class="stats-stat-value" id="st-avg-score">--</span></div>
-    <div class="stats-stat-row"><span class="stats-stat-label">Best score</span>            <span class="stats-stat-value" id="st-best-score">--</span></div>
-    <div style="text-align:center;padding:20px 20px 24px;">
-      <button class="btn-share" onclick="shareStats()">Share Stats! <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
-    </div>
   </div>
 </div>
 
@@ -944,6 +932,9 @@ function recordGameResult(won) {
     if (s.bestScore === null || score          < s.bestScore) s.bestScore = score;
     if (streak > s.longestStreak) s.longestStreak = streak;
     if (revealCount === 0) s.pureWins++;
+    s.lastGame = { date: todayKey, won: true, time: elapsedSeconds, score: score, reveals: revealCount, wrong: wrongCount };
+  } else {
+    s.lastGame = { date: todayKey, won: false, time: null, score: null, reveals: revealCount, wrong: wrongCount };
   }
   s.lastPuzzleDate = todayKey;
   saveStats(s);
@@ -1421,6 +1412,7 @@ function buildAllGamesStats() {
   if (!container) return;
   let totPlayed = 0, totWins = 0, bestStreak = 0, totSecs = 0;
   let accordHtml = '';
+  const todayKey = new Date().toDateString();
   ALL_GAMES_META.forEach(g => {
     let s = {}, st = {};
     try { s  = JSON.parse(localStorage.getItem(g.key)      || '{}'); } catch(e) {}
@@ -1432,24 +1424,77 @@ function buildAllGamesStats() {
     const bestT     = s.bestTime != null ? formatTime(s.bestTime) : '--';
     totPlayed += played; totWins += wins; totSecs += (s.totalTime || 0);
     if (longest > bestStreak) bestStreak = longest;
-    const THIS_KEY = STATS_KEY;
-    const isCurr = g.key === THIS_KEY;
-    if (isCurr || played === 0) return;
-    accordHtml +=
-      '<div class="game-accord' + (isCurr ? ' open' : '') + '">' +
-        '<div class="game-accord-hdr" onclick="toggleAccord(this)">' +
-          '<span class="accord-arrow">' + (isCurr ? '&#9660;' : '&#9654;') + '</span>' +
-          '<span class="accord-label">' + g.label + '</span>' +
-          '<span class="accord-played">' + played + ' played</span>' +
-        '</div>' +
-        '<div class="game-accord-body">' +
-          '<div class="stats-row"><span class="stats-label">Games played</span><span class="stats-value">' + played + '</span></div>' +
-          '<div class="stats-row"><span class="stats-label">Current streak</span><span class="stats-value">' + curStreak + '</span></div>' +
-          '<div class="stats-row"><span class="stats-label">Longest streak</span><span class="stats-value">' + longest + '</span></div>' +
-          '<div class="stats-row"><span class="stats-label">Wins</span><span class="stats-value">' + wins + '</span></div>' +
-          '<div class="stats-row"><span class="stats-label">Best time</span><span class="stats-value">' + bestT + '</span></div>' +
-        '</div>' +
-      '</div>';
+    const isCurr = g.key === STATS_KEY;
+    if (!isCurr && played === 0) return;
+    if (isCurr) {
+      accordHtml +=
+        '<div class="game-accord open">' +
+          '<div class="game-accord-hdr" onclick="toggleAccord(this)">' +
+            '<span class="accord-arrow">&#9660;</span>' +
+            '<span class="accord-label">' + g.label + '</span>' +
+            '<span class="accord-played">' + played + ' played</span>' +
+          '</div>' +
+          '<div class="game-accord-body">' +
+            '<div class="stats-sub-label">Today</div>' +
+            '<div id="todayStatsSection"></div>' +
+            '<div class="stats-sub-label">Overall</div>' +
+            '<div class="stats-section-label">Games</div>' +
+            '<div class="stats-row"><span class="stats-label">Days played</span><span class="stats-value" id="st-played">0</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Current streak</span><span class="stats-value" id="st-streak">0</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Longest streak</span><span class="stats-value" id="st-longest-streak">0</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Pure wins (no hints)</span><span class="stats-value" id="st-pure-wins">0</span></div>' +
+            '<div class="stats-section-label">Hints &amp; Mistakes</div>' +
+            '<div class="stats-row"><span class="stats-label">Letters revealed</span><span class="stats-value" id="st-reveals">0</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Avg reveals per game</span><span class="stats-value" id="st-avg-reveals">0.0</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Wrong letters total</span><span class="stats-value" id="st-wrong">0</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Avg wrong per game</span><span class="stats-value" id="st-avg-wrong">0.0</span></div>' +
+            '<div class="stats-section-label">Time</div>' +
+            '<div class="stats-row"><span class="stats-label">Total time</span><span class="stats-value" id="st-total-time">0:00</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Avg time per game</span><span class="stats-value" id="st-avg-time">0:00</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Best time</span><span class="stats-value" id="st-best-time">--</span></div>' +
+            '<div class="stats-section-label">Score</div>' +
+            '<div class="stats-row"><span class="stats-label">Avg score per game</span><span class="stats-value" id="st-avg-score">--</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Best score</span><span class="stats-value" id="st-best-score">--</span></div>' +
+            '<div style="text-align:center;padding:20px 20px 24px;">' +
+              '<button class="btn-share" onclick="shareStats()">Share Stats! <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    } else {
+      const lg = s.lastGame || null;
+      let todayHtml = '';
+      if (!lg || lg.date !== todayKey) {
+        todayHtml = '<div class="stats-row"><span class="stats-label" style="font-style:italic;color:var(--text-muted);">No game played</span><span class="stats-value"></span></div>';
+      } else {
+        const result = lg.won ? 'Won \u2713' : 'Lost \u2717';
+        const timeStr = lg.time != null ? formatTime(lg.time) : '--';
+        const scoreStr = lg.score != null ? lg.score : '--';
+        todayHtml =
+          '<div class="stats-row"><span class="stats-label">Result</span><span class="stats-value">' + result + '</span></div>' +
+          '<div class="stats-row"><span class="stats-label">Time</span><span class="stats-value">' + timeStr + '</span></div>' +
+          '<div class="stats-row"><span class="stats-label">Score</span><span class="stats-value">' + scoreStr + '</span></div>' +
+          '<div class="stats-row"><span class="stats-label">Letters revealed</span><span class="stats-value">' + (lg.reveals || 0) + '</span></div>' +
+          '<div class="stats-row"><span class="stats-label">Wrong letters</span><span class="stats-value">' + (lg.wrong || 0) + '</span></div>';
+      }
+      accordHtml +=
+        '<div class="game-accord">' +
+          '<div class="game-accord-hdr" onclick="toggleAccord(this)">' +
+            '<span class="accord-arrow">&#9654;</span>' +
+            '<span class="accord-label">' + g.label + '</span>' +
+            '<span class="accord-played">' + played + ' played</span>' +
+          '</div>' +
+          '<div class="game-accord-body">' +
+            '<div class="stats-sub-label">Today</div>' +
+            todayHtml +
+            '<div class="stats-sub-label">Overall</div>' +
+            '<div class="stats-row"><span class="stats-label">Games played</span><span class="stats-value">' + played + '</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Current streak</span><span class="stats-value">' + curStreak + '</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Longest streak</span><span class="stats-value">' + longest + '</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Wins</span><span class="stats-value">' + wins + '</span></div>' +
+            '<div class="stats-row"><span class="stats-label">Best time</span><span class="stats-value">' + bestT + '</span></div>' +
+          '</div>' +
+        '</div>';
+    }
   });
   const h = Math.floor(totSecs / 3600), m = Math.floor((totSecs % 3600) / 60);
   const totTimeStr = h > 0 ? h + 'h ' + m + 'm' : m + 'm';
@@ -1531,6 +1576,7 @@ function saveLeaderboardSetting(val) {
 
 // ── Statistics panel ──────────────────────────────────────────────────────────
 function populateStats() {
+  buildAllGamesStats();
   const wixStats = wixLeaderboardData ? wixLeaderboardData.playerStats : null;
   let played, curStreak, longestStr, pureWins,
       totalReveals, avgReveals, totalWrong, avgWrong,
@@ -1581,7 +1627,26 @@ function populateStats() {
   document.getElementById('st-best-time').textContent     = bestTime;
   document.getElementById('st-avg-score').textContent     = avgScore;
   document.getElementById('st-best-score').textContent    = bestScore;
-  buildAllGamesStats();
+
+  const todaySec = document.getElementById('todayStatsSection');
+  if (todaySec) {
+    const s2 = getStats();
+    const lg = s2.lastGame || null;
+    const todayKey = new Date().toDateString();
+    if (!lg || lg.date !== todayKey) {
+      todaySec.innerHTML = '<div class="stats-row"><span class="stats-label" style="font-style:italic;color:var(--text-muted);">No game played</span><span class="stats-value"></span></div>';
+    } else {
+      const result = lg.won ? 'Won \u2713' : 'Lost \u2717';
+      const timeStr = lg.time != null ? formatTime(lg.time) : '--';
+      const scoreStr = lg.score != null ? lg.score : '--';
+      todaySec.innerHTML =
+        '<div class="stats-row"><span class="stats-label">Result</span><span class="stats-value">' + result + '</span></div>' +
+        '<div class="stats-row"><span class="stats-label">Time</span><span class="stats-value">' + timeStr + '</span></div>' +
+        '<div class="stats-row"><span class="stats-label">Score</span><span class="stats-value">' + scoreStr + '</span></div>' +
+        '<div class="stats-row"><span class="stats-label">Letters revealed</span><span class="stats-value">' + (lg.reveals || 0) + '</span></div>' +
+        '<div class="stats-row"><span class="stats-label">Wrong letters</span><span class="stats-value">' + (lg.wrong || 0) + '</span></div>';
+    }
+  }
 }
 
 function shareStats() {
