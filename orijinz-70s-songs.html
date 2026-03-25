@@ -1541,6 +1541,7 @@
       <span class="stats-title">Settings</span>
       <button class="stats-close" onclick="closeSettings()">&#x2715;</button>
     </div>
+    <div id="keyboardSettingsSection">
     <div class="stats-section-label">Keyboard</div>
     <div class="settings-row">
       <div>
@@ -1551,6 +1552,7 @@
         <input type="checkbox" id="settingNativeKeyboard" onchange="saveNativeKeyboardSetting(this.checked)">
         <span class="toggle-track"></span>
       </label>
+    </div>
     </div>
     <div class="stats-section-label">Leaderboard</div>
     <div class="settings-row">
@@ -1716,6 +1718,7 @@ function buildAllGamesStats() {
     if (longest > bestStreak) bestStreak = longest;
     const THIS_KEY = STATS_KEY;
     const isCurr = g.key === THIS_KEY;
+    if (isCurr || played === 0) return;
     accordHtml +=
       '<div class="game-accord' + (isCurr ? ' open' : '') + '">' +
         '<div class="game-accord-hdr" onclick="toggleAccord(this)">' +
@@ -1816,6 +1819,8 @@ function openSettings() {
   const cb = document.getElementById('settingShowOnLeaderboard');
   if (cb) cb.checked = localStorage.getItem('showOnLeaderboard') !== 'false';
   const cb2 = document.getElementById('settingNativeKeyboard'); if (cb2) cb2.checked = localStorage.getItem('nativeKeyboard') === 'true';
+  const kbSection = document.getElementById('keyboardSettingsSection');
+  if (kbSection) kbSection.style.display = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? '' : 'none';
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
