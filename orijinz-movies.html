@@ -1507,7 +1507,7 @@
 
   <!-- Next puzzle button (visible at bottom) -->
   <div style="display:flex; justify-content:center; margin-top:18px; margin-bottom:12px;">
-    <button id="nextPuzzleBtn" onclick="devNext()" style="background:var(--accent-dark); color:#fff; border:2px solid var(--accent); border-radius:8px; padding:12px 36px; font-family:'Nunito Sans',sans-serif; font-size:0.95rem; font-weight:700; cursor:pointer; letter-spacing:0.5px; transition:all 0.15s;">NEXT &#x25B6;</button>
+    <button id="nextPuzzleBtn" onclick="devNextById()" style="background:var(--accent-dark); color:#fff; border:2px solid var(--accent); border-radius:8px; padding:12px 36px; font-family:'Nunito Sans',sans-serif; font-size:0.95rem; font-weight:700; cursor:pointer; letter-spacing:0.5px; transition:all 0.15s;">NEXT &#x25B6;</button>
   </div>
 
   </div><!-- end game-zone -->
@@ -3105,6 +3105,21 @@ function devNext() {
   safeSaveState({
     ...state,
     devPuzzleIndex: randIdx,
+    lastPlayed: null, guesses: [], revealed: [],
+    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
+    listenPenalty: 0, hintShown: false
+  });
+  location.reload();
+}
+function devNextById() {
+  if (!puzzle) return;
+  const nextId = puzzle.id + 1;
+  const idx = PUZZLES.findIndex(p => p.id === nextId);
+  if (idx === -1) { alert('No puzzle #' + nextId + ' — you reached the end!'); return; }
+  const state = safeGetState();
+  safeSaveState({
+    ...state,
+    devPuzzleIndex: idx,
     lastPlayed: null, guesses: [], revealed: [],
     revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
     listenPenalty: 0, hintShown: false
