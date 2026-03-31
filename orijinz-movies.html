@@ -232,10 +232,10 @@
   .answer-reveal {
     display: flex; justify-content: center; align-items: center;
     padding: 10px 0; width: 100%;
-    animation: revealFadeIn 0.6s ease forwards;
+    animation: revealFadeIn 1.2s ease forwards;
   }
   @keyframes revealFadeIn {
-    from { opacity: 0; transform: scale(0.85); }
+    from { opacity: 0; transform: scale(0.9); }
     to   { opacity: 1; transform: scale(1); }
   }
   .answer-reveal-text {
@@ -291,15 +291,10 @@
     flex-direction: column;
     gap: 8px;
     padding: 0 4px;
-    max-height: 400px;
-    overflow: hidden;
-    transition: opacity 0.6s ease, max-height 0.8s ease 0.3s, padding 0.8s ease 0.3s;
   }
   .keyboard.fading {
     opacity: 0;
     pointer-events: none;
-    max-height: 0;
-    padding: 0;
   }
   .kb-row {
     display: flex;
@@ -606,7 +601,7 @@
   }
   .result-panel.visible {
     display: block;
-    animation: resultFadeIn 1s ease both;
+    animation: resultFadeIn 1.4s ease both;
   }
   .result-emoji    { font-size: 2.5rem; margin-bottom: 8px; }
   .result-headline {
@@ -755,14 +750,9 @@
     align-items: center;
     gap: 12px;
     opacity: 0.4;
-    max-height: 40px;
-    overflow: hidden;
-    transition: opacity 0.5s ease, max-height 0.7s ease 0.3s, margin 0.7s ease 0.3s;
   }
   .section-divider.fading {
     opacity: 0;
-    max-height: 0;
-    margin: 0;
   }
   .section-divider::before, .section-divider::after {
     content: '';
@@ -1312,8 +1302,8 @@
     .kb-key.wide { font-size: 0.68rem; }
     .synopsis-card { padding: 18px 18px; max-height: 200px; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; }
     .synopsis-card::-webkit-scrollbar { display: none; }
-    .synopsis-card-wrap { position: relative; max-height: 500px; overflow: hidden; transition: opacity 0.6s ease, max-height 0.8s ease 0.3s, margin 0.8s ease 0.3s; }
-    .synopsis-card-wrap.fading { opacity: 0; pointer-events: none; max-height: 0; margin: 0; }
+    .synopsis-card-wrap { position: relative; }
+    .synopsis-card-wrap.fading { opacity: 0; pointer-events: none; }
     .synopsis-card-wrap::after {
       content: '';
       position: absolute;
@@ -2637,9 +2627,8 @@ function submitGuess() {
     if (won) {
       streak++;
       recordGameResult(true);
-      updateCurrentInputDisplay();
       launchConfetti();
-      setTimeout(() => showResult(true), 600);
+      showResult(true);
     } else {
       let slot = 0;
       for (let i = 0; i < answer.length; i++) {
@@ -2696,18 +2685,9 @@ function animateGuessSubmit(states, won, onComplete) {
       }, i * STAGGER);
     });
     if (won) {
-      setTimeout(() => {
-        const extra = [...display.querySelectorAll('.letter-tile.prefilled-tile, .letter-tile.space-tile')];
-        tileData.forEach(({ tile }, i) => {
-          setTimeout(() => {
-            tile.classList.add('win-bounce');
-            tile.style.transition = 'opacity 0.75s ease 0.2s';
-            tile.style.opacity    = '0';
-          }, i * BOUNCE_STAG);
-        });
-        extra.forEach(tile => { tile.style.transition = 'opacity 0.75s ease 0.2s'; tile.style.opacity = '0'; });
-        setTimeout(() => { animating = false; onComplete(); }, n * BOUNCE_STAG + 700);
-      }, totalFlip + 80);
+      // After tiles flip to show correct colors, pause briefly then hand off to showResult
+      // which fades the entire game zone as one unit
+      setTimeout(() => { animating = false; onComplete(); }, totalFlip + 600);
     } else {
       setTimeout(() => {
         tileData.forEach(({ tile, stateIdx, isRevealed }) => {
@@ -2734,20 +2714,7 @@ function animateGuessSubmit(states, won, onComplete) {
       });
     }, 150);
     if (won) {
-      setTimeout(() => {
-        display.style.transition = 'transform 0.15s ease';
-        display.style.transform  = 'scale(1.04)';
-        setTimeout(() => {
-          display.style.transform = 'scale(1)';
-          const extra = [...display.querySelectorAll('.letter-tile.prefilled-tile, .letter-tile.space-tile')];
-          tileData.forEach(({ tile }) => {
-            tile.style.transition = 'opacity 0.45s ease';
-            tile.style.opacity    = '0';
-          });
-          extra.forEach(tile => { tile.style.transition = 'opacity 0.45s ease'; tile.style.opacity = '0'; });
-          setTimeout(() => { animating = false; onComplete(); }, 550);
-        }, 150);
-      }, 350);
+      setTimeout(() => { animating = false; onComplete(); }, 700);
     } else {
       setTimeout(() => {
         tileData.forEach(({ tile, stateIdx, isRevealed }) => {
@@ -2920,7 +2887,10 @@ function stopClip() {
   const timerEl = document.getElementById('videoTimer');
   if (timerEl) timerEl.textContent = '';
   updateTrailerBtn();
-  if (!gameOver) updateCurrentInputDisplay();
+  if (!gameOver) {
+    cursorPos = 0;
+    setTimeout(() => updateCurrentInputDisplay(), 50);
+  }
 }
 
 function updateTrailerBtn() {
@@ -3011,28 +2981,32 @@ function showResult(won) {
   const cs      = document.querySelector('.clue-section');
   const sw      = document.getElementById('synopsisCardWrap');
 
-  // Hide the next button
+  // Hide the next button and video card
   const nextBtn = document.getElementById('nextPuzzleBtn');
   if (nextBtn) nextBtn.style.display = 'none';
-
-  // Also hide the video card if visible
   const vc = document.getElementById('videoCard');
   if (vc) vc.style.display = 'none';
 
-  kb.classList.add('fading');
-  if (divider) divider.classList.add('fading');
-  if (cs) cs.classList.add('fading');
-  if (sw) sw.classList.add('fading');
+  // Fade individual sections directly alongside the game zone
+  [sw, cs].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
 
-  // Delay result panel appearance until collapse is mostly done
+  // Fade the entire game zone to black — everything goes together
+  const gz = document.getElementById('gameZone');
+  gz.style.transition = 'opacity 1.5s ease';
+  gz.style.opacity = '0';
+
+  // After fade-out: hide clutter, show answer + result, fade back in
   setTimeout(() => {
+    [kb, divider, cs, sw].filter(Boolean).forEach(el => el.style.display = 'none');
+    updateCurrentInputDisplay(); // show the big answer text
+    window.scrollTo(0, 0);
     rp.classList.add('visible');
-  }, 600);
-
-  // Smooth scroll up after everything has settled
-  setTimeout(() => {
-    rp.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 1800);
+    // Fade back in
+    setTimeout(() => {
+      gz.style.transition = 'opacity 1.2s ease';
+      gz.style.opacity = '1';
+    }, 200);
+  }, 1600);
 
   const emoji = document.getElementById('resultEmoji');
   const hl    = document.getElementById('resultHeadline');
