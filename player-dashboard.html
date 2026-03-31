@@ -338,9 +338,24 @@ window.addEventListener('load', () => {
 
 window.addEventListener('message', function(e) {
   if (!e.data || e.data.type !== 'orijinz_dashboard_data') return;
-  gameResults = (e.data.gameResults || []).sort((a, b) => new Date(b.puzzleDate) - new Date(a.puzzleDate));
+
+  // Normalize gameResults — puzzleDate may arrive as Date object, ISO string, or other format
+  gameResults = (e.data.gameResults || []).map(r => {
+    let d = r.puzzleDate;
+    if (d && typeof d === 'object' && d.$date) d = d.$date; // Wix Date serialization
+    if (d) d = new Date(d).toISOString();
+    return { ...r, puzzleDate: d || '' };
+  }).sort((a, b) => new Date(b.puzzleDate) - new Date(a.puzzleDate));
+
   memberStats = e.data.memberStats || [];
   memberName  = e.data.memberName || '';
+
+  console.log('Dashboard received:', gameResults.length, 'results,', memberStats.length, 'stats');
+  if (gameResults.length > 0) console.log('First result:', JSON.stringify(gameResults[0]));
+  if (memberStats.length > 0) console.log('First stat:', JSON.stringify(memberStats[0]));
+  console.log('All game keys in results:', [...new Set(gameResults.map(r => r.game))]);
+  console.log('All game keys in stats:', [...new Set(memberStats.map(s => s.game))]);
+
   render();
 });
 
