@@ -339,12 +339,9 @@ window.addEventListener('load', () => {
 window.addEventListener('message', function(e) {
   if (!e.data || e.data.type !== 'orijinz_dashboard_data') return;
 
-  // Normalize gameResults — puzzleDate may arrive as Date object, ISO string, or other format
+  // Normalize gameResults — puzzleDate may arrive as Date object, ISO string, timestamp, or Wix format
   gameResults = (e.data.gameResults || []).map(r => {
-    let d = r.puzzleDate;
-    if (d && typeof d === 'object' && d.$date) d = d.$date; // Wix Date serialization
-    if (d) d = new Date(d).toISOString();
-    return { ...r, puzzleDate: d || '' };
+    return { ...r, puzzleDate: normalizeDate(r.puzzleDate) };
   }).sort((a, b) => new Date(b.puzzleDate) - new Date(a.puzzleDate));
 
   memberStats = e.data.memberStats || [];
@@ -407,7 +404,7 @@ function card(label, value, cls) {
 
 function renderToday() {
   const today = new Date().toISOString().slice(0, 10);
-  const todayResults = gameResults.filter(r => r.puzzleDate && r.puzzleDate.slice(0, 10) === today);
+  const todayResults = gameResults.filter(r => toDateStr(r.puzzleDate) === today);
 
   let html = '';
   const played = {};
@@ -476,7 +473,7 @@ function renderScoreChart() {
     if (gameResults_.length === 0) return;
     const byDate = {};
     gameResults_.forEach(r => {
-      const d = (r.puzzleDate || '').slice(0, 10);
+      const d = toDateStr(r.puzzleDate);
       if (!byDate[d]) byDate[d] = r.score;
     });
     datasets.push({
@@ -520,7 +517,7 @@ function renderHistory() {
 
   tbody.innerHTML = filtered.slice(0, 50).map(r => {
     const meta = GAME_META[r.game] || { label: r.game, emoji: '🎮' };
-    const date = (r.puzzleDate || '').slice(0, 10);
+    const date = toDateStr(r.puzzleDate);
     const won = r.wonGame ? '✓' : '✗';
     const wonColor = r.wonGame ? 'var(--green)' : 'var(--red)';
     return '<tr>' +
@@ -535,6 +532,21 @@ function renderHistory() {
 }
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
+function normalizeDate(d) {
+  if (!d) return '';
+  if (typeof d === 'string') return d;
+  if (typeof d === 'object' && d.$date) return new Date(d.$date).toISOString();
+  if (d instanceof Date || typeof d === 'number') return new Date(d).toISOString();
+  try { return new Date(d).toISOString(); } catch(e) { return String(d); }
+}
+
+function toDateStr(d) {
+  // Safely extract YYYY-MM-DD from any date format
+  const s = normalizeDate(d);
+  if (!s) return '';
+  return s.slice(0, 10);
+}
+
 function formatTime(secs) {
   if (secs == null) return '--';
   const m = Math.floor(secs / 60);
