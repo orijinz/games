@@ -232,10 +232,10 @@
   .answer-reveal {
     display: flex; justify-content: center; align-items: center;
     padding: 10px 0; width: 100%;
-    animation: revealFadeIn 0.6s ease forwards;
+    animation: revealFadeIn 1.2s ease forwards;
   }
   @keyframes revealFadeIn {
-    from { opacity: 0; transform: scale(0.85); }
+    from { opacity: 0; transform: scale(0.9); }
     to   { opacity: 1; transform: scale(1); }
   }
   .answer-reveal-text {
@@ -291,11 +291,6 @@
     flex-direction: column;
     gap: 8px;
     padding: 0 4px;
-    transition: opacity 0.7s ease;
-  }
-  .keyboard.fading {
-    opacity: 0;
-    pointer-events: none;
   }
   .kb-row {
     display: flex;
@@ -539,7 +534,7 @@
   }
   .result-panel.visible {
     display: block;
-    animation: resultFadeIn 0.9s ease forwards;
+    animation: resultFadeIn 1.4s ease forwards;
   }
   .result-emoji    { font-size: 2.5rem; margin-bottom: 8px; }
   .result-headline {
@@ -2524,9 +2519,8 @@ function submitGuess() {
     if (won) {
       streak++;
       recordGameResult(true);
-      updateCurrentInputDisplay();
       launchConfetti();
-      setTimeout(() => showResult(true), 600);
+      showResult(true);
     } else {
       let slot = 0;
       for (let i = 0; i < answer.length; i++) {
@@ -2583,18 +2577,7 @@ function animateGuessSubmit(states, won, onComplete) {
       }, i * STAGGER);
     });
     if (won) {
-      setTimeout(() => {
-        const extra = [...display.querySelectorAll('.letter-tile.prefilled-tile, .letter-tile.space-tile')];
-        tileData.forEach(({ tile }, i) => {
-          setTimeout(() => {
-            tile.classList.add('win-bounce');
-            tile.style.transition = 'opacity 0.75s ease 0.2s';
-            tile.style.opacity    = '0';
-          }, i * BOUNCE_STAG);
-        });
-        extra.forEach(tile => { tile.style.transition = 'opacity 0.75s ease 0.2s'; tile.style.opacity = '0'; });
-        setTimeout(() => { animating = false; onComplete(); }, n * BOUNCE_STAG + 700);
-      }, totalFlip + 80);
+      setTimeout(() => { animating = false; onComplete(); }, totalFlip + 600);
     } else {
       setTimeout(() => {
         tileData.forEach(({ tile, stateIdx, isRevealed }) => {
@@ -2621,20 +2604,7 @@ function animateGuessSubmit(states, won, onComplete) {
       });
     }, 150);
     if (won) {
-      setTimeout(() => {
-        display.style.transition = 'transform 0.15s ease';
-        display.style.transform  = 'scale(1.04)';
-        setTimeout(() => {
-          display.style.transform = 'scale(1)';
-          const extra = [...display.querySelectorAll('.letter-tile.prefilled-tile, .letter-tile.space-tile')];
-          tileData.forEach(({ tile }) => {
-            tile.style.transition = 'opacity 0.45s ease';
-            tile.style.opacity    = '0';
-          });
-          extra.forEach(tile => { tile.style.transition = 'opacity 0.45s ease'; tile.style.opacity = '0'; });
-          setTimeout(() => { animating = false; onComplete(); }, 550);
-        }, 150);
-      }, 350);
+      setTimeout(() => { animating = false; onComplete(); }, 700);
     } else {
       setTimeout(() => {
         tileData.forEach(({ tile, stateIdx, isRevealed }) => {
@@ -2820,20 +2790,27 @@ function showResult(won) {
   const cs      = document.querySelector('.clue-section');
   const scw     = document.getElementById('songCardWrap');
 
-  kb.classList.add('fading');
-  if (divider) divider.classList.add('fading');
-  if (cs) cs.classList.add('fading');
-  if (scw) scw.classList.add('fading');
+  const nextBtn = document.getElementById('nextPuzzleBtn');
+  if (nextBtn) nextBtn.style.display = 'none';
+  const vc = document.getElementById('videoCard');
+  if (vc) vc.style.display = 'none';
 
-  rp.classList.add('visible');
+  [scw, cs].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
+
+  const gz = document.getElementById('gameZone');
+  gz.style.transition = 'opacity 1.5s ease';
+  gz.style.opacity = '0';
 
   setTimeout(() => {
-    kb.style.display = 'none';
-    if (divider) divider.style.display = 'none';
-    if (cs) cs.style.display = 'none';
-    if (scw) scw.style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 1200);
+    [kb, divider, cs, scw].filter(Boolean).forEach(el => el.style.display = 'none');
+    updateCurrentInputDisplay();
+    window.scrollTo(0, 0);
+    rp.classList.add('visible');
+    setTimeout(() => {
+      gz.style.transition = 'opacity 1.2s ease';
+      gz.style.opacity = '1';
+    }, 200);
+  }, 1600);
 
   const emoji = document.getElementById('resultEmoji');
   const hl    = document.getElementById('resultHeadline');
