@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — Orijinz</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:        #0e0e12;
+    --bg2:       #131318;
+    --card:      #181820;
+    --border:    #2a2a34;
+    --text:      #e0e0e8;
+    --text-dim:  #707888;
+    --gold:      #f0c860;
+    --gold-dim:  #d0a840;
+    --teal:      #4ecdc4;
+    --blue:      #5b9bd5;
+    --green:     #4caf50;
+    --red:       #e05252;
+    --purple:    #9b8ec4;
+    --orange:    #e8a040;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    padding: 16px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .header .subtitle {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+  .member-name {
+    font-size: 0.9rem;
+    color: var(--teal);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* SUMMARY CARDS */
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 480px) { .summary-cards { grid-template-columns: repeat(2, 1fr); } }
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .summary-card .label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .summary-card .value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--gold);
+  }
+  .summary-card .value.teal { color: var(--teal); }
+  .summary-card .value.blue { color: var(--blue); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 24px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(240,200,96,0.2);
+  }
+
+  /* GAME CARDS */
+  .game-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .game-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .game-card.active { border-color: var(--gold); }
+  .game-card .game-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .game-card .game-name .emoji { font-size: 1.1rem; }
+  .game-card .game-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+    font-size: 0.75rem;
+  }
+  .game-card .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+  }
+  .game-card .stat-label { color: var(--text-dim); }
+  .game-card .stat-value { color: var(--text); font-weight: 600; }
+  .game-card .today-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+  }
+  .today-badge.won { background: rgba(76,175,80,0.2); color: var(--green); }
+  .today-badge.not-played { background: rgba(112,120,136,0.15); color: var(--text-dim); }
+
+  /* CHART */
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-title {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  /* RECENT GAMES TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 24px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th {
+    background: var(--bg2);
+    color: var(--gold);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid rgba(42,42,52,0.5); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(24,24,32,0.8); }
+  .r { text-align: right; }
+
+  /* LOADING / EMPTY */
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .loading .spinner {
+    display: inline-block;
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎯 My Dashboard</h1>
+  <div class="subtitle">Orijinz Games</div>
+  <div class="member-name" id="memberName"></div>
+</div>
+
+<div id="loadingState" class="loading">
+  <div class="spinner"></div>
+  <div>Loading your stats...</div>
+</div>
+
+<div id="dashContent" class="hidden">
+
+  <!-- SUMMARY CARDS -->
+  <div class="summary-cards" id="summaryCards"></div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" id="btn-overview" onclick="showTab('overview')">Overview</button>
+    <button class="tab-btn" id="btn-history" onclick="showTab('history')">Game History</button>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <div id="tab-overview">
+
+    <div class="section-label">Today</div>
+    <div class="game-cards" id="todayCards"></div>
+
+    <div class="section-label">By Game</div>
+    <div class="game-cards" id="gameCards"></div>
+
+    <div class="section-label">Score Trend (Last 14 Days)</div>
+    <div class="chart-card">
+      <canvas id="scoreChart" height="200"></canvas>
+    </div>
+
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div id="tab-history" class="hidden">
+
+    <div class="section-label">Recent Games</div>
+    <div style="margin-bottom:12px;">
+      <select id="historyFilter" onchange="renderHistory()" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:0.8rem;">
+        <option value="all">All Games</option>
+        <option value="wordsandphrases">Words & Phrases</option>
+        <option value="70ssongs">70s Songs</option>
+        <option value="covers">Covers</option>
+        <option value="quotes">Quotes</option>
+        <option value="slogans">Slogans</option>
+        <option value="movies">Movies</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Game</th>
+            <th class="r">Score</th>
+            <th class="r">Time</th>
+            <th class="r">Reveals</th>
+            <th class="r">Won</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const GAME_META = {
+  wordsandphrases: { label: 'Words & Phrases', emoji: '📝', color: '#4ecdc4' },
+  '70ssongs':      { label: '70s Songs',       emoji: '🎵', color: '#9b8ec4' },
+  covers:          { label: 'Covers',          emoji: '🎸', color: '#5b9bd5' },
+  quotes:          { label: 'Quotes',          emoji: '💬', color: '#e8a040' },
+  slogans:         { label: 'Slogans',         emoji: '📢', color: '#e05252' },
+  movies:          { label: 'Movies',          emoji: '🎬', color: '#c0c0c8' },
+};
+
+let gameResults = [];
+let memberStats = [];
+let memberName  = '';
+let scoreChart  = null;
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  // Request data from Wix parent
+  window.parent.postMessage({ type: 'orijinz_dashboard_request' }, '*');
+});
+
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'orijinz_dashboard_data') return;
+  gameResults = (e.data.gameResults || []).sort((a, b) => new Date(b.puzzleDate) - new Date(a.puzzleDate));
+  memberStats = e.data.memberStats || [];
+  memberName  = e.data.memberName || '';
+  render();
+});
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function showTab(name) {
+  ['overview', 'history'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+    document.getElementById('btn-' + t).classList.toggle('active', t === name);
+  });
+  if (name === 'history') renderHistory();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  document.getElementById('loadingState').classList.add('hidden');
+  document.getElementById('dashContent').classList.remove('hidden');
+
+  if (memberName) {
+    document.getElementById('memberName').textContent = 'Welcome, ' + memberName;
+  }
+
+  renderSummary();
+  renderToday();
+  renderGameCards();
+  renderScoreChart();
+}
+
+function renderSummary() {
+  const totalPlayed = memberStats.reduce((sum, s) => sum + (s.gamesPlayed || 0), 0);
+  const bestStreak  = Math.max(0, ...memberStats.map(s => s.longestStreak || 0));
+  const gamesActive = memberStats.filter(s => (s.gamesPlayed || 0) > 0).length;
+
+  // Total time from game results
+  const totalSecs = gameResults.reduce((sum, r) => sum + (r.timeSecs || 0), 0);
+  const totalMins = Math.round(totalSecs / 60);
+
+  const html =
+    card('Total Played', totalPlayed, '') +
+    card('Games Active', gamesActive + ' / 6', 'teal') +
+    card('Best Streak', bestStreak, 'blue') +
+    card('Time Played', totalMins + 'm', '');
+
+  document.getElementById('summaryCards').innerHTML = html;
+}
+
+function card(label, value, cls) {
+  return '<div class="summary-card"><div class="label">' + label + '</div><div class="value ' + cls + '">' + value + '</div></div>';
+}
+
+function renderToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  const todayResults = gameResults.filter(r => r.puzzleDate && r.puzzleDate.slice(0, 10) === today);
+
+  let html = '';
+  const played = {};
+  todayResults.forEach(r => {
+    const g = r.game;
+    if (played[g]) return; // show first result per game
+    played[g] = true;
+    const meta = GAME_META[g] || { label: g, emoji: '🎮', color: '#888' };
+    const wonBadge = r.wonGame
+      ? '<span class="today-badge won">✓ Won</span>'
+      : '<span class="today-badge" style="background:rgba(224,82,82,0.2);color:var(--red);">✗ Lost</span>';
+    html += '<div class="game-card" style="border-left:3px solid ' + meta.color + ';">' +
+      '<div class="game-name"><span class="emoji">' + meta.emoji + '</span>' + meta.label + wonBadge + '</div>' +
+      '<div class="game-stats">' +
+        '<div class="stat-row"><span class="stat-label">Score</span><span class="stat-value">' + (r.score || '--') + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Time</span><span class="stat-value">' + formatTime(r.timeSecs) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Reveals</span><span class="stat-value">' + (r.lettersRevealed || 0) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Wrong</span><span class="stat-value">' + (r.wrongLetters || 0) + '</span></div>' +
+      '</div></div>';
+  });
+
+  // Show games not played today
+  Object.keys(GAME_META).forEach(g => {
+    if (played[g]) return;
+    const meta = GAME_META[g];
+    const hasStat = memberStats.find(s => s.game === g);
+    if (!hasStat) return; // never played this game
+    html += '<div class="game-card" style="opacity:0.5;border-left:3px solid var(--border);">' +
+      '<div class="game-name"><span class="emoji">' + meta.emoji + '</span>' + meta.label +
+      '<span class="today-badge not-played">Not played</span></div></div>';
+  });
+
+  document.getElementById('todayCards').innerHTML = html || '<div style="color:var(--text-dim);font-size:0.85rem;padding:8px;">No games played today yet.</div>';
+}
+
+function renderGameCards() {
+  let html = '';
+  Object.entries(GAME_META).forEach(([key, meta]) => {
+    const stat = memberStats.find(s => s.game === key);
+    if (!stat || !stat.gamesPlayed) return;
+    const avgScore = stat.gamesPlayed > 0 ? Math.round((stat.totalScore || 0) / stat.gamesPlayed) : '--';
+    html += '<div class="game-card" style="border-left:3px solid ' + meta.color + ';">' +
+      '<div class="game-name"><span class="emoji">' + meta.emoji + '</span>' + meta.label + '</div>' +
+      '<div class="game-stats">' +
+        '<div class="stat-row"><span class="stat-label">Played</span><span class="stat-value">' + stat.gamesPlayed + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Streak</span><span class="stat-value">' + (stat.currentStreak || 0) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Best Streak</span><span class="stat-value">' + (stat.longestStreak || 0) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-label">Avg Score</span><span class="stat-value">' + avgScore + '</span></div>' +
+      '</div></div>';
+  });
+  document.getElementById('gameCards').innerHTML = html;
+}
+
+function renderScoreChart() {
+  // Last 14 days score per game
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+
+  const datasets = [];
+  Object.entries(GAME_META).forEach(([key, meta]) => {
+    const gameResults_ = gameResults.filter(r => r.game === key);
+    if (gameResults_.length === 0) return;
+    const byDate = {};
+    gameResults_.forEach(r => {
+      const d = (r.puzzleDate || '').slice(0, 10);
+      if (!byDate[d]) byDate[d] = r.score;
+    });
+    datasets.push({
+      label: meta.label,
+      data: days.map(d => byDate[d] || null),
+      borderColor: meta.color,
+      backgroundColor: meta.color + '33',
+      tension: 0.3,
+      pointRadius: 3,
+      spanGaps: true,
+    });
+  });
+
+  const ctx = document.getElementById('scoreChart').getContext('2d');
+  if (scoreChart) scoreChart.destroy();
+  scoreChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: days.map(d => d.slice(5)), datasets },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#707888', font: { size: 11 } } },
+      },
+      scales: {
+        x: { ticks: { color: '#707888', font: { size: 10 } }, grid: { color: 'rgba(42,42,52,0.5)' } },
+        y: { ticks: { color: '#707888', font: { size: 10 } }, grid: { color: 'rgba(42,42,52,0.5)' }, title: { display: true, text: 'Score (lower is better)', color: '#707888', font: { size: 10 } } },
+      }
+    }
+  });
+}
+
+function renderHistory() {
+  const filter = document.getElementById('historyFilter').value;
+  const filtered = filter === 'all' ? gameResults : gameResults.filter(r => r.game === filter);
+  const tbody = document.getElementById('historyBody');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:24px;">No games found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.slice(0, 50).map(r => {
+    const meta = GAME_META[r.game] || { label: r.game, emoji: '🎮' };
+    const date = (r.puzzleDate || '').slice(0, 10);
+    const won = r.wonGame ? '✓' : '✗';
+    const wonColor = r.wonGame ? 'var(--green)' : 'var(--red)';
+    return '<tr>' +
+      '<td>' + date + '</td>' +
+      '<td>' + meta.emoji + ' ' + meta.label + '</td>' +
+      '<td class="r">' + (r.score || '--') + '</td>' +
+      '<td class="r">' + formatTime(r.timeSecs) + '</td>' +
+      '<td class="r">' + (r.lettersRevealed || 0) + '</td>' +
+      '<td class="r" style="color:' + wonColor + '">' + won + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function formatTime(secs) {
+  if (secs == null) return '--';
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+// ── DEV: Load sample data for testing outside Wix ─────────────────────────────
+if (window.location.protocol === 'file:' || window.location.hostname === 'localhost') {
+  setTimeout(() => {
+    if (gameResults.length === 0) {
+      document.getElementById('loadingState').innerHTML =
+        '<div style="color:var(--gold);font-size:0.9rem;">⚠ No data received from Wix.<br><br>' +
+        '<span style="color:var(--text-dim);font-size:0.8rem;">This dashboard must be embedded in Wix to receive player data.<br>' +
+        'The Wix page should send a postMessage with type "orijinz_dashboard_data".</span></div>';
+    }
+  }, 3000);
+}
+</script>
+</body>
+</html>
