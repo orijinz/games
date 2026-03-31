@@ -317,12 +317,12 @@
 
 <script>
 const GAME_META = {
-  wordsandphrases: { label: 'Words & Phrases', emoji: '📝', color: '#4ecdc4' },
-  '70ssongs':      { label: '70s Songs',       emoji: '🎵', color: '#9b8ec4' },
-  covers:          { label: 'Covers',          emoji: '🎸', color: '#5b9bd5' },
-  quotes:          { label: 'Quotes',          emoji: '💬', color: '#e8a040' },
-  slogans:         { label: 'Slogans',         emoji: '📢', color: '#e05252' },
-  movies:          { label: 'Movies',          emoji: '🎬', color: '#c0c0c8' },
+  wordsandphrases: { label: 'Words & Phrases', emoji: '✦',  color: '#f5c842' },
+  '70ssongs':      { label: '70s Songs',       emoji: '🎵', color: '#9d7dd4' },
+  covers:          { label: 'Covers',          emoji: '🎸', color: '#6898e8' },
+  quotes:          { label: 'Quotes',          emoji: '💬', color: '#00ceb8' },
+  slogans:         { label: 'Slogans',         emoji: '✦',  color: '#ff8820' },
+  movies:          { label: 'Movies',          emoji: '🎬', color: '#9aaab8' },
 };
 
 let gameResults = [];
@@ -382,18 +382,32 @@ function render() {
 
 function renderSummary() {
   const totalPlayed = memberStats.reduce((sum, s) => sum + (s.gamesPlayed || 0), 0);
-  const bestStreak  = Math.max(0, ...memberStats.map(s => s.longestStreak || 0));
-  const gamesActive = memberStats.filter(s => (s.gamesPlayed || 0) > 0).length;
 
-  // Total time from game results
+  // Days played — count unique dates across all game results
+  const uniqueDays = new Set(gameResults.map(r => toDateStr(r.puzzleDate)).filter(Boolean));
+  const daysPlayed = uniqueDays.size;
+
+  // Best streak — find which game has the longest and name it
+  let bestStreak = 0, bestStreakGame = '';
+  memberStats.forEach(s => {
+    const streak = s.longestStreak || 0;
+    if (streak > bestStreak) {
+      bestStreak = streak;
+      bestStreakGame = s.game;
+    }
+  });
+  const streakMeta = GAME_META[bestStreakGame] || {};
+  const streakLabel = bestStreakGame ? (streakMeta.emoji || '') + ' ' + (streakMeta.label || bestStreakGame) : '';
+
+  // Total time — smart formatting
   const totalSecs = gameResults.reduce((sum, r) => sum + (r.timeSecs || 0), 0);
-  const totalMins = Math.round(totalSecs / 60);
+  const timeStr = formatDuration(totalSecs);
 
   const html =
-    card('Total Played', totalPlayed, '') +
-    card('Games Active', gamesActive + ' / 6', 'teal') +
-    card('Best Streak', bestStreak, 'blue') +
-    card('Time Played', totalMins + 'm', '');
+    card('Total Games Played', totalPlayed, '') +
+    card('Days Played', daysPlayed, 'teal') +
+    cardWithSub('Best Streak', bestStreak, streakLabel, 'blue') +
+    card('Total Time Played', timeStr, '');
 
   document.getElementById('summaryCards').innerHTML = html;
 }
@@ -402,8 +416,15 @@ function card(label, value, cls) {
   return '<div class="summary-card"><div class="label">' + label + '</div><div class="value ' + cls + '">' + value + '</div></div>';
 }
 
+function cardWithSub(label, value, sub, cls) {
+  return '<div class="summary-card"><div class="label">' + label + '</div><div class="value ' + cls + '">' + value + '</div>' +
+    (sub ? '<div style="font-size:0.6rem;color:var(--text-dim);margin-top:4px;letter-spacing:0.5px;">' + sub + '</div>' : '') +
+    '</div>';
+}
+
 function renderToday() {
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const today = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
   const todayResults = gameResults.filter(r => toDateStr(r.puzzleDate) === today);
 
   let html = '';
@@ -541,10 +562,27 @@ function normalizeDate(d) {
 }
 
 function toDateStr(d) {
-  // Safely extract YYYY-MM-DD from any date format
+  // Extract YYYY-MM-DD — use UTC to match how Wix stores dates (midnight UTC)
+  if (!d) return '';
   const s = normalizeDate(d);
   if (!s) return '';
-  return s.slice(0, 10);
+  // If it's an ISO string, just grab the date portion (UTC)
+  if (s.length >= 10 && s[4] === '-') return s.slice(0, 10);
+  const dt = new Date(s);
+  if (isNaN(dt.getTime())) return '';
+  return dt.toISOString().slice(0, 10);
+}
+
+function formatDuration(secs) {
+  if (secs == null || secs === 0) return '0m';
+  const weeks = Math.floor(secs / 604800);
+  const days  = Math.floor((secs % 604800) / 86400);
+  const hours = Math.floor((secs % 86400) / 3600);
+  const mins  = Math.floor((secs % 3600) / 60);
+  if (weeks > 0) return weeks + 'w ' + days + 'd';
+  if (days > 0)  return days + 'd ' + hours + 'h';
+  if (hours > 0) return hours + 'h ' + mins + 'm';
+  return mins + 'm';
 }
 
 function formatTime(secs) {
