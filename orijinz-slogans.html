@@ -946,10 +946,16 @@ function recordGameResult(won) {
 // ── Init ─────────────────────────────────────────────────────────────────────
 function initGame() {
   const stored   = safeGetState();
-  puzzleIndex    = (stored.devPuzzleIndex !== undefined) ? stored.devPuzzleIndex : getDayPuzzleIndex();
   const todayKey = new Date().toDateString();
   const yesterday = new Date(Date.now() - 864e5).toDateString();
   const lastPlayed = stored.lastPlayed || null;
+
+  if (stored.devPuzzleIndex !== undefined && lastPlayed === todayKey) {
+    puzzleIndex = stored.devPuzzleIndex;
+  } else {
+    puzzleIndex = getDayPuzzleIndex();
+    if (stored.devPuzzleIndex !== undefined) { delete stored.devPuzzleIndex; safeSaveState(stored); }
+  }
   streak = (lastPlayed === todayKey || lastPlayed === yesterday) ? (stored.streak || 0) : 0;
 
   if (stored.lastPlayed === todayKey && stored.puzzleIndex === puzzleIndex) {

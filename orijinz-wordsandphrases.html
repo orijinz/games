@@ -1930,10 +1930,20 @@ function safeSaveState(obj) {
 
 function initGame() {
   const stored = safeGetState();
-  puzzleIndex = (stored.devPuzzleIndex !== undefined) ? stored.devPuzzleIndex : getDayPuzzleIndex();
-
   const todayKey     = new Date().toDateString();
   const lastPlayed   = stored.lastPlayed || null;
+
+  // Only use devPuzzleIndex if it was set today; otherwise use the daily puzzle
+  if (stored.devPuzzleIndex !== undefined && lastPlayed === todayKey) {
+    puzzleIndex = stored.devPuzzleIndex;
+  } else {
+    puzzleIndex = getDayPuzzleIndex();
+    // Clear stale devPuzzleIndex
+    if (stored.devPuzzleIndex !== undefined) {
+      delete stored.devPuzzleIndex;
+      safeSaveState(stored);
+    }
+  }
   const yesterday    = new Date(Date.now() - 864e5).toDateString();
   // Streak is valid only if last played today or yesterday; otherwise reset
   if (lastPlayed === todayKey || lastPlayed === yesterday) {

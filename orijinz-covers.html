@@ -2073,7 +2073,10 @@ function resumeTimer() {
 }
 
 window.addEventListener('blur',  () => document.body.classList.add('window-blurred'));
-window.addEventListener('focus', () => document.body.classList.remove('window-blurred'));
+window.addEventListener('focus', () => {
+  document.body.classList.remove('window-blurred');
+  if (!gameOver) { cursorPos = 0; updateCurrentInputDisplay(); }
+});
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { pauseTimer(); } else { resumeTimer(); }
 });
@@ -2090,10 +2093,15 @@ function safeSaveState(obj) {
 
 function initGame() {
   const stored = safeGetState();
-  puzzleIndex = (stored.devPuzzleIndex !== undefined) ? stored.devPuzzleIndex : getDayPuzzleIndex();
-
   const todayKey     = new Date().toDateString();
   const lastPlayed   = stored.lastPlayed || null;
+
+  if (stored.devPuzzleIndex !== undefined && lastPlayed === todayKey) {
+    puzzleIndex = stored.devPuzzleIndex;
+  } else {
+    puzzleIndex = getDayPuzzleIndex();
+    if (stored.devPuzzleIndex !== undefined) { delete stored.devPuzzleIndex; safeSaveState(stored); }
+  }
   const yesterday    = new Date(Date.now() - 864e5).toDateString();
   if (lastPlayed === todayKey || lastPlayed === yesterday) {
     streak = stored.streak || 0;
