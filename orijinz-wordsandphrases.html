@@ -868,6 +868,50 @@
   }
   .stats-close:hover { color: var(--text); }
 
+  .stats-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    padding: 0 24px;
+    background: var(--bg2);
+    position: sticky;
+    top: 60px;
+    z-index: 1;
+  }
+  .stats-tab {
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+  }
+  .stats-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .stats-tab:hover:not(.active) { color: var(--text); }
+
+  .ag-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .ag-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 8px; text-align: center; }
+  .ag-card .ag-val { font-size: 1.3rem; font-weight: 800; color: var(--blue); }
+  .ag-card .ag-lbl { font-size: 0.5rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
+  .ag-section { font-size: 0.55rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin: 16px 0 8px; }
+  .ag-game { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+  .ag-game-hdr { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 0.8rem; font-weight: 700; }
+  .ag-game-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; font-size: 0.7rem; }
+  .ag-game-stats .ag-row { display: flex; justify-content: space-between; }
+  .ag-game-stats .ag-lbl { color: var(--text-muted); }
+  .ag-game-stats .ag-val { font-weight: 600; }
+  .ag-badge { font-size: 0.5rem; font-weight: 700; padding: 2px 6px; border-radius: 8px; margin-left: auto; }
+  .ag-badge.won { background: rgba(76,175,80,0.2); color: #4caf50; }
+  .ag-badge.lost { background: rgba(224,82,82,0.2); color: #e05252; }
+  .ag-badge.np { background: rgba(112,120,136,0.1); color: var(--text-muted); }
+
   .stats-section-label {
     font-family: 'Space Mono', monospace;
     font-size: 0.58rem;
@@ -1221,10 +1265,6 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Statistics
     </button>
-    <button class="menu-item" onclick="menuGame('https://www.entspire.com/my-dashboard')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      My Dashboard
-    </button>
     <button class="menu-item" onclick="menuSettings()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
@@ -1370,8 +1410,17 @@
       <span class="stats-title">Statistics</span>
       <button class="stats-close" onclick="closeStats()">&#x2715;</button>
     </div>
-
-    <div id="allGamesSection"></div>
+    <div class="stats-tabs">
+      <button class="stats-tab active" id="stTabThis" onclick="switchStatsTab('this')">This Game</button>
+      <button class="stats-tab" id="stTabAll" onclick="switchStatsTab('all')">All Games</button>
+    </div>
+    <div id="statsTabThis">
+      <div id="allGamesSection"></div>
+    </div>
+    <div id="statsTabAll" style="display:none;">
+      <div id="allGamesLoading" style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;">Loading stats...</div>
+      <div id="allGamesContent" style="display:none;padding:0 16px 16px;"></div>
+    </div>
   </div>
 </div>
 
@@ -1461,7 +1510,7 @@ function closeMenu() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); closeHelp(); closeSettings(); } });
 
-function menuHome()     { closeMenu(); window.location.href = 'https://www.entspire.com'; }
+function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }
@@ -1618,6 +1667,11 @@ function openStats() {
     }
   }
 
+  // Reset to This Game tab
+  switchStatsTab('this');
+  // Request All Games data from Wix (loads in background)
+  if (!allGamesData) requestAllGamesData();
+
   const overlay = document.getElementById('statsOverlay');
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
@@ -1631,6 +1685,109 @@ function closeStats() {
 
 function handleStatsOverlayClick(e) {
   if (e.target === document.getElementById('statsOverlay')) closeStats();
+}
+
+// ── STATS TABS ────────────────────────────────────────────────────────────────
+let allGamesData = null;
+const AG_GAMES = {
+  wordsandphrases: { label: 'Words & Phrases', emoji: '\u2726',  color: '#43BAD0' },
+  '70ssongs':      { label: '70s Songs',       emoji: '\uD83C\uDFB5', color: '#9D7DD4' },
+  covers:          { label: 'Covers',          emoji: '\uD83C\uDFB8', color: '#6898E8' },
+  quotes:          { label: 'Quotes',          emoji: '\uD83D\uDCAC', color: '#00CEB8' },
+  slogans:         { label: 'Slogans',         emoji: '\u2726',  color: '#FF8820' },
+  movies:          { label: 'Movies',          emoji: '\uD83C\uDFAC', color: '#9AAAB8' },
+};
+
+function switchStatsTab(tab) {
+  document.getElementById('stTabThis').classList.toggle('active', tab === 'this');
+  document.getElementById('stTabAll').classList.toggle('active', tab === 'all');
+  document.getElementById('statsTabThis').style.display = tab === 'this' ? '' : 'none';
+  document.getElementById('statsTabAll').style.display = tab === 'all' ? '' : 'none';
+  if (tab === 'all' && allGamesData) renderAllGames();
+}
+
+function requestAllGamesData() {
+  window.parent.postMessage({ type: 'orijinz_dashboard_request' }, '*');
+}
+
+window.addEventListener('message', function(evt) {
+  if (!evt.data || evt.data.type !== 'orijinz_dashboard_data') return;
+  allGamesData = evt.data;
+  document.getElementById('allGamesLoading').style.display = 'none';
+  document.getElementById('allGamesContent').style.display = '';
+  renderAllGames();
+});
+
+function agFormatTime(s) { if (s == null) return '--'; var m = Math.floor(s/60), sec = s%60; return m + ':' + (sec<10?'0':'') + sec; }
+function agToDateStr(d) { if (!d) return ''; var s = (typeof d === 'string') ? d : new Date(d).toISOString(); return s.slice(0,10); }
+
+function renderAllGames() {
+  if (!allGamesData) return;
+  var results = (allGamesData.gameResults || []).map(function(r) {
+    var d = r.puzzleDate;
+    if (d && typeof d !== 'string') { try { d = new Date(d).toISOString(); } catch(e) { d = String(d); } }
+    return Object.assign({}, r, { puzzleDate: d || '' });
+  }).sort(function(a,b) { return new Date(b.puzzleDate) - new Date(a.puzzleDate); });
+  var stats = allGamesData.memberStats || [];
+
+  var now = new Date();
+  var today = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+
+  // Summary
+  var totalPlayed = stats.reduce(function(s,x){ return s + (x.gamesPlayed||0); }, 0);
+  var bestStreak = 0, bestGame = '';
+  stats.forEach(function(x) { if ((x.longestStreak||0) > bestStreak) { bestStreak = x.longestStreak; bestGame = x.game; } });
+  var totalSecs = results.reduce(function(s,r){ return s + (r.timeSecs||0); }, 0);
+  var totalMins = Math.round(totalSecs / 60);
+  var bm = AG_GAMES[bestGame] || {};
+
+  var html = '<div class="ag-summary">' +
+    '<div class="ag-card"><div class="ag-val">' + totalPlayed + '</div><div class="ag-lbl">Games Played</div></div>' +
+    '<div class="ag-card"><div class="ag-val">' + bestStreak + '</div><div class="ag-lbl">Best Streak</div>' + (bm.emoji ? '<div style="font-size:0.5rem;color:var(--text-muted);margin-top:2px;">' + bm.emoji + ' ' + (bm.label||'') + '</div>' : '') + '</div>' +
+    '<div class="ag-card"><div class="ag-val">' + totalMins + 'm</div><div class="ag-lbl">Time Played</div></div>' +
+  '</div>';
+
+  // Today
+  html += '<div class="ag-section">Today</div>';
+  var todayResults = results.filter(function(r) { return agToDateStr(r.puzzleDate) === today; });
+  var played = {};
+  if (todayResults.length === 0) {
+    html += '<div style="font-size:0.75rem;color:var(--text-muted);padding:4px 0 8px;">No games played today.</div>';
+  } else {
+    todayResults.forEach(function(r) {
+      if (played[r.game]) return;
+      played[r.game] = true;
+      var g = AG_GAMES[r.game] || { label: r.game, emoji: '', color: '#888' };
+      var badge = r.wonGame ? '<span class="ag-badge won">\u2713 Won</span>' : '<span class="ag-badge lost">\u2717 Lost</span>';
+      html += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';">' +
+        '<div class="ag-game-hdr">' + g.emoji + ' ' + g.label + badge + '</div>' +
+        '<div class="ag-game-stats">' +
+          '<div class="ag-row"><span class="ag-lbl">Score</span><span class="ag-val">' + (r.score||'--') + '</span></div>' +
+          '<div class="ag-row"><span class="ag-lbl">Time</span><span class="ag-val">' + agFormatTime(r.timeSecs) + '</span></div>' +
+          '<div class="ag-row"><span class="ag-lbl">Reveals</span><span class="ag-val">' + (r.lettersRevealed||0) + '</span></div>' +
+          '<div class="ag-row"><span class="ag-lbl">Wrong</span><span class="ag-val">' + (r.wrongLetters||0) + '</span></div>' +
+        '</div></div>';
+    });
+  }
+
+  // By Game
+  html += '<div class="ag-section">By Game</div>';
+  Object.keys(AG_GAMES).forEach(function(key) {
+    var g = AG_GAMES[key];
+    var st = stats.find(function(s) { return s.game === key; });
+    if (!st || !st.gamesPlayed) return;
+    var avg = st.gamesPlayed > 0 ? Math.round((st.totalScore||0) / st.gamesPlayed) : '--';
+    html += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';">' +
+      '<div class="ag-game-hdr">' + g.emoji + ' ' + g.label + '</div>' +
+      '<div class="ag-game-stats">' +
+        '<div class="ag-row"><span class="ag-lbl">Played</span><span class="ag-val">' + st.gamesPlayed + '</span></div>' +
+        '<div class="ag-row"><span class="ag-lbl">Streak</span><span class="ag-val">' + (st.currentStreak||0) + '</span></div>' +
+        '<div class="ag-row"><span class="ag-lbl">Best Streak</span><span class="ag-val">' + (st.longestStreak||0) + '</span></div>' +
+        '<div class="ag-row"><span class="ag-lbl">Avg Score</span><span class="ag-val">' + avg + '</span></div>' +
+      '</div></div>';
+  });
+
+  document.getElementById('allGamesContent').innerHTML = html;
 }
 
 function shareStats() {
