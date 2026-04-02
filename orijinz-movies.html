@@ -523,6 +523,33 @@
     color: var(--white);
     line-height: 1.6;
   }
+  .share-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 400;
+    align-items: center; justify-content: center;
+  }
+  .share-overlay.open { display: flex; }
+  .share-popup {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; width: min(320px, 85vw);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  .share-popup-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px 10px; border-bottom: 1px solid var(--border);
+  }
+  .share-popup-title { font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 900; color: var(--text); }
+  .share-close { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; }
+  .share-option {
+    display: block; width: 100%; padding: 12px 18px;
+    background: none; border: none; border-bottom: 1px solid rgba(42,42,52,0.5);
+    font-family: 'Nunito Sans', sans-serif; font-size: 0.88rem; color: var(--text);
+    text-align: left; cursor: pointer; text-decoration: none;
+    transition: background 0.15s;
+  }
+  .share-option:last-child { border-bottom: none; border-radius: 0 0 12px 12px; }
+  .share-option:hover { background: rgba(154,170,184,0.08); }
+
   /* TOAST */
   .toast {
     position: fixed;
@@ -1413,10 +1440,6 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Account Settings
     </button>
-    <button class="menu-item" onclick="menuLogout()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Log Out
-    </button>
   </div>
 </nav>
 
@@ -1720,6 +1743,21 @@
   </div>
 </div>
 
+<div class="share-overlay" id="shareOverlay" onclick="handleShareOverlayClick(event)">
+  <div class="share-popup">
+    <div class="share-popup-header">
+      <div class="share-popup-title">Share</div>
+      <button class="share-close" onclick="closeSharePopup()">&#10005;</button>
+    </div>
+    <a class="share-option" id="shareEmail"    href="#" target="_blank" rel="noopener">&#128140; Email</a>
+    <a class="share-option" id="shareMessages" href="#" target="_blank" rel="noopener">&#128172; Messages</a>
+    <a class="share-option" id="shareWhatsApp" href="#" target="_blank" rel="noopener">&#128518; WhatsApp</a>
+    <button class="share-option" onclick="sharePopupCopy()">&#128203; Copy to clipboard</button>
+    <a class="share-option" id="shareFacebook" href="#" target="_blank" rel="noopener">&#128420; Facebook</a>
+    <a class="share-option" id="shareBluesky"  href="#" target="_blank" rel="noopener">&#127756; Bluesky</a>
+    <a class="share-option" id="shareTwitter"  href="#" target="_blank" rel="noopener">&#120143; Post on X / Twitter</a>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <canvas id="confettiCanvas"></canvas>
 
@@ -1750,7 +1788,6 @@ function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }
 function menuGame(url)   { closeMenu(); try { window.top.location.href = url; } catch(e) { window.location.href = url; } }
-function menuLogout()    { closeMenu(); window.parent.postMessage({ type: 'orijinz_logout' }, '*'); }
 
 // =================================================================
 // STATISTICS
@@ -3117,8 +3154,31 @@ function shareResult() {
 // =================================================================
 // TOAST
 // =================================================================
+var _shareText = '', _shareUrl = '';
 function nativeShare(data) {
-  window.parent.postMessage({ type: 'orijinz_share', title: data.title || '', text: data.text || '', url: data.url || '' }, '*');
+  _shareText = data.text || '';
+  _shareUrl  = data.url || '';
+  var encFull = encodeURIComponent(_shareText + '\n' + _shareUrl);
+  var encUrl  = encodeURIComponent(_shareUrl);
+  document.getElementById('shareEmail').href    = 'mailto:?subject=' + encodeURIComponent(data.title || 'Orijinz Daily') + '&body=' + encFull;
+  var msgEl = document.getElementById('shareMessages');
+  if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    msgEl.href = 'sms:?&body=' + encFull;
+    msgEl.style.display = '';
+  } else {
+    msgEl.style.display = 'none';
+  }
+  document.getElementById('shareWhatsApp').href = 'https://wa.me/?text=' + encFull;
+  document.getElementById('shareFacebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encUrl;
+  document.getElementById('shareBluesky').href  = 'https://bsky.app/intent/compose?text=' + encFull;
+  document.getElementById('shareTwitter').href  = 'https://twitter.com/intent/tweet?text=' + encFull;
+  document.getElementById('shareOverlay').classList.add('open');
+}
+function closeSharePopup() { document.getElementById('shareOverlay').classList.remove('open'); }
+function handleShareOverlayClick(e) { if (e.target === document.getElementById('shareOverlay')) closeSharePopup(); }
+function sharePopupCopy() {
+  safeCopy(_shareText + '\n' + _shareUrl);
+  closeSharePopup();
 }
 
 function safeCopy(text) {

@@ -548,14 +548,14 @@ body.page-blur .letter-tile.active {
 /* Share popup */
 .share-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.65); z-index: 400;
-  align-items: flex-end; justify-content: center;
+  background: rgba(0,0,0,0.6); z-index: 400;
+  align-items: center; justify-content: center;
 }
 .share-overlay.open { display: flex; }
 .share-popup {
   background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 16px 16px 0 0; width: 100%; max-width: 680px;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  border-radius: 12px; width: min(320px, 85vw);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
 }
 .share-popup-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -570,6 +570,7 @@ body.page-blur .letter-tile.active {
   text-align: left; cursor: pointer; text-decoration: none;
   transition: background 0.15s;
 }
+.share-option:last-child { border-bottom: none; border-radius: 0 0 12px 12px; }
 .share-option:hover { background: rgba(255,136,32,0.08); }
 
 /* RESPONSIVE */
@@ -643,10 +644,6 @@ body.page-blur .letter-tile.active {
     <button class="menu-item" onclick="menuGame('https://www.entspire.com/account-settings')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Account Settings
-    </button>
-    <button class="menu-item" onclick="menuLogout()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Log Out
     </button>
   </div>
   <div class="menu-footer" id="menuFooter" style="display:none">
@@ -1229,6 +1226,93 @@ function handleKey(key) {
 }
 
 // ── Submit guess ──────────────────────────────────────────────────────────────
+function getLetterState(guessWord, idx) {
+  if (!guessWord[idx]) return 'wrong';
+  return guessWord[idx] === answerClean[idx] ? 'correct-pos' : 'wrong';
+}
+
+function animateGuessSubmit(states, won, onComplete) {
+  animating = true;
+  const display  = document.getElementById('currentInputDisplay');
+  const tiles    = [...display.querySelectorAll('.letter-tile:not(.space-tile):not(.prefilled-tile)')];
+  const tileData = tiles.map((tile, i) => ({
+    tile, stateIdx: i, isRevealed: tile.classList.contains('revealed')
+  }));
+  const n        = tileData.length;
+  const LONG     = n > 18;
+  const FLIP_DUR = 400, STAGGER = 100;
+
+  function applyColor(tile, isRevealed, st) {
+    if (won || isRevealed || st === 'correct-pos') {
+      tile.style.background  = '#b86818';
+      tile.style.borderColor = '#b86818';
+      tile.style.color       = 'white';
+    } else {
+      tile.style.background  = '#c0392b';
+      tile.style.borderColor = '#c0392b';
+      tile.style.color       = 'white';
+    }
+    tile.style.textShadow = '';
+  }
+
+  if (!LONG) {
+    const totalFlip = (n - 1) * STAGGER + FLIP_DUR;
+    tileData.forEach(({ tile, stateIdx, isRevealed }, i) => {
+      setTimeout(() => {
+        tile.style.transition = 'transform 0.2s ease';
+        tile.style.transform  = 'rotateY(90deg)';
+        setTimeout(() => {
+          applyColor(tile, isRevealed, states[stateIdx]);
+          tile.style.transition = 'transform 0.2s ease';
+          tile.style.transform  = 'rotateY(0deg)';
+        }, FLIP_DUR / 2);
+      }, i * STAGGER);
+    });
+    if (won) {
+      setTimeout(() => { animating = false; onComplete(); }, totalFlip + 600);
+    } else {
+      setTimeout(() => {
+        tileData.forEach(({ tile, stateIdx, isRevealed }) => {
+          if (isRevealed || states[stateIdx] === 'correct-pos') return;
+          tile.style.transition  = 'background 0.3s ease, border-color 0.3s ease, color 0.3s ease';
+          tile.style.background  = 'var(--bg3)';
+          tile.style.borderColor = 'var(--border)';
+          tile.style.color       = 'var(--white)';
+          tile.textContent       = '';
+        });
+        setTimeout(() => { animating = false; onComplete(); }, 400);
+      }, totalFlip + 600);
+    }
+  } else {
+    tileData.forEach(({ tile }) => {
+      tile.style.transition = 'transform 0.15s ease';
+      tile.style.transform  = 'rotateY(90deg)';
+    });
+    setTimeout(() => {
+      tileData.forEach(({ tile, stateIdx, isRevealed }) => {
+        applyColor(tile, isRevealed, states[stateIdx]);
+        tile.style.transition = 'transform 0.15s ease';
+        tile.style.transform  = 'rotateY(0deg)';
+      });
+    }, 150);
+    if (won) {
+      setTimeout(() => { animating = false; onComplete(); }, 700);
+    } else {
+      setTimeout(() => {
+        tileData.forEach(({ tile, stateIdx, isRevealed }) => {
+          if (isRevealed || states[stateIdx] === 'correct-pos') return;
+          tile.style.transition  = 'background 0.25s ease, border-color 0.25s ease, color 0.25s ease';
+          tile.style.background  = 'var(--bg3)';
+          tile.style.borderColor = 'var(--border)';
+          tile.style.color       = 'var(--white)';
+          tile.textContent       = '';
+        });
+        setTimeout(() => { animating = false; onComplete(); }, 300);
+      }, 700);
+    }
+  }
+}
+
 function submitGuess() {
   if (gameOver || animating) return;
 
@@ -1250,6 +1334,7 @@ function submitGuess() {
   }
 
   const won = fullGuess === answerClean;
+  const states = Array.from({length: fullGuess.length}, (_, i) => getLetterState(fullGuess, i));
 
   for (let i = 0; i < answerClean.length; i++) {
     if (fullGuess[i] === answerClean[i]) {
@@ -1260,37 +1345,38 @@ function submitGuess() {
     }
   }
 
-  if (won) {
-    for (let i = 0; i < answer.length; i++) {
-      if (answer[i] !== ' ' && !isAutoFill(answer[i])) revealedLetters.add(i);
-    }
-    gameOver = true;
-    streak++;
-    stopTimer();
-    recordGameResult(true);
-    saveState();
-    refreshKeyboard();
-    launchConfetti();
-    showResult(true);
-    sendResultToWix();
+  if (won) { gameOver = true; stopTimer(); }
 
-  } else {
-    let slot = 0;
-    for (let i = 0; i < answer.length; i++) {
-      if (answer[i] === ' ' || isAutoFill(answer[i])) continue;
-      if (!revealedLetters.has(i) && fullGuess[slot] === answerClean[slot]) {
-        revealedLetters.add(i);
-        hitLetters.add(answerClean[slot]);
+  animateGuessSubmit(states, won, () => {
+    if (won) {
+      for (let i = 0; i < answer.length; i++) {
+        if (answer[i] !== ' ' && !isAutoFill(answer[i])) revealedLetters.add(i);
       }
-      slot++;
+      streak++;
+      recordGameResult(true);
+      saveState();
+      refreshKeyboard();
+      launchConfetti();
+      showResult(true);
+      sendResultToWix();
+    } else {
+      let slot = 0;
+      for (let i = 0; i < answer.length; i++) {
+        if (answer[i] === ' ' || isAutoFill(answer[i])) continue;
+        if (!revealedLetters.has(i) && fullGuess[slot] === answerClean[slot]) {
+          revealedLetters.add(i);
+          hitLetters.add(answerClean[slot]);
+        }
+        slot++;
+      }
+      currentGuess = []; cursorPos = 0;
+      saveState();
+      updateCurrentInputDisplay();
+      refreshKeyboard();
+      updateRevealBtn();
+      showToast('Not quite \u2014 keep trying!', 1800);
     }
-    currentGuess = []; cursorPos = 0;
-    saveState();
-    updateCurrentInputDisplay();
-    refreshKeyboard();
-    updateRevealBtn();
-    showToast('Not quite \u2014 keep trying!', 1800);
-  }
+  });
 }
 
 // ── Reveal a Letter ───────────────────────────────────────────────────────────
@@ -1434,7 +1520,6 @@ function menuHelp()     { closeMenu(); openHelp(); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); openSettings(); }
 function menuGame(url)   { closeMenu(); try { window.top.location.href = url; } catch(e) { window.location.href = url; } }
-function menuLogout()    { closeMenu(); window.parent.postMessage({ type: 'orijinz_logout' }, '*'); }
 
 // ── Modal helpers ─────────────────────────────────────────────────────────────
 function openModal(id) {
@@ -1896,7 +1981,13 @@ function openSharePopup(text) {
   const encFull = encodeURIComponent(text + '\n' + url);
   const encUrl  = encodeURIComponent(url);
   document.getElementById('shareEmail').href    = 'mailto:?subject=Orijinz%20Daily%20Slogans&body=' + encFull;
-  document.getElementById('shareMessages').href = 'sms:?&body=' + encFull;
+  var msgEl = document.getElementById('shareMessages');
+  if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    msgEl.href = 'sms:?&body=' + encFull;
+    msgEl.style.display = '';
+  } else {
+    msgEl.style.display = 'none';
+  }
   document.getElementById('shareWhatsApp').href = 'https://wa.me/?text=' + encFull;
   document.getElementById('shareFacebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encUrl;
   document.getElementById('shareBluesky').href  = 'https://bsky.app/intent/compose?text=' + encFull;
