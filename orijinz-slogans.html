@@ -452,7 +452,7 @@ body.page-blur .letter-tile.active {
   .game-accord-body { display: none; }
   .game-accord.open .game-accord-body { display: block; }
   #allGamesSection .stats-section-label { margin-top: 0; }
-  #allGamesSection .stats-row { padding-left: 24px; padding-right: 24px; }
+  #allGamesSection .stats-row { padding-left: 24px; padding-right: 24px; justify-content: space-between; }
   .stats-sub-label {
     font-family: 'Space Mono', monospace;
     font-size: 0.54rem;
@@ -1973,7 +1973,7 @@ function devReset() {
 }
 function devNext() {
   const existing = safeGetState();
-  safeSaveState({ ...existing, devPuzzleIndex: (puzzleIndex + 1) % PUZZLES.length, lastPlayed: null });
+  safeSaveState({ ...existing, devPuzzleIndex: (puzzleIndex + 1) % PUZZLES.length, lastPlayed: new Date().toDateString() });
   location.reload();
 }
 
