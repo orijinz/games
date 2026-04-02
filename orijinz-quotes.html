@@ -2198,7 +2198,7 @@ function devNext() {
   const state = safeGetState();
   let randIdx;
   do { randIdx = Math.floor(Math.random() * PUZZLES.length); } while (randIdx === puzzleIndex);
-  safeSaveState({ ...state, devPuzzleIndex: randIdx, lastPlayed: null, guesses: [], revealed: [], revealCount: 0, wrongCount: 0, hintShown: false, gameOver: false, elapsed: 0 });
+  safeSaveState({ ...state, devPuzzleIndex: randIdx, lastPlayed: new Date().toDateString(), guesses: [], revealed: [], revealCount: 0, wrongCount: 0, hintShown: false, gameOver: false, elapsed: 0 });
   location.reload();
 }
 function devGoTo(n) {
@@ -2207,7 +2207,7 @@ function devGoTo(n) {
   const idx = PUZZLES.findIndex(p => p.id === n);
   if (idx === -1) { alert('Puzzle #' + n + ' not found'); return; }
   const state = safeGetState();
-  safeSaveState({ ...state, devPuzzleIndex: idx, lastPlayed: null, guesses: [], revealed: [], revealCount: 0, wrongCount: 0, hintShown: false, gameOver: false, elapsed: 0 });
+  safeSaveState({ ...state, devPuzzleIndex: idx, lastPlayed: new Date().toDateString(), guesses: [], revealed: [], revealCount: 0, wrongCount: 0, hintShown: false, gameOver: false, elapsed: 0 });
   location.reload();
 }
 try {

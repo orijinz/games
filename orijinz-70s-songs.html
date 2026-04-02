@@ -2941,7 +2941,7 @@ function devNext() {
   safeSaveState({
     ...state,
     devPuzzleIndex: randIdx,
-    lastPlayed: null, guesses: [], revealed: [],
+    lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
     defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
     listenPenalty: 0
   });
@@ -2956,7 +2956,7 @@ function devGoTo(n) {
   safeSaveState({
     ...state,
     devPuzzleIndex: idx,
-    lastPlayed: null, guesses: [], revealed: [],
+    lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
     defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
     listenPenalty: 0
   });

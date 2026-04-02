@@ -2766,7 +2766,7 @@ function devNext() {
   safeSaveState({
     ...state,
     devPuzzleIndex: ((puzzleIndex + 1) % PUZZLES.length),
-    lastPlayed: null, guesses: [], revealed: [],
+    lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
     defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0
   });
   location.reload();
@@ -2780,7 +2780,7 @@ function devGoTo(n) {
   safeSaveState({
     ...state,
     devPuzzleIndex: idx,
-    lastPlayed: null, guesses: [], revealed: [],
+    lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
     defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0
   });
   location.reload();
