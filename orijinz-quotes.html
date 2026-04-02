@@ -1450,11 +1450,7 @@ window.addEventListener('message', function(event) {
 function shareStats() {
   const s   = getStats();
   const txt = 'Orijinz Quotes Stats\nPlayed: ' + s.gamesPlayed + ' \u00B7 Streak: ' + s.streak + '\nBest score: ' + (s.bestScore !== null ? s.bestScore : '--') + '\nhttps://www.entspire.com/orijinz-quotes';
-  if (navigator.share) {
-    navigator.share({ title: 'Orijinz Quotes Stats', text: txt }).catch(() => safeCopy(txt));
-  } else {
-    safeCopy(txt);
-  }
+  nativeShare({ title: 'Orijinz Quotes Stats', text: txt });
 }
 
 // =================================================================
@@ -2184,17 +2180,16 @@ function shareResult() {
   const timeStr   = formatTime(elapsedSeconds);
   const shareText = 'Orijinz Quotes #' + (puzzle.id || (puzzleIndex + 1)) + ' \u23F1\uFE0F ' + timeStr;
   const shareUrl  = 'https://www.entspire.com/orijinz-quotes';
-  if (navigator.share) {
-    navigator.share({ title: 'Orijinz Quotes', text: shareText, url: shareUrl })
-      .catch(err => { if (err.name !== 'AbortError') safeCopy(shareText + '\n' + shareUrl); });
-  } else {
-    safeCopy(shareText + '\n' + shareUrl);
-  }
+  nativeShare({ title: 'Orijinz Quotes', text: shareText, url: shareUrl });
 }
 
 // =================================================================
 // TOAST
 // =================================================================
+function nativeShare(data) {
+  window.parent.postMessage({ type: 'orijinz_share', title: data.title || '', text: data.text || '', url: data.url || '' }, '*');
+}
+
 function safeCopy(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text)

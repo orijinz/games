@@ -2018,14 +2018,7 @@ function shareStats() {
   const text = lines.join('\n');
   const url  = 'https://www.entspire.com/orijinz-70s-songs';
 
-  if (navigator.share) {
-    navigator.share({ title: 'Orijinz Daily 70s Songs Stats', text, url })
-      .catch(err => {
-        if (err.name !== 'AbortError') safeCopy(text);
-      });
-  } else {
-    safeCopy(text);
-  }
+  nativeShare({ title: 'Orijinz Daily 70s Songs Stats', text, url });
 }
 
 // =================================================================
@@ -2917,19 +2910,16 @@ function shareResult() {
   const shareText = 'Orijinz Daily 70s Songs #' + (puzzle.id || (puzzleIndex + 1)) + ' \u23F1\uFE0F ' + timeStr;
   const shareUrl  = 'https://www.entspire.com/orijinz-70s-songs';
 
-  if (navigator.share) {
-    navigator.share({ title: 'Orijinz Daily 70s Songs', text: shareText, url: shareUrl })
-      .catch(err => {
-        if (err.name !== 'AbortError') safeCopy(shareText + '\n' + shareUrl);
-      });
-  } else {
-    safeCopy(shareText + '\n' + shareUrl);
-  }
+  nativeShare({ title: 'Orijinz Daily 70s Songs', text: shareText, url: shareUrl });
 }
 
 // =================================================================
 // TOAST
 // =================================================================
+function nativeShare(data) {
+  window.parent.postMessage({ type: 'orijinz_share', title: data.title || '', text: data.text || '', url: data.url || '' }, '*');
+}
+
 function safeCopy(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text)
