@@ -1956,10 +1956,10 @@ function shareStats() {
     '\u23F1\uFE0F Avg Time:        ' + avgTime,
     '\uD83C\uDFAF Best Score:      ' + bestScore,
     '',
-    'https://www.entspire.com/orijinz-covers',
+    'https://www.entspire.com/odcovers',
   ];
   const text = lines.join('\n');
-  const url  = 'https://www.entspire.com/orijinz-covers';
+  const url  = 'https://www.entspire.com/odcovers';
 
   nativeShare({ title: 'Orijinz Daily Covers Stats', text, url });
 }
@@ -2793,7 +2793,7 @@ function showResult(won) {
 function shareResult() {
   const timeStr  = formatTime(elapsedSeconds);
   const shareText = 'Orijinz Covers #' + (puzzle.id || (puzzleIndex + 1)) + ' \u23F1\uFE0F ' + timeStr;
-  const shareUrl  = 'https://www.entspire.com/orijinz-covers';
+  const shareUrl  = 'https://www.entspire.com/odcovers';
 
   nativeShare({ title: 'Orijinz Covers', text: shareText, url: shareUrl });
 }

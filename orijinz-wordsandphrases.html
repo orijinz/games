@@ -1862,10 +1862,10 @@ function shareStats() {
     '\u23F1\uFE0F Avg Time:        ' + avgTime,
     '\uD83C\uDFAF Best Score:      ' + bestScore,
     '',
-    'https://www.entspire.com/orijinz-daily',
+    'https://www.entspire.com/odwordsandphrases',
   ];
   const text = lines.join('\n');
-  const url  = 'https://www.entspire.com/orijinz-daily';
+  const url  = 'https://www.entspire.com/odwordsandphrases';
 
   nativeShare({ title: 'Orijinz Daily Words & Phrases Stats', text, url });
 }
@@ -2768,7 +2768,7 @@ window.addEventListener('message', function(event) {
 function shareResult() {
   const timeStr  = formatTime(elapsedSeconds);
   const shareText = 'Orijinz Daily Words & Phrases #' + (puzzle.id || (puzzleIndex + 1)) + ' \u23F1\uFE0F ' + timeStr;
-  const shareUrl  = 'https://www.entspire.com/orijinz-daily';
+  const shareUrl  = 'https://www.entspire.com/odwordsandphrases';
 
   nativeShare({ title: 'Orijinz Daily Words & Phrases', text: shareText, url: shareUrl });
 }
