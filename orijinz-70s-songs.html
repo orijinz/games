@@ -3094,6 +3094,17 @@ window.addEventListener('focus', () => {
   document.body.classList.remove('page-blur');
   if (!gameOver) { cursorPos = 0; updateCurrentInputDisplay(); }
 });
+document.addEventListener('click', (e) => {
+  if (!gameOver && !e.target.closest('iframe') && !e.target.closest('.kb-key') && !e.target.closest('.letter-tile')) {
+    cursorPos = 0; updateCurrentInputDisplay();
+  }
+});
+setInterval(() => {
+  if (!gameOver && document.activeElement === document.body) {
+    var tiles = document.querySelectorAll('.letter-tile.active');
+    if (tiles.length === 0) { cursorPos = 0; updateCurrentInputDisplay(); }
+  }
+}, 500);
 window.addEventListener('resize', fitWordGroups);
 </script>
 </body>
