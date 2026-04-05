@@ -164,11 +164,14 @@ main {
 .word-group { display: flex; gap: 5px; }
 
 .letter-tile {
-  width: 40px; height: 46px;
+  width: min(40px, calc((100vw - 48px - var(--max-word, 1) * 5px) / var(--max-word, 1)));
+  height: min(46px, calc((100vw - 48px - var(--max-word, 1) * 5px) / var(--max-word, 1) * 1.15));
   border: 2px solid var(--letter-border); background: var(--letter-bg);
   border-radius: 7px;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--text);
+  font-family: 'Playfair Display', serif;
+  font-size: min(1.25rem, calc((100vw - 48px - var(--max-word, 1) * 5px) / var(--max-word, 1) * 0.55));
+  font-weight: 700; color: var(--text);
   box-shadow: 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
   user-select: none; cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
@@ -191,7 +194,7 @@ body.page-blur .letter-tile.active {
   font-family: 'Space Mono', monospace; font-size: 0.9rem;
 }
 .letter-tile.space-tile {
-  width: 14px; background: transparent; border: none; box-shadow: none;
+  width: min(14px, 2.5vw); background: transparent; border: none; box-shadow: none;
   color: var(--border); font-size: 1rem; cursor: default;
 }
 .answer-reveal {
@@ -1102,38 +1105,22 @@ function refreshKeyboard() {
 function fitWordGroups() {
   const display = document.getElementById('currentInputDisplay');
   if (!display) return;
-  const availW = display.clientWidth || 340;
-  const gap = 5;
-  const groups = display.querySelectorAll('.word-group');
-  // find the longest word (most tiles)
-  let maxTiles = 0;
-  groups.forEach(g => {
-    const count = g.children.length;
-    if (count > maxTiles) maxTiles = count;
-  });
-  if (maxTiles === 0) return;
-  // calculate the max tile width that fits the longest word
-  const baseW = window.innerWidth <= 480 ? 36 : 40;
-  const baseH = window.innerWidth <= 480 ? 42 : 46;
-  const maxTileW = Math.floor((availW - gap * (maxTiles - 1)) / maxTiles);
-  const tileW = Math.min(baseW, maxTileW);
-  const scale = tileW / baseW;
-  const tileH = Math.round(baseH * scale);
-  const fontSize = scale >= 1 ? null : (scale * (window.innerWidth <= 480 ? 1.1 : 1.25)) + 'rem';
-  // apply uniform size to ALL tiles
-  display.querySelectorAll('.letter-tile').forEach(t => {
-    if (t.classList.contains('space-tile')) {
-      t.style.width = Math.round(14 * scale) + 'px';
-      return;
+  let availW = 0;
+  let el = display;
+  while (el && !availW) { availW = el.clientWidth; el = el.parentElement; }
+  if (!availW) return;
+  display.querySelectorAll('.word-group').forEach(g => {
+    g.style.zoom = '';
+    if (g.scrollWidth > availW * 0.98) {
+      g.style.zoom = String(availW / g.scrollWidth);
     }
-    t.style.width = tileW + 'px';
-    t.style.height = tileH + 'px';
-    if (fontSize) t.style.fontSize = fontSize;
   });
 }
 
 function updateCurrentInputDisplay() {
   const display = document.getElementById('currentInputDisplay');
+  const maxWordLen = Math.max(...answer.split(/[\s]+/).filter(Boolean).map(w => w.length));
+  display.style.setProperty('--max-word', maxWordLen);
   display.innerHTML = '';
 
   if (gameOver) {
