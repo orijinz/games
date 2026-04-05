@@ -1094,12 +1094,7 @@ function buildKeyboard() {
 }
 
 function refreshKeyboard() {
-  document.querySelectorAll('.kb-key[data-key]').forEach(btn => {
-    const k = btn.dataset.key;
-    if (k && k.length === 1) {
-      btn.classList.toggle('miss', wrongLetters.has(k) && !hitLetters.has(k));
-    }
-  });
+  // Keyboard letter highlighting disabled — answers can reuse letters
 }
 
 // ── Tile rendering ────────────────────────────────────────────────────────────
