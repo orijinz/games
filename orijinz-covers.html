@@ -153,10 +153,17 @@
   }
 
   .spotify-embed-wrap {
-    width: 100%;
+    width: calc(100% + 12px);
+    margin-left: -6px;
+    margin-right: -6px;
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 10px;
+  }
+  .spotify-embed-wrap iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block;
   }
 
   .cover-credit {
@@ -826,7 +833,6 @@
     justify-content: center;
     padding: max(10vh, 60px) 12px 12px;
     justify-content: center;
-    overflow-y: auto;
   }
   .stats-overlay.open    { display: flex; }
   .stats-overlay.visible { opacity: 1; }
@@ -1193,7 +1199,7 @@
   @media (max-width: 480px) {
     .kb-key      { height: 46px; font-size: 0.82rem; }
     .kb-key.wide { font-size: 0.68rem; }
-    .song-card { padding: 18px 18px; max-height: 280px; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; }
+    .song-card { padding: 14px 10px; max-height: 280px; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; }
     .song-card::-webkit-scrollbar { display: none; }
     .song-card-wrap { position: relative; transition: opacity 0.7s ease; }
     .song-card-wrap.fading { opacity: 0; pointer-events: none; }
