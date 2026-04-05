@@ -457,7 +457,7 @@
     display: none;
   }
   .result-panel.visible { display: block; animation: resultFadeIn 1.4s ease forwards; }
-  .result-emoji    { font-size: 2.5rem; margin-bottom: 8px; }
+  .result-emoji    { display: none; }
   .result-headline {
     font-family: 'Playfair Display', serif;
     font-size: 1.8rem; font-weight: 900;
@@ -663,7 +663,6 @@
     opacity: 0; transition: opacity 0.25s ease;
     align-items: flex-start; justify-content: center;
     padding: max(10vh, 60px) 12px 12px;
-    overflow-y: auto;
   }
   .stats-overlay.open    { display: flex; }
   .stats-overlay.visible { opacity: 1; }
@@ -2200,9 +2199,10 @@ function showResult(won) {
     msg.textContent   = 'Come back tomorrow for a new quote!';
   }
 
-  // Show "Did you know?" if present
-  if (puzzle.dyk) {
-    document.getElementById('dykText').textContent = puzzle.dyk;
+  // Show "Did you know?" — use dyk field, or show unused hint
+  const dykContent = puzzle.dyk || (!hintShown && puzzle.hint ? puzzle.hint : '');
+  if (dykContent) {
+    document.getElementById('dykText').textContent = dykContent;
     document.getElementById('dykPanel').classList.add('visible');
   }
 
