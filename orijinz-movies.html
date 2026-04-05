@@ -3077,6 +3077,8 @@ function showResult(won) {
   const hw2 = document.getElementById('hintWrap');
   if (hw2) hw2.style.display = 'none';
   document.getElementById('instructionText').style.display = 'none';
+  const tapHint = document.getElementById('tapToTypeHint');
+  if (tapHint) tapHint.style.display = 'none';
 
   const kb      = document.getElementById('keyboard');
   const divider = document.querySelector('.section-divider');

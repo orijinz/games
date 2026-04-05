@@ -2751,6 +2751,8 @@ function updateRevealBtn() {
 function showResult(won) {
   stopTimer();
   document.getElementById('instructionText').style.display = 'none';
+  const tapHint = document.getElementById('tapToTypeHint');
+  if (tapHint) tapHint.style.display = 'none';
 
   const kb      = document.getElementById('keyboard');
   const divider = document.querySelector('.section-divider');
