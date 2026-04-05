@@ -866,6 +866,17 @@
     .quote-card-wrap { position: relative; }
     .quote-card { padding: 16px 16px; max-height: 180px; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; }
     .quote-card::-webkit-scrollbar { display: none; }
+    .quote-card-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 44px;
+      background: linear-gradient(to bottom, transparent, #153432);
+      border-radius: 0 0 8px 8px;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .quote-card-wrap.scrolled-end::after { opacity: 0; }
     .date-badge  { display: none; }
     main         { gap: 14px; padding: 16px 16px 32px; }
     .clue-btn    { padding: 9px 14px; font-size: 0.65rem; }
@@ -1715,6 +1726,19 @@ function initGame() {
   document.getElementById('puzzleNum').textContent  = 'Puzzle #' + (puzzle.id || (puzzleIndex + 1));
   document.getElementById('catBadge').textContent   = puzzle.badge;
   document.getElementById('quoteText').textContent  = puzzle.quote;
+
+  // Scroll fade indicator for long quotes
+  const quoteCard = document.getElementById('quoteCard');
+  const quoteWrap = document.getElementById('quoteCardWrap');
+  if (quoteCard && quoteWrap) {
+    const updateFade = () => {
+      const overflows = quoteCard.scrollHeight > quoteCard.clientHeight + 4;
+      const atEnd = quoteCard.scrollTop + quoteCard.clientHeight >= quoteCard.scrollHeight - 8;
+      quoteWrap.classList.toggle('scrolled-end', !overflows || atEnd);
+    };
+    setTimeout(updateFade, 80);
+    quoteCard.addEventListener('scroll', updateFade, { passive: true });
+  }
 
   // Instruction text: "Name the [category]" for all types
   const instrEl = document.getElementById('instructionText');

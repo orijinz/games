@@ -583,6 +583,20 @@ body.page-blur .letter-tile.active {
   /* letter-tile size is set dynamically by fitWordGroups() */
   .kb-key      { height: 46px; font-size: 0.82rem; }
   .kb-key.wide { font-size: 0.68rem; }
+  .slogan-card-wrap { position: relative; }
+  .slogan-card { max-height: 180px; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; }
+  .slogan-card::-webkit-scrollbar { display: none; }
+  .slogan-card-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 44px;
+    background: linear-gradient(to bottom, transparent, #3e1e0c);
+    border-radius: 0 0 8px 8px;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .slogan-card-wrap.scrolled-end::after { opacity: 0; }
   .date-badge  { display: none; }
   main         { gap: 14px; padding: 16px 16px 32px; }
   .clue-btn    { padding: 9px 14px; font-size: 0.62rem; }
@@ -672,12 +686,14 @@ body.page-blur .letter-tile.active {
 <main id="gameZone">
   <div class="meta-row" id="puzzleNum">Puzzle #1</div>
 
-  <div class="slogan-card">
-    <div class="card-top">
-      <span class="card-label">Today's Slogan</span>
-      <span class="cat-pill" id="catPill"></span>
+  <div class="slogan-card-wrap" id="sloganCardWrap">
+    <div class="slogan-card" id="sloganCard">
+      <div class="card-top">
+        <span class="card-label">Today's Slogan</span>
+        <span class="cat-pill" id="catPill"></span>
+      </div>
+      <div class="slogan-text" id="sloganText"></div>
     </div>
-    <div class="slogan-text" id="sloganText"></div>
   </div>
 
   <div class="clue-section">
@@ -1022,6 +1038,19 @@ function initGame() {
 
   document.getElementById('catPill').textContent         = puzzle.title;
   document.getElementById('instructionText').textContent = 'Guess the ' + puzzle.title.toLowerCase();
+
+  // Scroll fade indicator for long slogans
+  const sloganCard = document.getElementById('sloganCard');
+  const sloganWrap = document.getElementById('sloganCardWrap');
+  if (sloganCard && sloganWrap) {
+    const updateFade = () => {
+      const overflows = sloganCard.scrollHeight > sloganCard.clientHeight + 4;
+      const atEnd = sloganCard.scrollTop + sloganCard.clientHeight >= sloganCard.scrollHeight - 8;
+      sloganWrap.classList.toggle('scrolled-end', !overflows || atEnd);
+    };
+    setTimeout(updateFade, 80);
+    sloganCard.addEventListener('scroll', updateFade, { passive: true });
+  }
 
   // Restore settings
   const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
@@ -1438,7 +1467,7 @@ function showResult(won) {
   const kb      = document.getElementById('keyboard');
   const divider = document.querySelector('.section-divider');
   const cs      = document.querySelector('.clue-section');
-  const sc      = document.querySelector('.slogan-card');
+  const sc      = document.getElementById('sloganCardWrap');
   const rp      = document.getElementById('resultPanel');
 
   const nextBtn = document.getElementById('nextPuzzleBtn');
