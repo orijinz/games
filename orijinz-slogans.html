@@ -109,7 +109,7 @@ main {
   to   { transform: translateY(0);   opacity: 1;   }
 }
 .card-top {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px;
 }
 .card-label {
   font-family: 'Space Mono', monospace; font-size: 0.58rem;
@@ -161,16 +161,16 @@ main {
   display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
   gap: 5px; width: 100%; max-width: 100%; overflow: hidden;
 }
-.word-group { display: flex; gap: 5px; }
+.word-group { display: flex; gap: 5px; max-width: 100%; }
 
 .letter-tile {
-  width: min(40px, calc((100vw - 48px - var(--max-word, 1) * 5px) / var(--max-word, 1)));
-  height: min(46px, calc((100vw - 48px - var(--max-word, 1) * 5px) / var(--max-word, 1) * 1.15));
+  width: var(--tile-w, 40px); height: var(--tile-h, 46px);
+  flex: 0 0 var(--tile-w, 40px);
   border: 2px solid var(--letter-border); background: var(--letter-bg);
   border-radius: 7px;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Playfair Display', serif;
-  font-size: min(1.25rem, calc((100vw - 48px - var(--max-word, 1) * 5px) / var(--max-word, 1) * 0.55));
+  font-size: var(--tile-font, 1.25rem);
   font-weight: 700; color: var(--text);
   box-shadow: 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
   user-select: none; cursor: pointer;
@@ -194,7 +194,8 @@ body.page-blur .letter-tile.active {
   font-family: 'Space Mono', monospace; font-size: 0.9rem;
 }
 .letter-tile.space-tile {
-  width: min(14px, 2.5vw); background: transparent; border: none; box-shadow: none;
+  width: var(--space-w, 14px); flex: 0 0 var(--space-w, 14px);
+  background: transparent; border: none; box-shadow: none;
   color: var(--border); font-size: 1rem; cursor: default;
 }
 .answer-reveal {
@@ -1105,16 +1106,21 @@ function refreshKeyboard() {
 function fitWordGroups() {
   const display = document.getElementById('currentInputDisplay');
   if (!display) return;
+  // walk up to find real container width
   let availW = 0;
   let el = display;
   while (el && !availW) { availW = el.clientWidth; el = el.parentElement; }
   if (!availW) return;
-  display.querySelectorAll('.word-group').forEach(g => {
-    g.style.zoom = '';
-    if (g.scrollWidth > availW * 0.98) {
-      g.style.zoom = String(availW / g.scrollWidth);
-    }
-  });
+  const gap = 5;
+  const maxWord = parseInt(display.style.getPropertyValue('--max-word')) || 1;
+  const tileW = Math.min(40, Math.floor((availW - gap * (maxWord - 1)) / maxWord));
+  const tileH = Math.round(tileW * 1.15);
+  const fontSize = Math.min(1.25, tileW * 0.031);
+  const spaceW = Math.min(14, Math.round(tileW * 0.35));
+  display.style.setProperty('--tile-w', tileW + 'px');
+  display.style.setProperty('--tile-h', tileH + 'px');
+  display.style.setProperty('--tile-font', fontSize + 'rem');
+  display.style.setProperty('--space-w', spaceW + 'px');
 }
 
 function updateCurrentInputDisplay() {
@@ -2092,6 +2098,7 @@ function devNext() {
 window.addEventListener('blur',  () => document.body.classList.add('page-blur'));
 window.addEventListener('focus', () => document.body.classList.remove('page-blur'));
 initGame();
+window.addEventListener('resize', fitWordGroups);
 try { window.focus(); } catch(e) {}
 </script>
 </body>
