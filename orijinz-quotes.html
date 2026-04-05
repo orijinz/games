@@ -1307,7 +1307,11 @@ function closeStats() {
   overlay.classList.remove('visible');
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
-function handleStatsOverlayClick(e) { if (e.target === e.currentTarget) closeStats(); }
+function handleStatsOverlayClick(e) {
+  if (e.target !== e.currentTarget) return;
+  if (_helpTouchY !== null) return;
+  closeStats();
+}
 
 let allGamesData = null;
 const AG_GAMES = {
@@ -1388,9 +1392,18 @@ function closeHelp() {
   overlay.classList.remove('visible');
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
+let _helpTouchY = null;
 function handleHelpOverlayClick(e) {
-  if (e.target === document.getElementById('helpOverlay')) closeHelp();
+  if (e.target !== document.getElementById('helpOverlay')) return;
+  if (_helpTouchY !== null) return;
+  closeHelp();
 }
+document.addEventListener('touchstart', e => { _helpTouchY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dy = e.changedTouches[0].clientY - (_helpTouchY || 0);
+  if (Math.abs(dy) > 10) { _helpTouchY = 'scrolled'; return; }
+  _helpTouchY = null;
+}, { passive: true });
 
 function openSettings() {
   const overlay = document.getElementById('settingsOverlay');
@@ -1409,7 +1422,9 @@ function closeSettings() {
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
 function handleSettingsOverlayClick(e) {
-  if (e.target === document.getElementById('settingsOverlay')) closeSettings();
+  if (e.target !== document.getElementById('settingsOverlay')) return;
+  if (_helpTouchY !== null) return;
+  closeSettings();
 }
 function saveNativeKeyboardSetting(val) {
   localStorage.setItem('nativeKeyboard', val ? 'true' : 'false');
@@ -1532,7 +1547,11 @@ function closeLeaderboard() {
   overlay.classList.remove('visible');
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
-function handleLbOverlayClick(e) { if (e.target === e.currentTarget) closeLeaderboard(); }
+function handleLbOverlayClick(e) {
+  if (e.target !== e.currentTarget) return;
+  if (_helpTouchY !== null) return;
+  closeLeaderboard();
+}
 
 let lbSortField = 'score';
 function setLbSort(field) {
@@ -2410,7 +2429,7 @@ window.addEventListener('resize', fitWordGroups);
 </div>
 
 <!-- Help modal -->
-<div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)" style="overflow:hidden;">
+<div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">
   <div class="stats-panel" id="helpPanel" style="max-width:460px;">
     <div class="stats-panel-header">
       <span class="stats-title">Help</span>
@@ -2439,6 +2458,9 @@ window.addEventListener('resize', fitWordGroups);
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Is there a way to play earlier puzzles?</p>
       <p style="margin:0 0 16px;">Unfortunately not. You get one new puzzle every day.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">Can I use the native keyboard on my mobile device?</p>
+      <p style="margin:0 0 16px;">Yes, if the Orijinz Daily mobile keyboard is hard for you to use, you can try the native keyboard built into your device. Go to the hamburger menu in the upper left and choose Settings and enable the native keyboard. Note that some native keyboards require extra scrolling and can be awkward. Unfortunately this is how they are designed.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Can we send you feedback or ideas?</p>
       <p style="margin:0;">Of course &#8212; email <a href="mailto:orijinzgames@outlook.com" style="color:var(--accent-light);">orijinzgames@outlook.com</a>.</p>
