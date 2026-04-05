@@ -948,7 +948,6 @@
     justify-content: center;
     padding: max(10vh, 60px) 12px 12px;
     justify-content: center;
-    overflow-y: auto;
   }
   .stats-overlay.open    { display: flex; }
   .stats-overlay.visible { opacity: 1; }
@@ -1706,7 +1705,7 @@
 </div>
 
 <!-- Help modal -->
-<div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)" style="overflow:hidden !important;overflow-y:hidden !important;">
+<div class="stats-overlay" id="helpOverlay" onclick="handleHelpOverlayClick(event)">
   <div class="stats-panel" id="helpPanel" style="max-width:460px;">
     <div class="stats-panel-header">
       <span class="stats-title">Help</span>
