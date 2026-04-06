@@ -64,12 +64,18 @@ header {
   font-family: 'Nunito', sans-serif;
   font-size: clamp(2rem, 7vw, 3rem);
   font-weight: 900; letter-spacing: -0.01em; line-height: 1;
+  display: inline-flex; align-items: baseline;
 }
 .logo .logo-brand { color: var(--accent); }
 .logo .logo-daily {
   background: linear-gradient(90deg, var(--accent-light), #fff8ee);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
+.logo .logo-spacer { width: 0.25em; }
+.icon-o { position: relative; display: inline-block; font-size: 1em; line-height: 1; vertical-align: baseline; }
+.icon-o .o-shadow { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: inherit; line-height: 1; color: rgba(0,0,0,0.4); position: absolute; top: 0.03em; left: 0.025em; }
+.icon-o .o-mid { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: inherit; line-height: 1; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-image: conic-gradient(from 180deg, #7A5CA8, #4A70B8, #2A9AA8, #00A898, #C03828, #C06018, #D0A030, #7A5CA8); position: absolute; top: 0.015em; left: 0.01em; }
+.icon-o .o-top { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: inherit; line-height: 1; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-image: conic-gradient(from 180deg, #9D7DD4, #6898E8, #43BAD0, #00CEB8, #F05040, #F08030, #FFD840, #9D7DD4); position: relative; }
 .header-sub {
   font-size: 0.83rem; color: var(--text-muted);
   margin-top: 5px; letter-spacing: 0.04em; font-style: italic;
@@ -676,9 +682,7 @@ body.page-blur .letter-tile.active {
     <span></span><span></span><span></span>
   </button>
   <div class="header-ornament">&#10022; Slogans &#10022;</div>
-  <div class="logo">
-    <span class="logo-brand">Orijinz</span><span class="logo-daily"> Daily</span>
-  </div>
+  <div class="logo"><span class="icon-o"><span class="o-shadow">O</span><span class="o-mid">O</span><span class="o-top">O</span></span><span class="logo-brand">rijinz</span><span class="logo-spacer"></span><span class="logo-daily">Daily</span></div>
   <div class="header-sub">Read the slogan. Guess the source.</div>
   <div class="date-badge" id="dateBadge"></div>
 </header>
@@ -837,7 +841,7 @@ body.page-blur .letter-tile.active {
       <p style="margin:0 0 16px;">Unfortunately not. You get one new puzzle every day.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Can I use the native keyboard on my mobile device?</p>
-      <p style="margin:0 0 16px;">Yes, if the Orijinz Daily mobile keyboard is hard for you to use, you can try the native keyboard built into your device. Go to the hamburger menu in the upper left and choose Settings and enable the native keyboard. Note that some native keyboards require extra scrolling and can be awkward. Unfortunately this is how they are designed.</p>
+      <p style="margin:0 0 16px;">Yes, if the Orijinz Daily mobile keyboard is hard for you to use, you can try the native keyboard built into your device. Go to the hamburger menu in the upper left and choose Settings and enable the native keyboard. Note that some native keyboards require extra scrolling and can be awkward. Unfortunately, this is how they are designed.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Can we send you feedback or ideas?</p>
       <p style="margin:0;">Of course &#8212; email <a href="mailto:orijinzgames@outlook.com" style="color:var(--accent);">orijinzgames@outlook.com</a></p>
