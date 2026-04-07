@@ -3078,8 +3078,6 @@ function showResult(won) {
   stopClip();
   const tw2 = document.getElementById('trailerWrap');
   if (tw2) tw2.style.display = 'none';
-  const hw2 = document.getElementById('hintWrap');
-  if (hw2) hw2.style.display = 'none';
   document.getElementById('instructionText').style.display = 'none';
   const tapHint = document.getElementById('tapToTypeHint');
   if (tapHint) tapHint.style.display = 'none';
@@ -3089,6 +3087,7 @@ function showResult(won) {
   const rp      = document.getElementById('resultPanel');
   const cs      = document.querySelector('.clue-section');
   const sw      = document.getElementById('synopsisCardWrap');
+  const hw      = document.getElementById('hintWrap');
 
   // Hide the next button and video card
   const nextBtn = document.getElementById('nextPuzzleBtn');
@@ -3097,7 +3096,7 @@ function showResult(won) {
   if (vc) vc.style.display = 'none';
 
   // Fade individual sections directly alongside the game zone
-  [sw, cs].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
+  [sw, cs, hw].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
 
   // Fade the entire game zone to black — everything goes together
   const gz = document.getElementById('gameZone');
@@ -3106,7 +3105,7 @@ function showResult(won) {
 
   // After fade-out: hide clutter, show answer + result, fade back in
   setTimeout(() => {
-    [kb, divider, cs, sw].filter(Boolean).forEach(el => el.style.display = 'none');
+    [kb, divider, cs, sw, hw].filter(Boolean).forEach(el => el.style.display = 'none');
     updateCurrentInputDisplay(); // show the big answer text
     window.scrollTo(0, 0);
     rp.classList.add('visible');

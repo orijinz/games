@@ -1003,7 +1003,7 @@
     style="position:fixed;bottom:50%;left:50%;width:1px;height:1px;opacity:0;pointer-events:none;border:none;outline:none;background:transparent;color:transparent;caret-color:transparent;resize:none;overflow:hidden;"></textarea>
 
     <div class="input-section">
-      <p class="instruction" id="instructionText">Type your answer using the keyboard below</p>
+      <p class="instruction" id="instructionText">Guess the answer</p>
       <div class="current-input-display" id="currentInputDisplay" onclick="handleTilesTap()"></div>
       <div id="tapToTypeHint" style="display:none;text-align:center;padding:8px 0 4px;font-size:0.85rem;color:var(--text-muted);cursor:pointer;" onclick="focusNativeInput()">Tap here to type your answer</div>
       <div class="timer-display" id="timerDisplay">0:00</div>
@@ -1762,10 +1762,11 @@ function initGame() {
     quoteCard.addEventListener('scroll', updateFade, { passive: true });
   }
 
-  // Instruction text: "Name the [category]" for all types
+  // Instruction text: "Guess the [category]" for all types
   const instrEl = document.getElementById('instructionText');
   const catLabel = (puzzle.cat || 'source').toLowerCase();
-  instrEl.textContent = 'Name the ' + catLabel;
+  instrEl.textContent = 'Guess the ' + catLabel;
+  instrEl.dataset.defaultText = instrEl.textContent;
 
   // Restore hint panel if already shown
   if (hintShown && puzzle.hint) {
@@ -2194,15 +2195,16 @@ function showResult(won) {
   const rp       = document.getElementById('resultPanel');
   const clueSection = document.querySelector('.clue-section');
   const qw       = document.getElementById('quoteCardWrap');
+  const hp       = document.getElementById('hintPanel');
 
-  [qw, clueSection].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
+  [qw, clueSection, hp].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
 
   const gz = document.getElementById('gameZone');
   gz.style.transition = 'opacity 1.5s ease';
   gz.style.opacity = '0';
 
   setTimeout(() => {
-    [kb, divider, clueSection, qw].filter(Boolean).forEach(el => el.style.display = 'none');
+    [kb, divider, clueSection, qw, hp].filter(Boolean).forEach(el => el.style.display = 'none');
     updateCurrentInputDisplay();
     window.scrollTo(0, 0);
     rp.classList.add('visible');

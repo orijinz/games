@@ -1405,7 +1405,7 @@
 
   <!-- Current input display -->
   <div class="input-section">
-    <p class="instruction" id="instructionText">Type your guess using the keyboard below</p>
+    <p class="instruction" id="instructionText">Guess the answer</p>
     <div class="current-input-display" id="currentInputDisplay" onclick="handleTilesTap()"></div>
     <div id="tapToTypeHint" style="display:none;text-align:center;padding:8px 0 4px;font-size:0.85rem;color:var(--text-muted);cursor:pointer;" onclick="focusNativeInput()">Tap here to type your answer</div>
     <div class="timer-display" id="timerDisplay">0:00</div>
@@ -2219,9 +2219,12 @@ function initGame() {
   badge.textContent = CAT_LABELS[puzzle.cat] || puzzle.cat;
   badge.className   = 'category-badge ' + (CAT_CLASSES[puzzle.cat] || '');
 
-  const instrMap = { word: 'Name the word', phrase: 'Name the phrase', name: 'Name the name', words: 'Name the two words', wordphrase: 'Name the word & phrase' };
+  const instrMap = { word: 'Guess the word', phrase: 'Guess the phrase', name: 'Guess the name', words: 'Guess the two words', wordphrase: 'Guess the word & phrase' };
   const instrEl2 = document.getElementById('instructionText');
-  if (instrEl2) instrEl2.textContent = instrMap[puzzle.cat] || 'Name the answer';
+  if (instrEl2) {
+    instrEl2.textContent = instrMap[puzzle.cat] || 'Guess the answer';
+    instrEl2.dataset.defaultText = instrEl2.textContent;
+  }
 
   if (puzzle.def && defShown) {
     document.getElementById('defText').innerHTML = puzzle.def;
@@ -2684,11 +2687,12 @@ function showResult(won) {
   const rp      = document.getElementById('resultPanel');
   const cs      = document.querySelector('.clue-section');
   const ow      = document.getElementById('originCardWrap');
+  const dp      = document.getElementById('defPanel');
   const hint    = document.getElementById('tapToTypeHint');
   const ni      = document.getElementById('nativeInput');
 
   // Fade individual sections directly alongside the game zone
-  [ow, cs].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
+  [ow, cs, dp].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
 
   // Fade the entire game zone to black
   const gz = document.getElementById('gameZone');
@@ -2697,7 +2701,7 @@ function showResult(won) {
 
   // After fade-out: hide clutter, show answer + result, fade back in
   setTimeout(() => {
-    [kb, divider, cs, ow].filter(Boolean).forEach(el => el.style.display = 'none');
+    [kb, divider, cs, ow, dp].filter(Boolean).forEach(el => el.style.display = 'none');
     if (hint) hint.style.display = 'none';
     if (ni) ni.style.display = 'none';
     updateCurrentInputDisplay();
@@ -3017,7 +3021,7 @@ function applyKeyboardMode() {
     if (kb)      { kb.style.display = ''; }
     if (divider) { divider.style.display = ''; }
     if (hint)    { hint.style.display = 'none'; }
-    if (instr)   { instr.textContent = 'Type your guess using the keyboard below'; }
+    if (instr)   { instr.textContent = instr.dataset.defaultText || instr.textContent; }
   }
 }
 function focusNativeInput() {
