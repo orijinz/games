@@ -330,7 +330,7 @@
     -webkit-tap-highlight-color: transparent;
     box-shadow: 0 3px 0 rgba(0,0,0,0.3);
   }
-  .kb-key:hover { background: #1e2530; }
+  @media (hover: hover) { .kb-key:hover { background: #1e2530; } }
   .kb-key:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3); }
   .kb-key.wide { flex: 1.5; font-size: 0.75rem; }
 
@@ -2540,7 +2540,7 @@ function buildKeyboard() {
       btn.className   = 'kb-key' + (key.length > 1 ? ' wide' : '');
       btn.textContent = key;
       btn.dataset.key = key;
-      btn.addEventListener('click', () => handleKey(key));
+      btn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleKey(key); });
       div.appendChild(btn);
     });
     kb.appendChild(div);
