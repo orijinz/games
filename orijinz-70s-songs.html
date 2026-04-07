@@ -173,6 +173,7 @@
     line-height: 1.5;
     font-style: italic;
     opacity: 0.85;
+    padding: 0 6px;
   }
 
   /* LETTER TILES */
@@ -316,7 +317,7 @@
     font-weight: 700;
     color: var(--white);
     cursor: pointer;
-    transition: background 0.1s ease, transform 0.08s ease;
+    transition: transform 0.08s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2270,6 +2271,7 @@ function isAutoFill(ch) { return ch === "'" || ch === '&' || ch === '-' || ch ==
 
 let puzzle, answer, answerClean;
 let currentGuess = [], cursorPos = 0, guesses = [], gameOver = false;
+let inputTileRefs = [];
 let animating = false;
 let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount = 0;
 let streak = 0, puzzleIndex = 0;
@@ -2472,6 +2474,7 @@ function updateCurrentInputDisplay() {
   const maxWordLen = Math.max(...answer.split(/[\s-]+/).filter(Boolean).map(w => w.length));
   display.style.setProperty('--max-word', maxWordLen);
   display.innerHTML = '';
+  inputTileRefs = [];
   if (gameOver) {
     const wrapper = document.createElement('div');
     wrapper.className = 'answer-reveal';
@@ -2528,11 +2531,23 @@ function updateCurrentInputDisplay() {
       tile.addEventListener('click', () => {
         if (gameOver) return;
         cursorPos = capturedSlot;
-        updateCurrentInputDisplay();
+        refreshInputTiles();
       });
+      inputTileRefs.push(tile);
       inputSlot++;
     }
     group.appendChild(tile);
+  }
+}
+
+function refreshInputTiles() {
+  // Lightweight in-place update for the hot path (typing/backspace).
+  for (let i = 0; i < inputTileRefs.length; i++) {
+    const tile = inputTileRefs[i];
+    const ch = currentGuess[i] || '';
+    if (tile.textContent !== ch) tile.textContent = ch;
+    if (i === cursorPos) tile.classList.add('active');
+    else tile.classList.remove('active');
   }
 }
 
@@ -2572,7 +2587,7 @@ function handleKey(key) {
     } else {
       currentGuess[0] = '';
     }
-    updateCurrentInputDisplay();
+    refreshInputTiles();
     updateRevealBtn();
   } else if (key === 'ENTER') {
     submitGuess();
@@ -2580,7 +2595,7 @@ function handleKey(key) {
     if (cursorPos < available) {
       currentGuess[cursorPos] = key;
       cursorPos = Math.min(cursorPos + 1, available);
-      updateCurrentInputDisplay();
+      refreshInputTiles();
       updateRevealBtn();
       const filled = Array.from({length: available}, (_, i) => currentGuess[i] || '').filter(c => c !== '').length;
       if (filled === available) setTimeout(submitGuess, 200);

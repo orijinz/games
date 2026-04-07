@@ -189,6 +189,7 @@
     line-height: 1.5;
     font-style: italic;
     opacity: 0.85;
+    padding: 0 6px;
   }
 
   /* ── LETTER TILES ── */
@@ -317,7 +318,7 @@
     font-size: 0.95rem; font-weight: 700;
     color: var(--text);
     cursor: pointer;
-    transition: background 0.1s ease, transform 0.08s ease;
+    transition: transform 0.08s ease;
     display: flex; align-items: center; justify-content: center;
     text-transform: uppercase;
     user-select: none;
@@ -1657,6 +1658,7 @@ function isAutoFill(ch) {
 
 let puzzle, answer, answerClean;
 let currentGuess = [], cursorPos = 0, guesses = [], gameOver = false;
+let inputTileRefs = [];
 let revealedLetters = new Set(), revealCount = 0, wrongCount = 0;
 let streak = 0, puzzleIndex = 0;
 let wixResultSent = false, wixPageUrl = '', wixLeaderboardData = null;
@@ -1846,6 +1848,7 @@ function updateCurrentInputDisplay() {
   const maxWordLen = Math.max(...answer.split(/[\s-]+/).filter(Boolean).map(w => w.length));
   display.style.setProperty('--max-word', maxWordLen);
   display.innerHTML = '';
+  inputTileRefs = [];
   if (gameOver) {
     const wrapper = document.createElement('div');
     wrapper.className = 'answer-reveal';
@@ -1891,10 +1894,22 @@ function updateCurrentInputDisplay() {
       if (inputSlot === cursorPos) tile.classList.add('active');
       const capturedSlot = inputSlot;
       tile.style.cursor = 'pointer';
-      tile.addEventListener('click', () => { if (!gameOver) { cursorPos = capturedSlot; updateCurrentInputDisplay(); } });
+      tile.addEventListener('click', () => { if (!gameOver) { cursorPos = capturedSlot; refreshInputTiles(); } });
+      inputTileRefs.push(tile);
       inputSlot++;
     }
     group.appendChild(tile);
+  }
+}
+
+function refreshInputTiles() {
+  // Lightweight in-place update for the hot path (typing/backspace).
+  for (let i = 0; i < inputTileRefs.length; i++) {
+    const tile = inputTileRefs[i];
+    const ch = currentGuess[i] || '';
+    if (tile.textContent !== ch) tile.textContent = ch;
+    if (i === cursorPos) tile.classList.add('active');
+    else tile.classList.remove('active');
   }
 }
 
@@ -1928,14 +1943,14 @@ function handleKey(key) {
   if (key === '\u232B' || key === 'BACKSPACE') {
     if (cursorPos > 0) { cursorPos--; currentGuess[cursorPos] = ''; }
     else currentGuess[0] = '';
-    updateCurrentInputDisplay(); updateRevealBtn();
+    refreshInputTiles(); updateRevealBtn();
   } else if (key === 'ENTER') {
     submitGuess();
   } else if (/^[A-Z]$/.test(key)) {
     if (cursorPos < available) {
       currentGuess[cursorPos] = key;
       cursorPos = Math.min(cursorPos + 1, available);
-      updateCurrentInputDisplay(); updateRevealBtn();
+      refreshInputTiles(); updateRevealBtn();
       const filled = Array.from({length: available}, (_, i) => currentGuess[i] || '').filter(c => c !== '').length;
       if (filled === available) setTimeout(submitGuess, 200);
     }

@@ -159,6 +159,7 @@ main {
 /* INSTRUCTION */
 .instruction {
   font-size: 0.9rem; color: var(--text); font-style: italic; line-height: 1.5; opacity: 0.85;
+  text-align: center; padding: 0 6px;
 }
 
 /* INPUT TILES */
@@ -937,6 +938,7 @@ let answer          = '';
 let answerClean     = '';
 let currentGuess    = [];
 let cursorPos       = 0;
+let inputTileRefs   = [];
 let revealedLetters = new Set();
 let hitLetters      = new Set();
 let wrongLetters    = new Set();
@@ -1163,6 +1165,7 @@ function updateCurrentInputDisplay() {
   const maxWordLen = Math.max(...answer.split(/[\s]+/).filter(Boolean).map(w => w.length));
   display.style.setProperty('--max-word', maxWordLen);
   display.innerHTML = '';
+  inputTileRefs = [];
 
   if (gameOver) {
     const wrap = document.createElement('div');
@@ -1218,13 +1221,26 @@ function updateCurrentInputDisplay() {
       tile.addEventListener('click', () => {
         if (gameOver) return;
         cursorPos = capturedSlot;
-        updateCurrentInputDisplay();
+        refreshInputTiles();
       });
+      inputTileRefs.push(tile);
       inputSlot++;
     }
     group.appendChild(tile);
   }
   requestAnimationFrame(fitWordGroups);
+}
+
+function refreshInputTiles() {
+  // Lightweight in-place update for the hot path (typing/backspace).
+  // Skips the full DOM rebuild + fitWordGroups reflow.
+  for (let i = 0; i < inputTileRefs.length; i++) {
+    const tile = inputTileRefs[i];
+    const ch = currentGuess[i] || '';
+    if (tile.textContent !== ch) tile.textContent = ch;
+    if (i === cursorPos) tile.classList.add('active');
+    else tile.classList.remove('active');
+  }
 }
 
 // ── Input handling ────────────────────────────────────────────────────────────
@@ -1253,7 +1269,7 @@ function handleKey(key) {
   if (key === '\u232B' || key === 'BACKSPACE') {
     if (cursorPos > 0) { cursorPos--; currentGuess[cursorPos] = ''; }
     else { currentGuess[0] = ''; }
-    updateCurrentInputDisplay();
+    refreshInputTiles();
     updateRevealBtn();
 
   } else if (key === 'ENTER') {
@@ -1263,7 +1279,7 @@ function handleKey(key) {
     if (cursorPos < available) {
       currentGuess[cursorPos] = key;
       cursorPos = Math.min(cursorPos + 1, available);
-      updateCurrentInputDisplay();
+      refreshInputTiles();
       updateRevealBtn();
       const filled = currentGuess.slice(0, available).filter(c => c).length;
       if (filled === available) setTimeout(submitGuess, 200);
