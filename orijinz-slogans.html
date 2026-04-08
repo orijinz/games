@@ -194,9 +194,8 @@ body.page-blur .letter-tile.active {
 .letter-tile.revealed {
   background: var(--accent-dark); border-color: var(--accent-dark); color: #fff;
 }
-.letter-tile.prefilled-tile {
-  background: rgba(255,136,32,0.10); border-color: var(--border);
-}
+/* Auto-fill tiles use the same style as revealed tiles — see .letter-tile.revealed.
+   The .prefilled-tile class is kept as a marker only (used by JS query selectors). */
 .letter-tile.space-tile {
   width: var(--space-w, 14px); flex: 0 0 var(--space-w, 14px);
   background: transparent; border: none; box-shadow: none;
@@ -1200,7 +1199,7 @@ function updateCurrentInputDisplay() {
 
     if (isAutoFill(ch)) {
       const tile = document.createElement('div');
-      tile.className   = 'letter-tile prefilled-tile';
+      tile.className   = 'letter-tile revealed prefilled-tile';
       tile.textContent = ch;
       group.appendChild(tile);
       continue;
@@ -1295,15 +1294,24 @@ function getLetterState(guessWord, idx) {
 function animateGuessSubmit(states, won, onComplete) {
   animating = true;
   const display  = document.getElementById('currentInputDisplay');
-  const tiles    = [...display.querySelectorAll('.letter-tile:not(.space-tile):not(.prefilled-tile)')];
-  const tileData = tiles.map((tile, i) => ({
-    tile, stateIdx: i, isRevealed: tile.classList.contains('revealed')
-  }));
+  // Include prefilled tiles in the flip so the whole answer animates as one unit.
+  const tiles    = [...display.querySelectorAll('.letter-tile:not(.space-tile)')];
+  let typedIdx   = 0;
+  const tileData = tiles.map(tile => {
+    const isPrefilled = tile.classList.contains('prefilled-tile');
+    return {
+      tile,
+      isPrefilled,
+      isRevealed: tile.classList.contains('revealed'),
+      stateIdx: isPrefilled ? -1 : typedIdx++
+    };
+  });
   const n        = tileData.length;
   const LONG     = n > 18;
   const FLIP_DUR = 400, STAGGER = 100;
 
-  function applyColor(tile, isRevealed, st) {
+  function applyColor(tile, isRevealed, isPrefilled, st) {
+    if (isPrefilled) return;
     if (won || isRevealed || st === 'correct-pos') {
       tile.style.background  = '#b86818';
       tile.style.borderColor = '#b86818';
@@ -1318,12 +1326,12 @@ function animateGuessSubmit(states, won, onComplete) {
 
   if (!LONG) {
     const totalFlip = (n - 1) * STAGGER + FLIP_DUR;
-    tileData.forEach(({ tile, stateIdx, isRevealed }, i) => {
+    tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }, i) => {
       setTimeout(() => {
         tile.style.transition = 'transform 0.2s ease';
         tile.style.transform  = 'rotateY(90deg)';
         setTimeout(() => {
-          applyColor(tile, isRevealed, states[stateIdx]);
+          applyColor(tile, isRevealed, isPrefilled, states[stateIdx]);
           tile.style.transition = 'transform 0.2s ease';
           tile.style.transform  = 'rotateY(0deg)';
         }, FLIP_DUR / 2);
@@ -1333,12 +1341,12 @@ function animateGuessSubmit(states, won, onComplete) {
       setTimeout(() => { animating = false; onComplete(); }, totalFlip + 600);
     } else {
       setTimeout(() => {
-        tileData.forEach(({ tile, stateIdx, isRevealed }) => {
-          if (isRevealed || states[stateIdx] === 'correct-pos') return;
+        tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }) => {
+          if (isPrefilled || isRevealed || states[stateIdx] === 'correct-pos') return;
           tile.style.transition  = 'background 0.3s ease, border-color 0.3s ease, color 0.3s ease';
           tile.style.background  = 'var(--bg3)';
           tile.style.borderColor = 'var(--border)';
-          tile.style.color       = 'var(--white)';
+          tile.style.color       = 'var(--text)';
           tile.textContent       = '';
         });
         setTimeout(() => { animating = false; onComplete(); }, 400);
@@ -1350,8 +1358,8 @@ function animateGuessSubmit(states, won, onComplete) {
       tile.style.transform  = 'rotateY(90deg)';
     });
     setTimeout(() => {
-      tileData.forEach(({ tile, stateIdx, isRevealed }) => {
-        applyColor(tile, isRevealed, states[stateIdx]);
+      tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }) => {
+        applyColor(tile, isRevealed, isPrefilled, states[stateIdx]);
         tile.style.transition = 'transform 0.15s ease';
         tile.style.transform  = 'rotateY(0deg)';
       });
@@ -1360,12 +1368,12 @@ function animateGuessSubmit(states, won, onComplete) {
       setTimeout(() => { animating = false; onComplete(); }, 700);
     } else {
       setTimeout(() => {
-        tileData.forEach(({ tile, stateIdx, isRevealed }) => {
-          if (isRevealed || states[stateIdx] === 'correct-pos') return;
+        tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }) => {
+          if (isPrefilled || isRevealed || states[stateIdx] === 'correct-pos') return;
           tile.style.transition  = 'background 0.25s ease, border-color 0.25s ease, color 0.25s ease';
           tile.style.background  = 'var(--bg3)';
           tile.style.borderColor = 'var(--border)';
-          tile.style.color       = 'var(--white)';
+          tile.style.color       = 'var(--text)';
           tile.textContent       = '';
         });
         setTimeout(() => { animating = false; onComplete(); }, 300);

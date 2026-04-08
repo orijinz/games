@@ -2654,15 +2654,24 @@ function submitGuess() {
 function animateGuessSubmit(states, won, onComplete) {
   animating = true;
   const display  = document.getElementById('currentInputDisplay');
-  const tiles    = [...display.querySelectorAll('.letter-tile:not(.space-tile):not(.prefilled-tile)')];
-  const tileData = tiles.map((tile, i) => ({
-    tile, stateIdx: i, isRevealed: tile.classList.contains('revealed')
-  }));
+  // Include prefilled tiles in the flip so the whole answer animates as one unit.
+  const tiles    = [...display.querySelectorAll('.letter-tile:not(.space-tile)')];
+  let typedIdx   = 0;
+  const tileData = tiles.map(tile => {
+    const isPrefilled = tile.classList.contains('prefilled-tile');
+    return {
+      tile,
+      isPrefilled,
+      isRevealed: tile.classList.contains('revealed'),
+      stateIdx: isPrefilled ? -1 : typedIdx++
+    };
+  });
   const n        = tileData.length;
   const LONG     = n > 18;
   const FLIP_DUR = 400, STAGGER = 100, BOUNCE_STAG = 80;
 
-  function applyColor(tile, isRevealed, st) {
+  function applyColor(tile, isRevealed, isPrefilled, st) {
+    if (isPrefilled) return;
     if (won || isRevealed || st === 'correct-pos') {
       tile.style.background  = '#7d5db4';
       tile.style.borderColor = '#7d5db4';
@@ -2677,12 +2686,12 @@ function animateGuessSubmit(states, won, onComplete) {
 
   if (!LONG) {
     const totalFlip = (n - 1) * STAGGER + FLIP_DUR;
-    tileData.forEach(({ tile, stateIdx, isRevealed }, i) => {
+    tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }, i) => {
       setTimeout(() => {
         tile.style.transition = 'transform 0.2s ease';
         tile.style.transform  = 'rotateY(90deg)';
         setTimeout(() => {
-          applyColor(tile, isRevealed, states[stateIdx]);
+          applyColor(tile, isRevealed, isPrefilled, states[stateIdx]);
           tile.style.transition = 'transform 0.2s ease';
           tile.style.transform  = 'rotateY(0deg)';
         }, FLIP_DUR / 2);
@@ -2692,8 +2701,8 @@ function animateGuessSubmit(states, won, onComplete) {
       setTimeout(() => { animating = false; onComplete(); }, totalFlip + 600);
     } else {
       setTimeout(() => {
-        tileData.forEach(({ tile, stateIdx, isRevealed }) => {
-          if (isRevealed || states[stateIdx] === 'correct-pos') return;
+        tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }) => {
+          if (isPrefilled || isRevealed || states[stateIdx] === 'correct-pos') return;
           tile.style.transition  = 'background 0.3s ease, border-color 0.3s ease, color 0.3s ease';
           tile.style.background  = 'var(--bg3)';
           tile.style.borderColor = 'var(--border)';
@@ -2709,8 +2718,8 @@ function animateGuessSubmit(states, won, onComplete) {
       tile.style.transform  = 'rotateY(90deg)';
     });
     setTimeout(() => {
-      tileData.forEach(({ tile, stateIdx, isRevealed }) => {
-        applyColor(tile, isRevealed, states[stateIdx]);
+      tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }) => {
+        applyColor(tile, isRevealed, isPrefilled, states[stateIdx]);
         tile.style.transition = 'transform 0.15s ease';
         tile.style.transform  = 'rotateY(0deg)';
       });
@@ -2719,8 +2728,8 @@ function animateGuessSubmit(states, won, onComplete) {
       setTimeout(() => { animating = false; onComplete(); }, 700);
     } else {
       setTimeout(() => {
-        tileData.forEach(({ tile, stateIdx, isRevealed }) => {
-          if (isRevealed || states[stateIdx] === 'correct-pos') return;
+        tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }) => {
+          if (isPrefilled || isRevealed || states[stateIdx] === 'correct-pos') return;
           tile.style.transition  = 'background 0.25s ease, border-color 0.25s ease, color 0.25s ease';
           tile.style.background  = 'var(--bg3)';
           tile.style.borderColor = 'var(--border)';
