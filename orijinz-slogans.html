@@ -754,6 +754,7 @@ body.page-blur .letter-tile.active {
   <div class="bottom-nav">
     <button class="nav-btn" onclick="devNext()"  title="Next puzzle">&#x25B6; Next</button>
     <button class="nav-btn" onclick="devReset()" title="Reset">&#x21BA; Reset</button>
+    <button class="nav-btn" onclick="devGoTo(prompt('Go to puzzle #:'))" title="Go to puzzle by id">&#8594; Go To #</button>
   </div>
 </main>
 
@@ -951,7 +952,7 @@ let elapsedSeconds  = 0;
 let timerInterval   = null;
 let startTime       = 0;
 
-function isAutoFill(ch) { return !/[A-Z0-9]/i.test(ch); }
+function isAutoFill(ch) { return !/^[A-Z]$/.test(ch); }
 function formatTime(s) { return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 
 // ── Day calculation ──────────────────────────────────────────────────────────
@@ -1251,7 +1252,7 @@ document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   if      (e.key === 'Enter')     handleKey('ENTER');
   else if (e.key === 'Backspace') handleKey('\u232B');
-  else if (/^[a-zA-Z0-9]$/.test(e.key)) handleKey(e.key.toUpperCase());
+  else if (/^[a-zA-Z]$/.test(e.key)) handleKey(e.key.toUpperCase());
 });
 
 function countAvailable() {
@@ -2166,6 +2167,16 @@ function devReset() {
 function devNext() {
   const existing = safeGetState();
   safeSaveState({ ...existing, devPuzzleIndex: (puzzleIndex + 1) % PUZZLES.length, lastPlayed: new Date().toDateString() });
+  location.reload();
+}
+
+function devGoTo(n) {
+  n = parseInt(n, 10);
+  if (!n) return;
+  const idx = PUZZLES.findIndex(p => p.id === n);
+  if (idx === -1) { alert('Puzzle #' + n + ' not found'); return; }
+  const existing = safeGetState();
+  safeSaveState({ ...existing, devPuzzleIndex: idx, lastPlayed: new Date().toDateString() });
   location.reload();
 }
 
