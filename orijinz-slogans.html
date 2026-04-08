@@ -932,14 +932,7 @@ body.page-blur .letter-tile.active {
       <span class="lb-col-tier"></span>
     </div>
     <div id="lbList"></div>
-    <div class="lb-entry-form" id="lbEntryForm">
-      <div class="lb-entry-title">Post Your Score</div>
-      <div class="lb-entry-fields">
-        <input class="lb-entry-input" id="lbName" type="text" placeholder="Your name" maxlength="30">
-        <input class="lb-entry-input" id="lbLocation" type="text" placeholder="City (optional)" maxlength="40">
-      </div>
-      <button class="lb-submit-btn" onclick="submitLeaderboardEntry()">Post to Leaderboard</button>
-    </div>
+    <!-- Name entry form removed — players authenticate via Wix; names come from memberName -->
   </div>
 </div>
 
@@ -1980,7 +1973,9 @@ function getDeviceId() {
 
 function renderLeaderboard() {
   const list = document.getElementById('lbList');
-  const form = document.getElementById('lbEntryForm');
+  // Entry form removed — players authenticate via Wix. Stub object so existing
+  // form.style.display = ... calls remain harmless without needing to delete them.
+  const form = { style: {} };
   const hdr  = document.getElementById('lbListHeader');
 
   if (wixLeaderboardData) {
@@ -2038,34 +2033,9 @@ function renderLeaderboard() {
 }
 
 function submitLeaderboardEntry() {
-  const name     = document.getElementById('lbName').value.trim()     || 'Anonymous';
-  const location = document.getElementById('lbLocation').value.trim() || '';
-  const score    = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
-  const todayKey = new Date().toDateString();
-  const puzzleKey = 'puzzle_' + puzzleIndex;
-  const deviceId = getDeviceId();
-  const st = getStats();
-
-  const d = getLbData();
-  if (!d[puzzleKey]) d[puzzleKey] = { date: todayKey, entries: [] };
-  d[puzzleKey].entries = d[puzzleKey].entries.filter(e => e.deviceId !== deviceId);
-  d[puzzleKey].entries.push({ name, location, score, played: st.gamesPlayed, streak, deviceId });
-  saveLbData(d);
-
-  // Post to Wix if available
-  const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
-  if (showOnLB) {
-    window.parent.postMessage({
-      type: 'orijinz_result', game: 'slogans',
-      puzzleNumber: puzzleIndex, puzzleDate: (function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})(),
-      score, timeSecs: elapsedSeconds, lettersRevealed: revealCount,
-      definitionUsed: false, wrongLetters: wrongCount, wonGame: true,
-      name, location, showOnLeaderboard: true
-    }, '*');
-  }
-
-  showToast('Posted! \uD83C\uDFC6', 2000);
-  renderLeaderboard();
+  // No-op — entry form removed; players authenticate via Wix and scores
+  // post automatically via sendResultToWix(). Function kept as a stub so
+  // any leftover caller is harmless.
 }
 
 // ── Wix postMessage ────────────────────────────────────────────────────────────

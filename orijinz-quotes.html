@@ -1120,16 +1120,7 @@
         <div class="lb-rubric-row"><span>&#x1F331; You Got It</span><span>420+</span></div>
       </div>
     </div>
-    <div class="lb-entry-form" id="lbEntryForm">
-      <div class="lb-entry-form-title">Add your Name (Optional)</div>
-      <div class="lb-input-row">
-        <input class="lb-input" id="lbName"     type="text" placeholder="Name"     maxlength="32" autocomplete="off" onkeydown="if(event.key==='Enter')submitLeaderboardEntry()">
-        <input class="lb-input" id="lbLocation" type="text" placeholder="Location" maxlength="64" autocomplete="off" onkeydown="if(event.key==='Enter')submitLeaderboardEntry()">
-      </div>
-      <div style="display:flex;justify-content:flex-end;">
-        <button class="lb-submit-btn" onclick="submitLeaderboardEntry()">Submit Score</button>
-      </div>
-    </div>
+    <!-- Name entry form removed — players authenticate via Wix; names come from memberName -->
     <div class="lb-sort-tabs">
       <div class="lb-sort-tab active" id="lbTab-score"  onclick="setLbSort('score')">Score</div>
       <div class="lb-sort-tab"        id="lbTab-played" onclick="setLbSort('played')">Games Played</div>
@@ -1583,19 +1574,9 @@ function getAllPlayerStats() {
   return all;
 }
 function submitLeaderboardEntry() {
-  const name     = document.getElementById('lbName').value.trim();
-  const location = document.getElementById('lbLocation').value.trim();
-  const devId    = getDeviceId();
-  const all      = getLbData();
-  const idx      = all.findIndex(e => e.deviceId === devId);
-  const stats    = getStats();
-  const score    = elapsedSeconds + (hintShown ? 30 : 0) + (revealCount * 15) + (wrongCount * 5);
-  const entry    = { deviceId: devId, name, location, score, played: stats.gamesPlayed, streak: stats.streak };
-  if (idx >= 0) all[idx] = entry; else all.push(entry);
-  saveLbData(all);
-  document.getElementById('lbEntryForm').style.display = 'none';
-  renderLeaderboard();
-  showToast('Score submitted!', 1800);
+  // No-op — entry form removed; players authenticate via Wix and scores
+  // post automatically via sendResultToWix(). Function kept as a stub so
+  // any leftover caller is harmless.
 }
 function getDeviceId() {
   try {
@@ -1607,7 +1588,9 @@ function getDeviceId() {
 function renderLeaderboard() {
   const devId = getDeviceId();
   const field = lbSortField;
-  const form  = document.getElementById('lbEntryForm');
+  // Entry form removed — players authenticate via Wix. Stub object so existing
+  // form.style.display = ... calls remain harmless without needing to delete them.
+  const form  = { style: {} };
   const list  = document.getElementById('lbList');
   let all;
   if (field === 'score' && wixLeaderboardData && wixLeaderboardData.scores && wixLeaderboardData.scores.length > 0) {
@@ -2352,12 +2335,8 @@ function fallbackCopy(text) {
 
 let toastTimer;
 function showToast(msg, duration) {
-  duration = duration || 1800;
-  const t  = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+  // Toasts removed — intentionally a no-op. Call sites left in place to avoid
+  // touching gameplay logic; they're harmless function calls now.
 }
 
 // =================================================================
