@@ -531,8 +531,25 @@ body.page-blur .letter-tile.active {
   border-radius: 8px; margin: 14px 20px; padding: 12px 16px;
 }
 .lb-rubric-title { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-.lb-rubric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; }
-.lb-rubric-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); padding: 2px 0; }
+.lb-rubric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(7, auto);
+  grid-auto-flow: column;
+  gap: 4px 16px;
+}
+.lb-rubric-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-family: 'Nunito Sans', sans-serif;
+}
+.lb-rubric-row span:last-child {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text);
+}
 .lb-sort-tabs { display: flex; border-bottom: 1px solid var(--border); margin: 0 20px; }
 .lb-sort-tab {
   flex: 1; padding: 9px 4px; text-align: center; cursor: pointer;
@@ -885,7 +902,7 @@ body.page-blur .letter-tile.active {
     </div>
     <div class="lb-rubric">
       <div class="lb-rubric-title">Scoring &mdash; Lower is Better</div>
-      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;">Score = time + 15s per letter revealed + 5s per wrong letter</div>
+      <div class="lb-rubric-penalty" style="margin-bottom:10px; margin-top:0; font-style:normal; color:var(--text-muted);">Your score = Your time + 15s per letter revealed + 5s per wrong letter</div>
       <div class="lb-rubric-grid">
         <div class="lb-rubric-row"><span>&#x1F3C6; Legendary</span><span>&lt; 20</span></div>
         <div class="lb-rubric-row"><span>&#x1F30C; Otherworldly</span><span>&lt; 40</span></div>
@@ -895,9 +912,12 @@ body.page-blur .letter-tile.active {
         <div class="lb-rubric-row"><span>&#x2728; Miraculous</span><span>&lt; 150</span></div>
         <div class="lb-rubric-row"><span>&#x1F31F; Extraordinary</span><span>&lt; 180</span></div>
         <div class="lb-rubric-row"><span>&#x2B50; Impressive</span><span>&lt; 210</span></div>
-        <div class="lb-rubric-row"><span>&#x26A1; Terrific</span><span>&lt; 270</span></div>
-        <div class="lb-rubric-row"><span>&#x1F4AA; Tenacious</span><span>&lt; 330</span></div>
-        <div class="lb-rubric-row"><span>&#x1F331; You Got It</span><span>330+</span></div>
+        <div class="lb-rubric-row"><span>&#x26A1; Terrific</span><span>&lt; 240</span></div>
+        <div class="lb-rubric-row"><span>&#x1F4AA; Tenacious</span><span>&lt; 270</span></div>
+        <div class="lb-rubric-row"><span>&#x1F44D; Well Played</span><span>&lt; 300</span></div>
+        <div class="lb-rubric-row"><span>&#x1F4A1; Nice Job</span><span>&lt; 360</span></div>
+        <div class="lb-rubric-row"><span>&#x1F44F; Solid Work</span><span>&lt; 420</span></div>
+        <div class="lb-rubric-row"><span>&#x1F331; You Got It</span><span>420+</span></div>
       </div>
     </div>
     <div class="lb-sort-tabs">
@@ -1574,8 +1594,11 @@ function showResult(won) {
     else if (score < 150) { e.textContent='\u2728';       h.textContent='Miraculous!'; }
     else if (score < 180) { e.textContent='\uD83C\uDF1F'; h.textContent='Extraordinary!'; }
     else if (score < 210) { e.textContent='\u2B50';       h.textContent='Impressive!'; }
-    else if (score < 270) { e.textContent='\u26A1';       h.textContent='Terrific!'; }
-    else if (score < 330) { e.textContent='\uD83D\uDCAA'; h.textContent='Tenacious!'; }
+    else if (score < 240) { e.textContent='\u26A1';       h.textContent='Terrific!'; }
+    else if (score < 270) { e.textContent='\uD83D\uDCAA'; h.textContent='Tenacious!'; }
+    else if (score < 300) { e.textContent='\uD83D\uDC4D'; h.textContent='Well Played!'; }
+    else if (score < 360) { e.textContent='\uD83D\uDCA1'; h.textContent='Nice Job!'; }
+    else if (score < 420) { e.textContent='\uD83D\uDC4F'; h.textContent='Solid Work!'; }
     else                  { e.textContent='\uD83C\uDF31'; h.textContent='You Got It!'; }
     const revStr = revealCount > 0 ? ' \u00B7 ' + revealCount + ' letter' + (revealCount===1?'':'s') + ' revealed' : '';
     const wrgStr = wrongCount  > 0 ? ' \u00B7 ' + wrongCount  + ' wrong' + (wrongCount===1?' guess':' guesses') : '';
@@ -2138,12 +2161,8 @@ function escHtml(s) {
 // ── Toast ──────────────────────────────────────────────────────────────────────
 let toastTimer;
 function showToast(msg, duration) {
-  duration = duration || 1800;
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+  // Toasts removed — intentionally a no-op. Call sites left in place to avoid
+  // touching gameplay logic; they're harmless function calls now.
 }
 
 // ── Confetti ───────────────────────────────────────────────────────────────────
