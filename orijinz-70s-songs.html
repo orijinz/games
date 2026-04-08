@@ -7,22 +7,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Nunito+Sans:wght@300;400;600;700&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:            #0c0b1c;
-    --bg2:           #110f28;
-    --bg3:           #160d2e;
-    --panel:         #131128;
-    --border:        #242048;
-    --text:          #ffffff;
-    --text-muted:    #9080a8;
-    --accent:        #9d7dd4;
-    --accent-light:  #b898e0;
-    --accent-dark:   #7d5db4;
-    --gold:          #f0c860;
-    --gold-dim:      #d0a840;
-    --red:           #e05252;
-    --white:         #ffffff;
-    --letter-bg:     #2c1e58;
-    --letter-border: #6048b8;
+    --bg:                  #0c0b1c;
+    --bg2:                 #110f28;
+    --bg3:                 #160d2e;
+    --bg-radial-1:         #141030;
+    --bg-radial-2:         #100e20;
+    --bg-radial-3:         #120f26;
+    --panel:               #131128;
+    --border:              #242048;
+    --text:                #ffffff;
+    --text-muted:          #9080a8;
+    --accent:              #9d7dd4;
+    --accent-light:        #b898e0;
+    --accent-dark:         #7d5db4;
+    --wrong-color:         #c0392b;
+    --gold:                #f0c860;
+    --gold-dim:            #d0a840;
+    --red:                 #e05252;
+    --white:               #ffffff;
+    --letter-bg:           #2c1e58;
+    --letter-border:       #6048b8;
+    --keyboard-key-bg:     #151030;
+    --keyboard-key-border: #252045;
+    --keyboard-key-hover:  #1e1845;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,9 +40,9 @@
     background-color: var(--bg);
     background-image:
       radial-gradient(ellipse at 50% 0%, rgba(157,125,212,0.07) 0%, transparent 40%),
-      radial-gradient(ellipse at 20% 20%, #141030 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 80%, #100e20 0%, transparent 55%),
-      radial-gradient(ellipse at 50% 50%, #120f26 0%, transparent 70%);
+      radial-gradient(ellipse at 20% 20%, var(--bg-radial-1) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, var(--bg-radial-2) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, var(--bg-radial-3) 0%, transparent 70%);
     font-family: 'Nunito Sans', sans-serif;
     color: var(--text);
     min-height: 100vh;
@@ -309,8 +316,8 @@
     height: 58px;
     padding: 0;
     border: none;
-    background: #151030;
-    border: 1px solid #252045;
+    background: var(--keyboard-key-bg);
+    border: 1px solid var(--keyboard-key-border);
     border-radius: 8px;
     font-family: 'Space Mono', monospace;
     font-size: 0.95rem;
@@ -327,7 +334,7 @@
     -webkit-tap-highlight-color: transparent;
     box-shadow: 0 3px 0 rgba(0,0,0,0.3);
   }
-  @media (hover: hover) { .kb-key:hover { background: #1e1845; } }
+  @media (hover: hover) { .kb-key:hover { background: var(--keyboard-key-hover); } }
   .kb-key:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3); }
   .kb-key.wide { flex: 1.5; font-size: 0.75rem; }
 
@@ -2673,12 +2680,12 @@ function animateGuessSubmit(states, won, onComplete) {
   function applyColor(tile, isRevealed, isPrefilled, st) {
     if (isPrefilled) return;
     if (won || isRevealed || st === 'correct-pos') {
-      tile.style.background  = '#7d5db4';
-      tile.style.borderColor = '#7d5db4';
+      tile.style.background  = 'var(--accent-dark)';
+      tile.style.borderColor = 'var(--accent-dark)';
       tile.style.color       = 'white';
     } else {
-      tile.style.background  = '#c0392b';
-      tile.style.borderColor = '#c0392b';
+      tile.style.background  = 'var(--wrong-color)';
+      tile.style.borderColor = 'var(--wrong-color)';
       tile.style.color       = 'white';
     }
     tile.style.textShadow = '';
