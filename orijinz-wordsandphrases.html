@@ -7,27 +7,35 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@300;400;600;700&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:            #0b1a26;
-    --bg2:           #0d1e2e;
-    --bg3:           #0d2233;
-    --panel:         #0d1d2c;
-    --border:        #1c3445;
-    --text:          #ffffff;
-    --text-muted:    #7aafc4;
-    --gold:          #f5c842;
-    --gold-dim:      #c9a230;
-    --accent:        #f5c842;
-    --blue:          #43BAD0;
-    --blue-light:    #7FCEDB;
-    --blue-dark:     #2e9ab8;
-    --amber:         #f0932b;
-    --grey:          #3a6a82;
-    --grey-light:    #4a8fa8;
-    --red:           #e05252;
-    --white:         #ffffff;
-    --wrong:         var(--grey);
-    --letter-bg:     #132d42;
-    --letter-border: #2e5570;
+    --bg:                  #0b1a26;
+    --bg2:                 #0d1e2e;
+    --bg3:                 #0d2233;
+    --bg-radial-1:         #0d2a3e;
+    --bg-radial-2:         #0b1e30;
+    --bg-radial-3:         #0e2333;
+    --panel:               #0d1d2c;
+    --border:              #1c3445;
+    --text:                #ffffff;
+    --text-muted:          #7aafc4;
+    --gold:                #f5c842;
+    --gold-dim:            #c9a230;
+    --accent:              #f5c842;
+    --accent-dark:         #1a7a96;
+    --wrong-color:         #c0392b;
+    --blue:                #43BAD0;
+    --blue-light:          #7FCEDB;
+    --blue-dark:           #2e9ab8;
+    --amber:               #f0932b;
+    --grey:                #3a6a82;
+    --grey-light:          #4a8fa8;
+    --red:                 #e05252;
+    --white:               #ffffff;
+    --wrong:               var(--grey);
+    --letter-bg:           #132d42;
+    --letter-border:       #2e5570;
+    --keyboard-key-bg:     #0d2233;
+    --keyboard-key-border: #1a3a50;
+    --keyboard-key-hover:  #133040;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,9 +46,9 @@
     background-color: var(--bg);
     background-image:
       radial-gradient(ellipse at 50% 0%, rgba(67,186,208,0.07) 0%, transparent 40%),
-      radial-gradient(ellipse at 20% 20%, #0d2a3e 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 80%, #0b1e30 0%, transparent 55%),
-      radial-gradient(ellipse at 50% 50%, #0e2333 0%, transparent 70%);
+      radial-gradient(ellipse at 20% 20%, var(--bg-radial-1) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, var(--bg-radial-2) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, var(--bg-radial-3) 0%, transparent 70%);
     font-family: 'Nunito Sans', sans-serif;
     color: var(--text);
     min-height: 100vh;
@@ -249,9 +257,9 @@
     opacity: 0.5;
   }
   .letter-tile.revealed {
-    background: #1a7a96;
-    border-color: #1a7a96;
-    color: #ffffff;
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+    color: var(--text);
     text-shadow: none;
   }
   @keyframes tileBounce {
@@ -276,7 +284,7 @@
   .current-input-display.row-shake {
     animation: rowShake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97);
   }
-  .letter-tile.correct-pos { background: #1a7a96; border-color: #1a7a96; color: #ffffff; text-shadow: none; }
+  .letter-tile.correct-pos { background: var(--accent-dark); border-color: var(--accent-dark); color: var(--text); text-shadow: none; }
   .letter-tile.wrong       { background: var(--wrong); border-color: var(--wrong); color: white; }
   .answer-reveal {
     display: flex; justify-content: center; align-items: center;
@@ -353,8 +361,8 @@
     height: 58px;
     padding: 0;
     border: none;
-    background: #0d2233;
-    border: 1px solid #1a3a50;
+    background: var(--keyboard-key-bg);
+    border: 1px solid var(--keyboard-key-border);
     border-radius: 8px;
     font-family: 'Space Mono', monospace;
     font-size: 0.95rem;
@@ -371,7 +379,7 @@
     -webkit-tap-highlight-color: transparent;
     box-shadow: 0 3px 0 rgba(0,0,0,0.3);
   }
-  @media (hover: hover) { .kb-key:hover { background: #133040; } }
+  @media (hover: hover) { .kb-key:hover { background: var(--keyboard-key-hover); } }
   .kb-key:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3); }
   .kb-key.wide { flex: 1.5; font-size: 0.75rem; }
 
@@ -2517,12 +2525,12 @@ function animateGuessSubmit(states, won, onComplete) {
   function applyColor(tile, isRevealed, isPrefilled, st) {
     if (isPrefilled) return;  // Prefilled tiles keep their existing style
     if (won || isRevealed || st === 'correct-pos') {
-      tile.style.background  = '#1a7a96';
-      tile.style.borderColor = '#1a7a96';
+      tile.style.background  = 'var(--accent-dark)';
+      tile.style.borderColor = 'var(--accent-dark)';
       tile.style.color       = 'white';
     } else {
-      tile.style.background  = '#c0392b';
-      tile.style.borderColor = '#c0392b';
+      tile.style.background  = 'var(--wrong-color)';
+      tile.style.borderColor = 'var(--wrong-color)';
       tile.style.color       = 'white';
     }
     tile.style.textShadow = '';
