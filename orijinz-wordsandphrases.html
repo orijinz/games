@@ -1990,6 +1990,13 @@ function renderLeaderboard() {
   const form     = { style: {} };
   const hdr      = document.getElementById('lbListHeader');
 
+  // Show a loading state while waiting for Wix to respond. Prevents the empty
+  // local fallback from briefly flashing "Add your name…" before Wix data arrives.
+  if (waitingForWixLeaderboard && !wixLeaderboardData) {
+    list.innerHTML = '<div class="lb-empty">Loading leaderboard\u2026</div>';
+    return;
+  }
+
   if (lbSortBy === 'score') {
     // Use Wix data if available, else fall back to localStorage
     let entries;
@@ -2073,6 +2080,10 @@ let puzzle, answer, answerClean;
 let currentGuess = [], cursorPos = 0, guesses = [], gameOver = false;
 let inputTileRefs = [];
 let wixResultSent = false, wixPageUrl = '', wixLeaderboardData = null;
+// True between sending a result to Wix and receiving the leaderboard back.
+// Used by renderLeaderboard to show "Loading…" instead of falling through to
+// stale local data during the postMessage round-trip.
+let waitingForWixLeaderboard = false;
 let animating = false;
 let revealedLetters = new Set(), defShown = false, revealCount = 0, wrongCount = 0;
 let streak = 0, puzzleIndex = 0;
@@ -2524,7 +2535,9 @@ function animateGuessSubmit(states, won, onComplete) {
       }, i * STAGGER);
     });
     if (won) {
-      setTimeout(() => { animating = false; onComplete(); }, totalFlip + 600);
+      // Extended pause on win — gives Wix postMessage round-trip time to complete
+      // before the user can open the leaderboard panel.
+      setTimeout(() => { animating = false; onComplete(); }, totalFlip + 1500);
     } else {
       setTimeout(() => {
         tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }) => {
@@ -2551,7 +2564,8 @@ function animateGuessSubmit(states, won, onComplete) {
       });
     }, 150);
     if (won) {
-      setTimeout(() => { animating = false; onComplete(); }, 700);
+      // Extended pause on win — gives Wix postMessage round-trip time to complete.
+      setTimeout(() => { animating = false; onComplete(); }, 1600);
     } else {
       setTimeout(() => {
         tileData.forEach(({ tile, stateIdx, isRevealed, isPrefilled }) => {
@@ -2786,6 +2800,11 @@ document.addEventListener('click', function() {
 function sendResultToWix(won) {
   if (wixResultSent) return;
   wixResultSent = true;
+  // Mark that we're waiting for Wix to respond with leaderboard data. Cleared
+  // when the response arrives, or after 3 seconds (safety timeout for local
+  // testing or slow Wix responses).
+  waitingForWixLeaderboard = true;
+  setTimeout(() => { waitingForWixLeaderboard = false; }, 3000);
   const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (defShown ? 30 : 0);
   const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
   window.parent.postMessage({
@@ -2809,6 +2828,7 @@ window.addEventListener('message', function(event) {
     wixPageUrl = event.data.url;
   } else if (event.data.type === 'orijinz_leaderboard') {
     wixLeaderboardData = event.data;
+    waitingForWixLeaderboard = false;
     renderLeaderboard();
   }
 });
