@@ -25,6 +25,10 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; padding: 16px; }
 
+  /* LOGO */
+  .logo-wrap { text-align: center; margin-bottom: 18px; }
+  .logo-wrap img { max-height: 90px; max-width: 100%; height: auto; }
+
   /* HEADER */
   .header { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
   .header h1 { flex: 1; min-width: 180px; font-size: 18px; font-weight: 700; color: var(--teal); letter-spacing: 1px; }
@@ -82,6 +86,10 @@
 </head>
 <body>
 
+<div class="logo-wrap">
+  <img src="logos/logo-homepage-bevel-o.png" alt="Orijinz">
+</div>
+
 <div class="header">
   <h1>Orijinz Admin</h1>
   <div class="controls">
@@ -117,15 +125,8 @@
     </select>
   </div>
 
-  <div class="cards">
-    <div class="card"><div class="card-label">Players</div><div class="card-value" id="pg-players">—</div></div>
-    <div class="card"><div class="card-label">Avg Score</div><div class="card-value" id="pg-avgscore">—</div></div>
-    <div class="card"><div class="card-label">Avg Time</div><div class="card-value" id="pg-avgtime">—</div></div>
-    <div class="card"><div class="card-label">Win Rate</div><div class="card-value" id="pg-winrate">—</div></div>
-    <div class="card"><div class="card-label">Avg Reveals</div><div class="card-value" id="pg-avgreveals">—</div></div>
-    <div class="card"><div class="card-label">Def Usage</div><div class="card-value" id="pg-defusage">—</div></div>
-    <div class="card"><div class="card-label">Pure Wins</div><div class="card-value" id="pg-purewins">—</div></div>
-  </div>
+  <!-- Cards rendered dynamically based on selected game -->
+  <div class="cards" id="pg-cards"></div>
 
   <div class="charts-2">
     <div class="chart-card"><div class="chart-title">Players Per Day</div><canvas id="pg-chart-players"></canvas></div>
@@ -140,20 +141,8 @@
   <div class="section-label">Day by Day</div>
   <div class="table-wrap">
     <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th class="r">Players</th>
-          <th class="r">Avg Score</th>
-          <th class="r">Avg Time</th>
-          <th class="r">Avg Reveals</th>
-          <th class="r">Def Usage</th>
-          <th class="r">Win Rate</th>
-          <th class="r">Wrong Ltrs</th>
-          <th>Difficulty</th>
-        </tr>
-      </thead>
-      <tbody id="pg-tbody"><tr><td colspan="9" class="empty">Waiting for data…</td></tr></tbody>
+      <thead><tr id="pg-thead"></tr></thead>
+      <tbody id="pg-tbody"><tr><td class="empty">Waiting for data...</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -161,11 +150,11 @@
 <!-- ==================== GLOBAL TAB ==================== -->
 <div id="tab-global" class="hidden">
   <div class="cards">
-    <div class="card"><div class="card-label">Total Games</div><div class="card-value" id="gl-total">—</div></div>
-    <div class="card"><div class="card-label">Unique Players</div><div class="card-value" id="gl-players">—</div></div>
-    <div class="card"><div class="card-label">Most Popular</div><div class="card-value small" id="gl-popular">—</div></div>
-    <div class="card"><div class="card-label">Avg Per Day</div><div class="card-value" id="gl-avgday">—</div></div>
-    <div class="card"><div class="card-label">Win Rate</div><div class="card-value" id="gl-winrate">—</div></div>
+    <div class="card"><div class="card-label">Total Games</div><div class="card-value" id="gl-total">--</div></div>
+    <div class="card"><div class="card-label">Unique Players</div><div class="card-value" id="gl-players">--</div></div>
+    <div class="card"><div class="card-label">Most Popular</div><div class="card-value small" id="gl-popular">--</div></div>
+    <div class="card"><div class="card-label">Avg Per Day</div><div class="card-value" id="gl-avgday">--</div></div>
+    <div class="card"><div class="card-label">Win Rate</div><div class="card-value" id="gl-winrate">--</div></div>
   </div>
 
   <div class="chart-full">
@@ -185,9 +174,10 @@
           <th class="r">Quotes</th>
           <th class="r">70s Songs</th>
           <th class="r">Movies</th>
+          <th class="r">Slogans</th>
         </tr>
       </thead>
-      <tbody id="gl-tbody"><tr><td colspan="7" class="empty">Waiting for data…</td></tr></tbody>
+      <tbody id="gl-tbody"><tr><td colspan="8" class="empty">Waiting for data...</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -196,13 +186,14 @@
 // ============================================================
 // CONSTANTS
 // ============================================================
+// Game colors match the canonical palette in player-dashboard.html (GAME_META)
 const GAMES = [
-  { key: 'wordsandphrases', label: 'Words & Phrases', color: '#4ecdc4' },
-  { key: 'covers',          label: 'Covers',          color: '#f5c842' },
-  { key: 'quotes',          label: 'Quotes',          color: '#1a7a96' },
-  { key: '70ssongs',        label: '70s Songs',       color: '#e67e22' },
-  { key: 'movies',          label: 'Movies',          color: '#9b59b6' },
-  { key: 'slogans',         label: 'Slogans',         color: '#e74c3c' }
+  { key: 'wordsandphrases', label: 'Words & Phrases', color: '#43BAD0' },
+  { key: 'covers',          label: 'Covers',          color: '#6898e8' },
+  { key: 'quotes',          label: 'Quotes',          color: '#00ceb8' },
+  { key: '70ssongs',        label: '70s Songs',       color: '#9d7dd4' },
+  { key: 'movies',          label: 'Movies',          color: '#9aaab8' },
+  { key: 'slogans',         label: 'Slogans',         color: '#ff8820' }
 ];
 
 const TIERS = [
@@ -221,6 +212,83 @@ const TIERS = [
   { label: 'Solid Work',    max: 420 },
   { label: 'You Got It',    max: Infinity }
 ];
+
+// ============================================================
+// PER-GAME STAT CONFIG
+// Each game declares which summary cards and which day-by-day
+// table columns it shows. Stat keys reference CARD_DEFS / COL_DEFS.
+// ============================================================
+const GAME_STATS = {
+  wordsandphrases: {
+    cards:     ['players','avgScore','avgTime','winRate','avgReveals','defUsage','pureWins','avgWrongLetters'],
+    tableCols: ['date','players','avgScore','avgTime','avgReveals','defUsage','winRate','wrongLtrs','difficulty']
+  },
+  covers: {
+    cards:     ['players','avgScore','avgTime','winRate','avgReveals','pureWins'],
+    tableCols: ['date','players','avgScore','avgTime','avgReveals','winRate','wrongLtrs','difficulty']
+  },
+  quotes: {
+    cards:     ['players','avgScore','avgTime','winRate','avgReveals','pureWins'],
+    tableCols: ['date','players','avgScore','avgTime','avgReveals','winRate','wrongLtrs','difficulty']
+  },
+  '70ssongs': {
+    cards:     ['players','avgScore','avgTime','winRate','avgReveals','clip10','clip20','clip30','pureWins'],
+    tableCols: ['date','players','avgScore','avgTime','avgReveals','clipMix','winRate','difficulty']
+  },
+  movies: {
+    cards:     ['players','avgScore','avgTime','winRate','avgReveals','trailer20','trailer25','trailer30','pureWins'],
+    tableCols: ['date','players','avgScore','avgTime','avgReveals','trailerMix','winRate','difficulty']
+  },
+  slogans: {
+    cards:     ['players','avgScore','avgTime','winRate','avgReveals','pureWins'],
+    tableCols: ['date','players','avgScore','avgTime','avgReveals','winRate','wrongLtrs','difficulty']
+  }
+};
+
+// ============================================================
+// CARD DEFINITIONS — label + how to compute from a row set
+// ============================================================
+const CARD_DEFS = {
+  players:         { label: 'Players',        fn: r => r.length },
+  avgScore:        { label: 'Avg Score',      fn: r => Math.round(avg(r.map(x=>x.score))) },
+  avgTime:         { label: 'Avg Time',       fn: r => fmtTime(Math.round(avg(r.map(x=>x.timeSecs||0)))) },
+  winRate:         { label: 'Win Rate',       fn: r => pct(r.filter(x=>x.wonGame).length, r.length) },
+  avgReveals:      { label: 'Avg Reveals',    fn: r => avg(r.map(x=>x.lettersRevealed||0)).toFixed(1) },
+  defUsage:        { label: 'Def Usage',      fn: r => pct(r.filter(x=>x.definitionUsed).length, r.length) },
+  pureWins:        { label: 'Pure Wins',      fn: r => r.filter(x=>x.wonGame && (x.lettersRevealed||0)===0 && !x.definitionUsed).length },
+  avgWrongLetters: { label: 'Avg Wrong Ltrs', fn: r => avg(r.map(x=>x.wrongLetters||0)).toFixed(1) },
+
+  // 70s Songs clip-duration cards
+  clip10: { label: '10s Clip', fn: r => durationPct(r, 'clipDuration', 10) },
+  clip20: { label: '20s Clip', fn: r => durationPct(r, 'clipDuration', 20) },
+  clip30: { label: '30s Clip', fn: r => durationPct(r, 'clipDuration', 30) },
+
+  // Movies trailer-duration cards
+  trailer20: { label: '20s Trailer', fn: r => durationPct(r, 'trailerDuration', 20) },
+  trailer25: { label: '25s Trailer', fn: r => durationPct(r, 'trailerDuration', 25) },
+  trailer30: { label: '30s Trailer', fn: r => durationPct(r, 'trailerDuration', 30) }
+};
+
+// ============================================================
+// TABLE COLUMN DEFINITIONS
+// ============================================================
+const COL_DEFS = {
+  date:       { label: 'Date',        align: 'l', fn: (d, r) => d },
+  players:    { label: 'Players',     align: 'r', fn: (d, r) => r.length },
+  avgScore:   { label: 'Avg Score',   align: 'r', fn: (d, r) => Math.round(avg(r.map(x=>x.score))) },
+  avgTime:    { label: 'Avg Time',    align: 'r', fn: (d, r) => fmtTime(Math.round(avg(r.map(x=>x.timeSecs||0)))) },
+  avgReveals: { label: 'Avg Reveals', align: 'r', fn: (d, r) => avg(r.map(x=>x.lettersRevealed||0)).toFixed(1) },
+  defUsage:   { label: 'Def Usage',   align: 'r', fn: (d, r) => pct(r.filter(x=>x.definitionUsed).length, r.length) },
+  winRate:    { label: 'Win Rate',    align: 'r', fn: (d, r) => pct(r.filter(x=>x.wonGame).length, r.length) },
+  wrongLtrs:  { label: 'Wrong Ltrs',  align: 'r', fn: (d, r) => avg(r.map(x=>x.wrongLetters||0)).toFixed(1) },
+  clipMix:    { label: 'Clip Mix',    align: 'r', fn: (d, r) => durationMix(r, 'clipDuration',    [10,20,30]) },
+  trailerMix: { label: 'Trailer Mix', align: 'r', fn: (d, r) => durationMix(r, 'trailerDuration', [20,25,30]) },
+  difficulty: { label: 'Difficulty',  align: 'l', fn: (d, r) => {
+    const dAvgSc = Math.round(avg(r.map(x=>x.score)));
+    const diff = difficulty(dAvgSc);
+    return `<span class="badge" style="background:${diff.color}22;color:${diff.color}">${diff.label}</span>`;
+  }}
+};
 
 // ============================================================
 // STATE
@@ -285,8 +353,23 @@ function showTab(name) {
 function fmtDate(d)     { return d.toISOString().slice(0, 10); }
 function dateKey(item)  { return new Date(item.puzzleDate).toISOString().slice(0, 10); }
 function avg(arr)       { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
-function pct(n, d)      { return d > 0 ? Math.round((n / d) * 100) + '%' : '—'; }
+function pct(n, d)      { return d > 0 ? Math.round((n / d) * 100) + '%' : '--'; }
 function fmtTime(s)     { const m = Math.floor(s / 60); return m + ':' + String(Math.round(s % 60)).padStart(2, '0'); }
+
+function durationPct(rows, field, target) {
+  const tracked = rows.filter(x => x[field] != null);
+  if (!tracked.length) return '--';
+  return pct(tracked.filter(x => x[field] === target).length, tracked.length);
+}
+
+function durationMix(rows, field, values) {
+  const tracked = rows.filter(x => x[field] != null);
+  if (!tracked.length) return '--';
+  return values.map(v => {
+    const n = tracked.filter(x => x[field] === v).length;
+    return Math.round((n / tracked.length) * 100) + '%';
+  }).join(' / ');
+}
 
 function getTier(score) {
   for (const t of TIERS) { if (score < t.max) return t.label; }
@@ -295,9 +378,9 @@ function getTier(score) {
 
 function difficulty(avgScore) {
   if (avgScore < 60)  return { label: 'Easy',      color: '#27ae60' };
-  if (avgScore < 120) return { label: 'Medium',     color: '#f5c842' };
-  if (avgScore < 200) return { label: 'Hard',       color: '#e67e22' };
-  return                     { label: 'Very Hard',  color: '#c0392b' };
+  if (avgScore < 120) return { label: 'Medium',    color: '#f5c842' };
+  if (avgScore < 200) return { label: 'Hard',      color: '#e67e22' };
+  return                     { label: 'Very Hard', color: '#c0392b' };
 }
 
 function groupByDate(rows) {
@@ -395,33 +478,35 @@ function renderAll() {
 // PER GAME
 // ============================================================
 function renderPerGame() {
-  const game = document.getElementById('gameSelect').value;
-  const rows = allResults.filter(r => r.game === game);
-  const tbody = document.getElementById('pg-tbody');
+  const game   = document.getElementById('gameSelect').value;
+  const config = GAME_STATS[game];
+  const rows   = allResults.filter(r => r.game === game);
+
+  const cardsEl = document.getElementById('pg-cards');
+  const thead   = document.getElementById('pg-thead');
+  const tbody   = document.getElementById('pg-tbody');
+
+  // Build table header from config
+  thead.innerHTML = config.tableCols.map(k => {
+    const c = COL_DEFS[k];
+    return `<th${c.align==='r'?' class="r"':''}>${c.label}</th>`;
+  }).join('');
 
   if (rows.length === 0) {
-    ['pg-players','pg-avgscore','pg-avgtime','pg-winrate','pg-avgreveals','pg-defusage','pg-purewins']
-      .forEach(id => document.getElementById(id).textContent = '—');
-    tbody.innerHTML = '<tr><td colspan="9" class="empty">No data for this game in the selected range.</td></tr>';
+    cardsEl.innerHTML = config.cards.map(k => {
+      const c = CARD_DEFS[k];
+      return `<div class="card"><div class="card-label">${c.label}</div><div class="card-value">--</div></div>`;
+    }).join('');
+    tbody.innerHTML = `<tr><td colspan="${config.tableCols.length}" class="empty">No data for this game in the selected range.</td></tr>`;
     ['pg-chart-players','pg-chart-score','pg-chart-tiers'].forEach(k => destroyChart(k));
     return;
   }
 
-  // Summary cards
-  const wins      = rows.filter(r => r.wonGame);
-  const avgScore  = avg(rows.map(r => r.score));
-  const avgTime   = avg(rows.map(r => r.timeSecs || 0));
-  const avgRevs   = avg(rows.map(r => r.lettersRevealed || 0));
-  const defCount  = rows.filter(r => r.definitionUsed).length;
-  const pureWins  = rows.filter(r => r.wonGame && (r.lettersRevealed || 0) === 0 && !r.definitionUsed).length;
-
-  document.getElementById('pg-players').textContent    = rows.length;
-  document.getElementById('pg-avgscore').textContent   = Math.round(avgScore);
-  document.getElementById('pg-avgtime').textContent    = fmtTime(Math.round(avgTime));
-  document.getElementById('pg-winrate').textContent    = pct(wins.length, rows.length);
-  document.getElementById('pg-avgreveals').textContent = avgRevs.toFixed(1);
-  document.getElementById('pg-defusage').textContent   = pct(defCount, rows.length);
-  document.getElementById('pg-purewins').textContent   = pureWins;
+  // Render summary cards from config
+  cardsEl.innerHTML = config.cards.map(k => {
+    const c = CARD_DEFS[k];
+    return `<div class="card"><div class="card-label">${c.label}</div><div class="card-value">${c.fn(rows)}</div></div>`;
+  }).join('');
 
   // Group by date
   const byDate = groupByDate(rows);
@@ -429,7 +514,7 @@ function renderPerGame() {
 
   // Line charts
   lineChart('pg-chart-players', dates, dates.map(d => byDate[d].length), '#4ecdc4', 'Players');
-  lineChart('pg-chart-score', dates, dates.map(d => Math.round(avg(byDate[d].map(r => r.score)))), '#f5c842', 'Avg Score');
+  lineChart('pg-chart-score',   dates, dates.map(d => Math.round(avg(byDate[d].map(r => r.score)))), '#f5c842', 'Avg Score');
 
   // Tier distribution
   const tierCounts = Object.fromEntries(TIERS.map(t => [t.label, 0]));
@@ -440,28 +525,15 @@ function renderPerGame() {
     '#1a7a96'
   );
 
-  // Table (newest first)
+  // Day-by-day table (newest first)
   tbody.innerHTML = '';
   [...dates].reverse().forEach(d => {
-    const dr   = byDate[d];
-    const dAvgSc = Math.round(avg(dr.map(r => r.score)));
-    const dAvgTm = Math.round(avg(dr.map(r => r.timeSecs || 0)));
-    const dWins  = dr.filter(r => r.wonGame).length;
-    const dRevs  = avg(dr.map(r => r.lettersRevealed || 0)).toFixed(1);
-    const dDefs  = dr.filter(r => r.definitionUsed).length;
-    const dWrong = avg(dr.map(r => r.wrongLetters || 0)).toFixed(1);
-    const diff   = difficulty(dAvgSc);
+    const dr = byDate[d];
     const tr = document.createElement('tr');
-    tr.innerHTML =
-      `<td>${d}</td>` +
-      `<td class="r">${dr.length}</td>` +
-      `<td class="r">${dAvgSc}</td>` +
-      `<td class="r">${fmtTime(dAvgTm)}</td>` +
-      `<td class="r">${dRevs}</td>` +
-      `<td class="r">${pct(dDefs, dr.length)}</td>` +
-      `<td class="r">${pct(dWins, dr.length)}</td>` +
-      `<td class="r">${dWrong}</td>` +
-      `<td><span class="badge" style="background:${diff.color}22;color:${diff.color}">${diff.label}</span></td>`;
+    tr.innerHTML = config.tableCols.map(k => {
+      const c = COL_DEFS[k];
+      return `<td${c.align==='r'?' class="r"':''}>${c.fn(d, dr)}</td>`;
+    }).join('');
     tbody.appendChild(tr);
   });
 }
@@ -474,8 +546,8 @@ function renderGlobal() {
 
   if (allResults.length === 0) {
     ['gl-total','gl-players','gl-popular','gl-avgday','gl-winrate']
-      .forEach(id => document.getElementById(id).textContent = '—');
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">No data in the selected range.</td></tr>';
+      .forEach(id => document.getElementById(id).textContent = '--');
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">No data in the selected range.</td></tr>';
     destroyChart('gl-chart-games');
     return;
   }
@@ -492,7 +564,7 @@ function renderGlobal() {
   document.getElementById('gl-total').textContent   = allResults.length;
   document.getElementById('gl-players').textContent = uniquePlayers;
   document.getElementById('gl-popular').textContent = topGame.label;
-  document.getElementById('gl-avgday').textContent  = dates.length ? Math.round(allResults.length / dates.length) : '—';
+  document.getElementById('gl-avgday').textContent  = dates.length ? Math.round(allResults.length / dates.length) : '--';
   document.getElementById('gl-winrate').textContent = pct(wins, allResults.length);
 
   // Stacked bar chart
@@ -500,11 +572,11 @@ function renderGlobal() {
     GAMES.map(g => ({
       label: g.label,
       data: dates.map(d => byDate[d].filter(r => r.game === g.key).length),
-      backgroundColor: g.color,
+      backgroundColor: g.color
     }))
   );
 
-  // Table (newest first)
+  // Day-by-day table (newest first)
   tbody.innerHTML = '';
   [...dates].reverse().forEach(d => {
     const dr    = byDate[d];
