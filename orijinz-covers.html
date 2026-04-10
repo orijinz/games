@@ -1030,8 +1030,10 @@
     z-index: 300;
     opacity: 0;
     transition: opacity 0.25s ease;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    padding: max(10vh, 60px) 12px 12px;
+    overflow-y: auto;
   }
   .lb-overlay.open    { display: flex; }
   .lb-overlay.visible { opacity: 1; }
@@ -2128,6 +2130,9 @@ function updateLbDateUI() {
   var dateStr = getDateStringForOffset(lbDateOffset);
   var idx = getPuzzleIndexForDate(dateStr);
   document.getElementById('lbDateAnswer').textContent = 'Answer: ' + PUZZLES[idx].answer.toUpperCase();
+  var tabs = document.querySelector('.lb-sort-tabs');
+  if (tabs) tabs.style.display = (lbDateOffset === 0) ? '' : 'none';
+  if (lbDateOffset !== 0) { lbSortBy = 'score'; setLbSort('score'); }
 }
 function loadLbDataForCurrentDate() {
   var dateStr = getDateStringForOffset(lbDateOffset);
@@ -2139,6 +2144,7 @@ function loadLbDataForCurrentDate() {
   }
   window.parent.postMessage({ type: 'orijinz_request_leaderboard', game: 'covers', date: dateStr }, '*');
   document.getElementById('lbList').innerHTML = '<div class="lb-empty">Loading leaderboard\u2026</div>';
+  setTimeout(function() { if (!lbDataCache[dateStr]) { lbDataCache[dateStr] = { scores: [] }; if (getDateStringForOffset(lbDateOffset) === dateStr) renderLeaderboard(); } }, 3000);
 }
 
 function setLbSort(field) {
