@@ -2009,6 +2009,7 @@ function loadLbDataForCurrentDate() {
   }
   window.parent.postMessage({ type: 'orijinz_request_leaderboard', game: 'slogans', date: dateStr }, '*');
   document.getElementById('lbList').innerHTML = '<div class="lb-empty">Loading leaderboard\u2026</div>';
+  setTimeout(function() { if (!lbDataCache[dateStr]) { lbDataCache[dateStr] = { scores: [] }; if (getDateStringForOffset(lbDateOffset) === dateStr) renderLeaderboard(); } }, 3000);
 }
 
 function getLbData() { try { return JSON.parse(localStorage.getItem(LB_KEY) || '{}'); } catch(e) { return {}; } }
@@ -2051,6 +2052,7 @@ function getDeviceId() {
 }
 
 function renderLeaderboard() {
+  const deviceId = getDeviceId();
   const list = document.getElementById('lbList');
   // Entry form removed — players authenticate via Wix. Stub object so existing
   // form.style.display = ... calls remain harmless without needing to delete them.
@@ -2116,23 +2118,6 @@ function renderLeaderboard() {
         const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
         return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location||'') + '</span><span class="lb-row-streak lb-col-active">' + (e.streak||0) + '</span><span class="lb-row-played">' + (e.played||0) + '</span></div>';
       }).join('');
-    }
-  }
-  else {
-    list.innerHTML = entries.map((e,i) => {
-      const mine = e.deviceId === getDeviceId() ? ' lb-mine' : '';
-      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + escHtml(e.location||'') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
-    }).join('');
-  }
-  // Pre-fill name if returning
-  const deviceId = getDeviceId();
-  for (const key of Object.keys(d)) {
-    for (const e of ((d[key]||{}).entries||[])) {
-      if (e.deviceId === deviceId && e.name) {
-        document.getElementById('lbName').value     = e.name;
-        document.getElementById('lbLocation').value = e.location || '';
-        break;
-      }
     }
   }
 }
