@@ -2015,6 +2015,20 @@ function loadLbDataForCurrentDate() {
 function getLbData() { try { return JSON.parse(localStorage.getItem(LB_KEY) || '{}'); } catch(e) { return {}; } }
 function saveLbData(d) { try { localStorage.setItem(LB_KEY, JSON.stringify(d)); } catch(e) {} }
 
+function getAllPlayerStats() {
+  const d = getLbData();
+  const latest = {};
+  for (const key of Object.keys(d)) {
+    const idx = parseInt(key.replace('puzzle_', '')) || 0;
+    for (const e of (d[key].entries || [])) {
+      if (!latest[e.deviceId] || idx > latest[e.deviceId]._idx) {
+        latest[e.deviceId] = { name: e.name, location: e.location || '', played: e.played || 0, streak: e.streak || 0, _idx: idx, deviceId: e.deviceId };
+      }
+    }
+  }
+  return Object.values(latest);
+}
+
 function lbTierEmoji(score) {
   if      (score < 20)  return '\uD83C\uDFC6';
   else if (score < 40)  return '\uD83C\uDF0C';
