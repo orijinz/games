@@ -699,6 +699,30 @@
   }
   .stats-close:hover { color: var(--text); }
 
+  .lb-date-nav {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; padding: 10px 24px 4px;
+  }
+  .lb-date-arrow {
+    -webkit-appearance: none; appearance: none;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 0.9rem;
+    width: 32px; height: 32px; border-radius: 6px;
+    cursor: pointer; transition: color 0.15s, border-color 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lb-date-arrow:hover:not(:disabled) { color: var(--gold); border-color: var(--gold); }
+  .lb-date-arrow:disabled { opacity: 0.25; cursor: default; }
+  .lb-date-label {
+    font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 800;
+    color: var(--accent); min-width: 160px; text-align: center;
+  }
+  .lb-date-answer {
+    text-align: center; padding: 0 24px 8px;
+    font-family: 'Nunito Sans', sans-serif; font-size: 0.82rem;
+    font-weight: 700; color: var(--gold); letter-spacing: 0.02em; min-height: 1.2em;
+  }
+
   .stats-tabs { display: flex; border-bottom: 2px solid var(--border); padding: 0 24px; background: var(--bg2); position: sticky; top: 60px; z-index: 1; }
   .stats-tab { -webkit-appearance: none; appearance: none; background: none; border: none; color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 16px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
   .stats-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -1098,9 +1122,17 @@
 <div class="lb-overlay" id="lbOverlay" onclick="handleLbOverlayClick(event)">
   <div class="lb-panel" id="lbPanel">
     <div class="stats-panel-header">
-      <span class="stats-title">Today&#39;s Results</span>
+      <span class="stats-title">Results</span>
       <button class="stats-close" onclick="closeLeaderboard()">&#x2715;</button>
     </div>
+
+    <!-- Date navigation -->
+    <div class="lb-date-nav">
+      <button class="lb-date-arrow" id="lbDateLeft" onclick="lbDateNav(-1)">&#9664;</button>
+      <span class="lb-date-label" id="lbDateLabel">Today&#39;s Results</span>
+      <button class="lb-date-arrow" id="lbDateRight" onclick="lbDateNav(1)" disabled>&#9654;</button>
+    </div>
+    <div class="lb-date-answer" id="lbDateAnswer"></div>
     <div class="lb-rubric">
       <div class="lb-rubric-title">Scoring &mdash; Lower is Better</div>
       <div class="lb-rubric-penalty" style="margin-bottom:10px;margin-top:0;font-style:normal;color:var(--text-muted);">Your score = time + 30s for using the hint + 15s per letter revealed + 5s per wrong letter</div>
@@ -1506,7 +1538,13 @@ window.addEventListener('message', function(event) {
   } else if (event.data.type === 'orijinz_leaderboard') {
     wixLeaderboardData = event.data;
     waitingForWixLeaderboard = false;
+    var todayStr = getDateStringForOffset(0);
+    lbDataCache[todayStr] = event.data;
     renderLeaderboard();
+  } else if (event.data.type === 'orijinz_leaderboard_dated') {
+    var dateStr = event.data.date;
+    lbDataCache[dateStr] = event.data;
+    if (getDateStringForOffset(lbDateOffset) === dateStr) renderLeaderboard();
   } else if (event.data.type === 'orijinz_dashboard_data') {
     allGamesData = event.data;
     document.getElementById('allGamesLoading').style.display = 'none';
@@ -1543,6 +1581,8 @@ function lbTierEmoji(score) {
 function getLbData()    { try { return JSON.parse(localStorage.getItem('orijinzQuotesLb') || '[]'); } catch(e) { return []; } }
 function saveLbData(d)  { try { localStorage.setItem('orijinzQuotesLb', JSON.stringify(d)); } catch(e) {} }
 function openLeaderboard() {
+  lbDateOffset = 0;
+  updateLbDateUI();
   renderLeaderboard();
   const overlay = document.getElementById('lbOverlay');
   overlay.classList.add('open');
@@ -1560,6 +1600,55 @@ function handleLbOverlayClick(e) {
 }
 
 let lbSortField = 'score';
+let lbDateOffset = 0;
+const lbDataCache = {};
+
+function getDateStringForOffset(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function getPuzzleIndexForDate(dateStr) {
+  if (DATE_OVERRIDES[dateStr] !== undefined) return DATE_OVERRIDES[dateStr];
+  const start = new Date('2026-01-01T00:00:00');
+  const target = new Date(dateStr + 'T00:00:00');
+  const diff = Math.floor((target - start) / 86400000);
+  return ((diff % PUZZLES.length) + PUZZLES.length) % PUZZLES.length;
+}
+function formatLbDateLabel(offset) {
+  if (offset === 0) return "Today\u2019s Results";
+  if (offset === -1) return "Yesterday\u2019s Results";
+  const d = new Date(); d.setDate(d.getDate() + offset);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate() + ' Results';
+}
+function lbDateNav(dir) {
+  var n = lbDateOffset + dir;
+  if (n > 0 || n < -3) return;
+  lbDateOffset = n;
+  updateLbDateUI();
+  loadLbDataForCurrentDate();
+}
+function updateLbDateUI() {
+  document.getElementById('lbDateLabel').textContent = formatLbDateLabel(lbDateOffset);
+  document.getElementById('lbDateLeft').disabled = (lbDateOffset <= -3);
+  document.getElementById('lbDateRight').disabled = (lbDateOffset >= 0);
+  var dateStr = getDateStringForOffset(lbDateOffset);
+  var idx = getPuzzleIndexForDate(dateStr);
+  document.getElementById('lbDateAnswer').textContent = 'Answer: ' + PUZZLES[idx].answer.toUpperCase();
+}
+function loadLbDataForCurrentDate() {
+  var dateStr = getDateStringForOffset(lbDateOffset);
+  if (lbDataCache[dateStr]) { renderLeaderboard(); return; }
+  if (lbDateOffset === 0 && wixLeaderboardData) {
+    lbDataCache[dateStr] = wixLeaderboardData;
+    renderLeaderboard();
+    return;
+  }
+  window.parent.postMessage({ type: 'orijinz_request_leaderboard', game: 'quotes', date: dateStr }, '*');
+  document.getElementById('lbList').innerHTML = '<div class="lb-empty">Loading leaderboard\u2026</div>';
+}
+
 function setLbSort(field) {
   lbSortField = field;
   document.querySelectorAll('.lb-sort-tab').forEach(t => t.classList.toggle('active', t.id === 'lbTab-' + field));
@@ -1605,13 +1694,22 @@ function renderLeaderboard() {
   }
 
   let all;
-  if (field === 'score' && wixLeaderboardData && wixLeaderboardData.scores && wixLeaderboardData.scores.length > 0) {
-    if (form) form.style.display = 'none';
-    all = wixLeaderboardData.scores.map(r => ({
-      name: r.name, location: r.location, score: r.score, played: 0, streak: 0,
-      deviceId: r.memberId === wixLeaderboardData.memberId ? devId : r.memberId
-    }));
-  } else if (field !== 'score' && wixLeaderboardData && wixLeaderboardData.stats && wixLeaderboardData.stats.length > 0) {
+  if (field === 'score') {
+    const dateStr = getDateStringForOffset(lbDateOffset);
+    const cachedData = lbDataCache[dateStr] || (lbDateOffset === 0 ? wixLeaderboardData : null);
+    if (cachedData && cachedData.scores && cachedData.scores.length > 0) {
+      if (form) form.style.display = 'none';
+      const myId = cachedData.memberId || (wixLeaderboardData && wixLeaderboardData.memberId);
+      all = cachedData.scores.map(r => ({
+        name: r.name, location: r.location, score: r.score, played: 0, streak: 0,
+        deviceId: r.memberId === myId ? devId : r.memberId
+      }));
+    } else if (lbDateOffset === 0) {
+      all = getAllPlayerStats();
+    } else {
+      all = [];
+    }
+  } else if (wixLeaderboardData && wixLeaderboardData.stats && wixLeaderboardData.stats.length > 0) {
     if (form) form.style.display = 'none';
     all = wixLeaderboardData.stats.map(s => ({
       name: s.name, location: s.location, score: 0,
@@ -1622,7 +1720,7 @@ function renderLeaderboard() {
     all = getAllPlayerStats();
   }
   const sorted = [...all].sort((a, b) => field === 'score' ? (a.score - b.score) : field === 'played' ? (b.played - a.played) : (b.streak - a.streak));
-  if (!sorted.length) { list.innerHTML = '<div class="lb-empty">No results yet. Play and submit your score!</div>'; return; }
+  if (!sorted.length) { list.innerHTML = '<div class="lb-empty">' + (field === 'score' && lbDateOffset !== 0 ? 'No scores for this date' : 'No results yet. Play and submit your score!') + '</div>'; return; }
   list.innerHTML = sorted.map((e, i) => {
     const isMe = e.deviceId === devId;
     const nameHtml = '<div class="lb-entry-name-main">' + escHtml(e.name || 'Add your name and it will go here') + '</div>' + (e.location ? '<div class="lb-entry-name-sub">' + escHtml(e.location) + '</div>' : '');
