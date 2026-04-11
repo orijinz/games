@@ -2283,8 +2283,8 @@ function getDateStringForOffset(offset) {
 }
 function getPuzzleIndexForDate(dateStr) {
   if (DATE_OVERRIDES[dateStr] !== undefined) return DATE_OVERRIDES[dateStr];
-  const start = new Date('2026-02-01T00:00:00');
-  const target = new Date(dateStr + 'T00:00:00');
+  const start = new Date('2026-02-01T12:00:00');
+  const target = new Date(dateStr + 'T12:00:00');
   const diff = Math.floor((target - start) / 86400000);
   return ((diff % PUZZLES.length) + PUZZLES.length) % PUZZLES.length;
 }
@@ -2306,8 +2306,7 @@ function updateLbDateUI() {
   document.getElementById('lbDateLabel').textContent = formatLbDateLabel(lbDateOffset);
   document.getElementById('lbDateLeft').disabled = (lbDateOffset <= -3);
   document.getElementById('lbDateRight').disabled = (lbDateOffset >= 0);
-  var dateStr = getDateStringForOffset(lbDateOffset);
-  var idx = getPuzzleIndexForDate(dateStr);
+  var idx = ((puzzleIndex + lbDateOffset) % PUZZLES.length + PUZZLES.length) % PUZZLES.length;
   document.getElementById('lbDateAnswer').textContent = 'Answer: ' + PUZZLES[idx].answer.toUpperCase();
   var tabs = document.querySelector('.lb-sort-tabs');
   if (tabs) tabs.style.display = (lbDateOffset === 0) ? '' : 'none';
