@@ -62,13 +62,6 @@ header {
   display: flex; flex-direction: column; gap: 4px; padding: 6px;
 }
 .hamburger-btn span { display: block; width: 20px; height: 2px; background: var(--text-muted); border-radius: 2px; }
-
-  .header-meta {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; margin-bottom: 8px;
-  }
-  .header-meta .header-ornament { margin-bottom: 0; flex: 1; text-align: center; }
-  .puzzle-num-mini { min-width: 50px; text-align: left; }
   
   font-size: 0.64rem; letter-spacing: 0.42em; text-transform: uppercase;
   color: #fff; font-family: 'Nunito Sans', sans-serif; font-weight: 700; margin-bottom: 6px;
@@ -93,15 +86,8 @@ header {
   font-size: 0.83rem; color: var(--text-muted);
   margin-top: 5px; letter-spacing: 0.04em; font-style: italic;
 }
-.date-badge { font-family: 'Nunito', sans-serif; font-size: 0.6rem; font-weight: 600; color: var(--text-muted); opacity: 0.75; letter-spacing: 0.04em; min-width: 50px; text-align: right; }
-  .puzzle-num-mini {
-    display: inline-block;
-    font-size: 0.55rem;
-    font-family: 'Space Mono', monospace;
-    opacity: 0.65;
-    margin-top: 2px;
-    letter-spacing: 0.05em;
-  }
+.date-badge { position: absolute; top: 26px; right: 24px; font-family: 'Nunito', sans-serif; font-size: 0.62rem; font-weight: 600; color: var(--text-muted); opacity: 0.75; letter-spacing: 0.04em; }
+  .puzzle-num-mini { position: absolute; top: 26px; left: 60px; font-family: 'Space Mono', monospace; font-size: 0.62rem; opacity: 0.65; color: var(--text-muted); letter-spacing: 0.05em; }
 
 
 /* MAIN */
@@ -817,7 +803,9 @@ body.page-blur .letter-tile.active {
   <button class="hamburger-btn" onclick="openMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
-  <div class="header-meta"><span id="puzzleNum" class="puzzle-num-mini"></span><div class="header-ornament">&#10022; Slogans &#10022;</div><span class="date-badge" id="dateBadge"></span></div>
+  <span id="puzzleNum" class="puzzle-num-mini"></span>
+  <div class="header-ornament">&#10022; Slogans &#10022;</div>
+  <span class="date-badge" id="dateBadge"></span>
   <div class="logo"><span class="icon-o"><span class="o-shadow">O</span><span class="o-mid">O</span><span class="o-top">O</span></span><span class="logo-brand">rijinz</span><span class="logo-spacer"></span><span class="logo-daily">Daily</span></div>
   <div class="header-sub">Read the slogan. Guess the source.</div>
 </header>
