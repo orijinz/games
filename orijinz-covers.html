@@ -62,7 +62,14 @@
     border-bottom: 1px solid var(--border);
     position: relative;
   }
-  .header-ornament {
+  
+  .header-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 8px;
+  }
+  .header-meta .header-ornament { margin-bottom: 0; flex: 1; text-align: center; }
+  .puzzle-num-mini { min-width: 50px; text-align: left; }
+  
     font-size: 0.68rem;
     letter-spacing: 0.4em;
     text-transform: uppercase;
@@ -98,19 +105,7 @@
     font-weight: 400;
     letter-spacing: 0.04em;
   }
-  .date-badge {
-    position: absolute;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    opacity: 0.8;
-    text-align: center;
-    line-height: 1.5;
-  }
+  .date-badge { font-family: 'Nunito', sans-serif; font-size: 0.6rem; font-weight: 600; color: var(--text-muted); opacity: 0.75; letter-spacing: 0.04em; min-width: 50px; text-align: right; }
   .puzzle-num-mini {
     display: inline-block;
     font-size: 0.55rem;
@@ -1305,7 +1300,6 @@
       transition: opacity 0.3s;
     }
     .song-card-wrap.scrolled-end::after { opacity: 0; }
-    .date-badge  { right: 10px; font-size: 0.55rem; }
     main         { gap: 14px; padding: 16px 16px 32px; }
     .clue-section { flex-direction: column; align-items: center; }
     .clue-btn    { padding: 9px 14px; font-size: 0.65rem; width: 100%; max-width: 260px; }
@@ -1322,10 +1316,9 @@
   <button id="menuBtn" onclick="openMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
-  <div class="header-ornament">&#x266A; COVERS &#x266A;</div>
+  <div class="header-meta"><span id="puzzleNum" class="puzzle-num-mini"></span><div class="header-ornament">&#x266A; COVERS &#x266A;</div><span class="date-badge" id="dateBadge"></span></div>
   <div class="logo"><span class="icon-o"><span class="o-shadow">O</span><span class="o-mid">O</span><span class="o-top">O</span></span><span class="logo-brand">rijinz</span><span class="logo-spacer"></span><span class="logo-daily">Daily</span></div>
   <div class="header-sub">Listen to the cover. Guess the original artist.</div>
-  <div class="date-badge" id="dateBadge"></div>
   <button id="resetBtn" onclick="devReset()" title="Dev Reset">&#x21BA;</button>
   <button id="nextBtn"  onclick="devNext()"  title="Next Puzzle">&#x276F;</button>
 </header>
@@ -2528,7 +2521,7 @@ function initGame() {
   answerClean = answer.split('').filter(ch => ch !== ' ' && !isAutoFill(ch)).join('');
 
   const now = new Date();
-  document.getElementById('dateBadge').innerHTML = '<span id="puzzleNum" class="puzzle-num-mini"></span>' + '<span class="date-text">' + now.toLocaleDateString('en-US', {month:'short', day:'numeric'}) + '</span>';
+  document.getElementById('dateBadge').textContent = now.toLocaleDateString('en-US', {month:'short', day:'numeric'});
   document.getElementById('puzzleNum').textContent = '#' + (puzzle.id || (puzzleIndex + 1));
 
   // Render the cover Spotify embed
