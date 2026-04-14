@@ -2679,9 +2679,8 @@ function initGame() {
   answerClean = answer.split('').filter(ch => ch !== ' ' && !isAutoFill(ch)).join('');
 
   const now = new Date();
-  document.getElementById('dateBadge').innerHTML =
-    now.toLocaleDateString('en-US', {month:'short', day:'numeric'}) + '<br>' + now.getFullYear() + '<br><span id="puzzleNum" class="puzzle-num-mini"></span>';
-  document.getElementById('puzzleNum').textContent = 'Puzzle #' + (puzzle.id || (puzzleIndex + 1));
+  document.getElementById('dateBadge').innerHTML = '<span id="puzzleNum" class="puzzle-num-mini"></span>' + '<span class="date-text">' + now.toLocaleDateString('en-US', {month:'short', day:'numeric'}) + '</span>';
+  document.getElementById('puzzleNum').textContent = '#' + (puzzle.id || (puzzleIndex + 1));
   document.getElementById('synopsisText').innerHTML = puzzle.synopsis;
 
   const synCard = document.getElementById('synopsisCard');
@@ -3515,7 +3514,7 @@ function devGoTo(n) {
   n = parseInt(n, 10);
   if (!n) return;
   const idx = PUZZLES.findIndex(p => p.id === n);
-  if (idx === -1) { alert('Puzzle #' + n + ' not found'); return; }
+  if (idx === -1) { alert('#' + n + ' not found'); return; }
   const state = safeGetState();
   safeSaveState({
     ...state,
