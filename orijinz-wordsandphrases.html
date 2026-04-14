@@ -1444,7 +1444,7 @@
       </a>
     </div>
     <div class="menu-divider"></div>
-    <div class="menu-section-label">Free Newsletter</div>
+    <div class="menu-section-label">Free email newsletter</div>
     <form class="menu-newsletter" onsubmit="submitMenuNewsletter(event)">
       <input id="menuNewsletterEmail" type="email" placeholder="Your email" required>
       <button type="submit">Sign Up</button>
@@ -2588,7 +2588,8 @@ function updateKeyboard() {
 // INPUT HANDLING
 // =================================================================
 document.addEventListener('keydown', e => {
-  if (document.activeElement === document.getElementById('nativeInput')) return;
+  var ae = document.activeElement;
+  if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
   if (e.ctrlKey && e.key === ']') { e.preventDefault(); devNext();  return; }
   if (e.ctrlKey && e.key === '[') { e.preventDefault(); devReset(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
