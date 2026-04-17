@@ -3380,7 +3380,7 @@ function showResult(won) {
     else                  { emoji.textContent = '\uD83C\uDF31'; hl.textContent = 'You Got It!'; }
     const revealStr = revealCount > 0 ? ' \u00B7 ' + revealCount + ' letter' + (revealCount === 1 ? '' : 's') + ' revealed' : '';
     const wrongStr  = wrongCount  > 0 ? ' \u00B7 ' + wrongCount  + ' letter' + (wrongCount  === 1 ? '' : 's') + ' guessed incorrectly' : '';
-    const listenStr = listenPenalty > 0 ? ' \u00B7 trailer (' + totalSecsWatched + 's watched, +' + listenPenalty + 's added)' : '';
+    const listenStr = totalSecsWatched > 0 ? ' \u00B7 trailer, ' + totalSecsWatched + 's watched' : '';
     msg.innerHTML = 'Solved in ' + timeStr + revealStr + wrongStr + listenStr + '.<br>Share the fun with friends!';
   } else {
     emoji.textContent = '\uD83C\uDFAC';
