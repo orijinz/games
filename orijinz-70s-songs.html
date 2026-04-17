@@ -2488,7 +2488,7 @@ let wixResultSent = false, wixPageUrl = '', wixLeaderboardData = null;
 let waitingForWixLeaderboard = false;
 let timerInterval = null, startTime = null, elapsedSeconds = 0;
 let audioEl = null, clipTimer = null;
-let selectedDuration = 10, listenPenalty = 0;
+let selectedDuration = 10, listenPenalty = 0, totalSecsWatched = 0;
 
 function formatTime(sec) {
   const h = Math.floor(sec / 3600);
@@ -2580,6 +2580,7 @@ function initGame() {
     gameOver        = stored.gameOver   || false;
     elapsedSeconds  = stored.elapsed    || 0;
     listenPenalty   = stored.listenPenalty || 0;
+    totalSecsWatched = stored.totalSecsWatched || 0;
   }
 
   puzzle      = PUZZLES[puzzleIndex];
@@ -2635,7 +2636,7 @@ function saveState() {
     streak, lastPlayed: new Date().toDateString(),
     guesses, revealed: [...revealedLetters],
     defShown: false, revealCount, wrongCount, gameOver, elapsed: elapsedSeconds,
-    listenPenalty,
+    listenPenalty, totalSecsWatched,
     ...(existing.devPuzzleIndex !== undefined ? { devPuzzleIndex: existing.devPuzzleIndex } : {})
   });
 }
@@ -3073,6 +3074,7 @@ function playClip() {
     }));
   }
   listenPenalty += seconds * 2;
+  totalSecsWatched += seconds;
   saveState();
   clipTimer = setTimeout(() => {
     if (audioEl) audioEl.pause();
@@ -3175,7 +3177,7 @@ function showResult(won) {
     else                  { emoji.textContent = '\uD83C\uDF31'; hl.textContent = 'You Got It!'; }
     const revealStr = revealCount > 0 ? ' \u00B7 ' + revealCount + ' letter' + (revealCount === 1 ? '' : 's') + ' revealed' : '';
     const wrongStr  = wrongCount  > 0 ? ' \u00B7 ' + wrongCount  + ' letter' + (wrongCount  === 1 ? '' : 's') + ' guessed incorrectly' : '';
-    const listenStr = listenPenalty > 0 ? ' \u00B7 listened (+' + listenPenalty + 's)' : '';
+    const listenStr = listenPenalty > 0 ? ' \u00B7 listened (' + totalSecsWatched + 's watched, +' + listenPenalty + 's added)' : '';
     msg.innerHTML = 'Solved in ' + timeStr + revealStr + wrongStr + listenStr + '.<br>Share the fun with friends!';
   } else {
     emoji.textContent = '\uD83C\uDFB5';
