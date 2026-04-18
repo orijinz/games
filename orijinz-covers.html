@@ -1538,12 +1538,16 @@
     </div>
     <div class="stats-tabs">
       <button class="stats-tab active" id="stTabThis" onclick="switchStatsTab('this')">This Game</button>
+      <button class="stats-tab" id="stTabToday" onclick="switchStatsTab('today')">Today</button>
       <button class="stats-tab" id="stTabAll" onclick="switchStatsTab('all')">All Games</button>
     </div>
     <div id="statsTabThis">
       <div id="allGamesSection"></div>
     </div>
-    <div id="statsTabAll" style="display:none;">
+    <div id="statsTabToday" style="position:absolute;visibility:hidden;pointer-events:none;height:0;overflow:hidden;">
+      <div id="todayGamesContent" style="padding:0 16px 16px;"></div>
+    </div>
+    <div id="statsTabAll" style="position:absolute;visibility:hidden;pointer-events:none;height:0;overflow:hidden;">
       <div id="allGamesLoading" style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;">Loading stats...</div>
       <div id="allGamesContent" style="display:none;padding:0 16px 16px;"></div>
     </div>
@@ -1950,10 +1954,9 @@ const AG_GAMES = {
 };
 
 function switchStatsTab(tab) {
-  document.getElementById('stTabThis').classList.toggle('active', tab === 'this');
-  document.getElementById('stTabAll').classList.toggle('active', tab === 'all');
-  document.getElementById('statsTabThis').style.display = tab === 'this' ? '' : 'none';
-  document.getElementById('statsTabAll').style.display = tab === 'all' ? '' : 'none';
+  var hidden = 'position:absolute;visibility:hidden;pointer-events:none;height:0;overflow:hidden;';
+  ['statsTabThis','statsTabToday','statsTabAll'].forEach(function(id,i) { var t = ['this','today','all'][i]; document.getElementById(id).style.cssText = (t===tab) ? '' : hidden; });
+  ['stTabThis','stTabToday','stTabAll'].forEach(function(id,i) { var t = ['this','today','all'][i]; document.getElementById(id).classList.toggle('active', t===tab); });
   if (tab === 'all' && allGamesData) renderAllGames();
   // Force iOS to recalculate scroll height after tab switch
   var panel = document.getElementById('statsPanel');
@@ -1987,19 +1990,21 @@ function renderAllGames() {
     '<div class="ag-card"><div class="ag-val">' + totalPlayed + '</div><div class="ag-lbl">Games Played</div></div>' +
     '<div class="ag-card"><div class="ag-val">' + bestStreak + '</div><div class="ag-lbl">Best Streak</div>' + (bm.emoji ? '<div style="font-size:0.5rem;color:var(--text-muted);margin-top:2px;">' + bm.emoji + ' ' + (bm.label||'') + '</div>' : '') + '</div>' +
     '<div class="ag-card"><div class="ag-val">' + totalMins + 'm</div><div class="ag-lbl">Time Played</div></div></div>';
-  html += '<div class="ag-section">Today</div>';
+  var todayHtml = '';
   var todayResults = results.filter(function(r) { return agToDateStr(r.puzzleDate) === today; });
   var played = {};
   if (todayResults.length === 0) {
-    html += '<div style="font-size:0.75rem;color:var(--text-muted);padding:4px 0 8px;">No games played today.</div>';
+    todayHtml += '<div style="font-size:0.75rem;color:var(--text-muted);padding:4px 0 8px;">No games played today.</div>';
   } else {
     todayResults.forEach(function(r) {
       if (played[r.game]) return; played[r.game] = true;
       var g = AG_GAMES[r.game] || { label: r.game, emoji: '', color: '#888' };
       var badge = r.wonGame ? '<span class="ag-badge won">\u2713 Won</span>' : '<span class="ag-badge lost">\u2717 Lost</span>';
-      html += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';"><div class="ag-game-hdr">' + g.emoji + ' ' + g.label + badge + '</div><div class="ag-game-stats"><div class="ag-row"><span class="ag-lbl">Score</span><span class="ag-val">' + (r.score||'--') + '</span></div><div class="ag-row"><span class="ag-lbl">Time</span><span class="ag-val">' + agFormatTime(r.timeSecs) + '</span></div><div class="ag-row"><span class="ag-lbl">Reveals</span><span class="ag-val">' + (r.lettersRevealed||0) + '</span></div><div class="ag-row"><span class="ag-lbl">Wrong</span><span class="ag-val">' + (r.wrongLetters||0) + '</span></div></div></div>';
+      todayHtml += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';"><div class="ag-game-hdr">' + g.emoji + ' ' + g.label + badge + '</div><div class="ag-game-stats"><div class="ag-row"><span class="ag-lbl">Score</span><span class="ag-val">' + (r.score||'--') + '</span></div><div class="ag-row"><span class="ag-lbl">Time</span><span class="ag-val">' + agFormatTime(r.timeSecs) + '</span></div><div class="ag-row"><span class="ag-lbl">Reveals</span><span class="ag-val">' + (r.lettersRevealed||0) + '</span></div><div class="ag-row"><span class="ag-lbl">Wrong</span><span class="ag-val">' + (r.wrongLetters||0) + '</span></div></div></div>';
     });
   }
+  document.getElementById('todayGamesContent').innerHTML = todayHtml;
+
   html += '<div class="ag-section">By Game</div>';
   Object.keys(AG_GAMES).forEach(function(key) {
     var g = AG_GAMES[key]; var st = stats.find(function(s) { return s.game === key; });
