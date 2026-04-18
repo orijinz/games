@@ -2031,11 +2031,13 @@ function renderAllGames() {
     var st = stats.find(function(s) { return s.game === key; });
     if (!st || !st.gamesPlayed) return;
     var avg = st.gamesPlayed > 0 ? Math.round((st.totalScore||0) / st.gamesPlayed) : '--';
+    var bestForGame = results.filter(function(r) { return r.game === key && r.wonGame; }).reduce(function(min, r) { return (r.score < min) ? r.score : min; }, Infinity);
+    var bestStr = bestForGame === Infinity ? '--' : bestForGame;
     html += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';">' +
       '<div class="ag-game-hdr">' + g.emoji + ' ' + g.label + '</div>' +
       '<div class="ag-game-stats">' +
         '<div class="ag-row"><span class="ag-lbl">Played</span><span class="ag-val">' + st.gamesPlayed + '</span></div>' +
-        '<div class="ag-row"><span class="ag-lbl">Streak</span><span class="ag-val">' + (st.currentStreak||0) + '</span></div>' +
+        '<div class="ag-row"><span class="ag-lbl">Best Score</span><span class="ag-val">' + bestStr + '</span></div>' +
         '<div class="ag-row"><span class="ag-lbl">Best Streak</span><span class="ag-val">' + (st.longestStreak||0) + '</span></div>' +
         '<div class="ag-row"><span class="ag-lbl">Avg Score</span><span class="ag-val">' + avg + '</span></div>' +
       '</div></div>';
