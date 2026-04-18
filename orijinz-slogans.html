@@ -385,11 +385,19 @@ body.page-blur .letter-tile.active {
 .menu-overlay.open { display: block; }
 .menu-overlay.visible { opacity: 1; }
 .menu-panel {
-  position: fixed; top: 0; left: 0; bottom: 0; width: min(230px, 75vw);
-  background: var(--bg2); border-right: 1px solid var(--border);
-  z-index: 401; transform: translateX(-100%); transition: transform 0.3s ease;
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
-}
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: min(230px, 75vw);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    z-index: 401;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
 .menu-panel.open { transform: translateX(0); }
 .menu-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -400,9 +408,9 @@ body.page-blur .letter-tile.active {
 .menu-close {
   background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer;
 }
-.menu-items { padding: 12px 0; }
+.menu-items { padding: 12px 0; touch-action: pan-y; }
 .menu-item {
-  display: flex; align-items: center; gap: 12px; width: 100%;
+  touch-action: pan-y; display: flex; align-items: center; gap: 12px; width: 100%;
   padding: 13px 20px; background: none; border: none;
   font-family: 'Nunito Sans', sans-serif; font-size: 0.95rem; color: var(--text);
   cursor: pointer; text-align: left; transition: background 0.15s;
@@ -1729,14 +1737,12 @@ document.addEventListener('click', function() {
 
 // ── Menu ──────────────────────────────────────────────────────────────────────
 function openMenu() {
-  lockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.add('open');
   requestAnimationFrame(() => { overlay.classList.add('visible'); panel.classList.add('open'); });
 }
 function closeMenu() {
-  unlockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.remove('visible');

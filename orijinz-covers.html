@@ -768,9 +768,11 @@
     border-right: 1px solid var(--border);
     z-index: 401;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
-    padding: 0 0 32px;
+    transition: transform 0.3s ease;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
   }
   .menu-panel.open { transform: translateX(0); }
 
@@ -802,9 +804,9 @@
   }
   .menu-close:hover { color: var(--text); }
 
-  .menu-items { padding: 12px 0; }
+  .menu-items { padding: 12px 0; touch-action: pan-y; }
   .menu-item {
-    display: flex;
+    touch-action: pan-y; display: flex;
     align-items: center;
     gap: 14px;
     padding: 14px 20px;
@@ -1680,7 +1682,6 @@
 // MENU
 // =================================================================
 function openMenu() {
-  lockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.add('open');
@@ -1690,7 +1691,6 @@ function openMenu() {
   });
 }
 function closeMenu() {
-  unlockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.remove('visible');
