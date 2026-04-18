@@ -465,7 +465,6 @@ body.page-blur .letter-tile.active {
   align-items: flex-start; justify-content: center;
   padding: max(10vh, 60px) 12px 12px;
     overflow-y: auto;
-  overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y;
 }
 .modal-overlay.open { display: flex; }
 .modal-overlay.visible { opacity: 1; }
@@ -707,6 +706,10 @@ body.page-blur .letter-tile.active {
 
 /* RESPONSIVE */
 @media (max-width: 480px) {
+
+    .modal-overlay { padding: 0 !important; align-items: stretch !important; }
+    .modal-panel { width: 100% !important; max-height: none !important; border-radius: 0 !important; height: 100% !important; }
+
     .puzzle-num-mini { top: 6px; left: 24px; }
     .date-badge      { top: 6px; right: 24px; }
     header           { padding-top: 32px; }

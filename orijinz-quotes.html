@@ -704,7 +704,6 @@
     opacity: 0; transition: opacity 0.25s ease;
     align-items: flex-start; justify-content: center;
     padding: max(10vh, 60px) 12px 12px;
-    overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y;
   }
   .stats-overlay.open    { display: flex; }
   .stats-overlay.visible { opacity: 1; }
@@ -712,7 +711,8 @@
     background: var(--bg2); border: 1px solid var(--border);
     border-radius: 8px; width: min(480px, 92vw);
      
-    padding: 0 0 24px; transform: translateY(16px);
+    padding: 0 0 24px;
+    max-height: 88vh; overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y; transform: translateY(16px);
     transition: transform 0.3s ease;
   }
   .stats-overlay.visible .stats-panel { transform: translateY(0); }
@@ -841,15 +841,15 @@
     background: rgba(0,0,0,0.55); z-index: 300;
     opacity: 0; transition: opacity 0.25s ease;
     align-items: flex-start; justify-content: center;
-    padding: max(10vh, 60px) 12px 12px;   overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y;
-  }
+    padding: max(10vh, 60px) 12px 12px; }
   .lb-overlay.open    { display: flex; }
   .lb-overlay.visible { opacity: 1; }
   .lb-panel {
     background: var(--bg2); border: 1px solid var(--border);
     border-radius: 8px; width: min(500px, 94vw);
      
-    padding: 0 0 24px; transform: translateY(16px);
+    padding: 0 0 24px;
+    max-height: 88vh; overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y; transform: translateY(16px);
     transition: transform 0.3s ease;
   }
   .lb-overlay.visible .lb-panel { transform: translateY(0); }
@@ -940,6 +940,12 @@
   .lb-entry-tier  { width: 28px; text-align: center; font-size: 1rem; }
   .lb-empty { padding: 24px; text-align: center; color: var(--text-muted); font-style: italic; font-size: 0.88rem; }
   @media (max-width: 480px) {
+
+    .stats-overlay { padding: 0; align-items: stretch; }
+    .stats-panel { width: 100%; max-height: none; border-radius: 0; height: 100%; }
+    .lb-overlay { padding: 0; align-items: stretch; }
+    .lb-panel { width: 100%; max-height: none; border-radius: 0; height: 100%; }
+
     .puzzle-num-mini { top: 6px; left: 24px; }
     .date-badge      { top: 6px; right: 24px; }
     header           { padding-top: 32px; }
