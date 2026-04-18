@@ -1046,18 +1046,18 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--gold);
-    padding: 18px 24px 8px;
+    padding: 12px 24px 6px;
   }
   .stats-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 13px 24px;
+    padding: 9px 24px;
     border-bottom: 1px solid rgba(28,52,69,0.6);
   }
   .stats-row:last-child { border-bottom: none; }
   .stats-label {
-    font-size: 0.92rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
     font-family: 'Nunito Sans', sans-serif;
   }
@@ -1379,7 +1379,13 @@
     .lb-rubric-grid { gap: 2px 8px; }
     .lb-rubric-row { font-size: 0.68rem; }
     .lb-rubric-row span:last-child { font-size: 0.62rem; }
-  }
+  
+    .stats-panel, .lb-panel, .modal-panel { touch-action: pan-y !important; -webkit-overflow-scrolling: touch !important; }
+    .stats-panel *, .lb-panel *, .modal-panel * { touch-action: pan-y; }
+
+    .stats-tabs { position: static; top: auto; }
+    .lb-sort-tabs { position: static; top: auto; }
+}
 </style>
 </head>
 <body>
@@ -1959,7 +1965,7 @@ window.addEventListener('message', function(evt) {
 });
 
 function agFormatTime(s) { if (s == null) return '--'; var m = Math.floor(s/60), sec = s%60; return m + ':' + (sec<10?'0':'') + sec; }
-function agToDateStr(d) { if (!d) return ''; var s = (typeof d === 'string') ? d : new Date(d).toISOString(); return s.slice(0,10); }
+function agToDateStr(d) { if (!d) return ''; if (typeof d === 'string') return d.slice(0,10); var dt = new Date(d); return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0'); }
 
 function renderAllGames() {
   if (!allGamesData) return;

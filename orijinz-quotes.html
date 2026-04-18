@@ -800,11 +800,11 @@
   .stats-section-label {
     font-family: 'Space Mono', monospace; font-size: 0.58rem;
     letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold); padding: 18px 24px 8px;
+    color: var(--gold); padding: 12px 24px 6px;
   }
   .stats-row {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 13px 24px; border-bottom: 1px solid rgba(30,84,80,0.4);
+    padding: 9px 24px; border-bottom: 1px solid rgba(30,84,80,0.4);
   }
   .stats-row:last-child { border-bottom: none; }
   .stats-label  { font-size: 0.92rem; color: var(--text-muted); font-family: 'Nunito Sans', sans-serif; }
@@ -985,6 +985,9 @@
   
     .stats-panel, .lb-panel, .modal-panel { touch-action: pan-y !important; -webkit-overflow-scrolling: touch !important; }
     .stats-panel *, .lb-panel *, .modal-panel * { touch-action: pan-y; }
+
+    .stats-tabs { position: static; top: auto; }
+    .lb-sort-tabs { position: static; top: auto; }
 }
 </style>
 </head>

@@ -1140,18 +1140,18 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--gold);
-    padding: 18px 24px 8px;
+    padding: 12px 24px 6px;
   }
   .stats-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 13px 24px;
+    padding: 9px 24px;
     border-bottom: 1px solid rgba(40,40,50,0.6);
   }
   .stats-row:last-child { border-bottom: none; }
   .stats-label {
-    font-size: 0.92rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
     font-family: 'Nunito Sans', sans-serif;
   }
@@ -1467,6 +1467,9 @@
   
     .stats-panel, .lb-panel, .modal-panel { touch-action: pan-y !important; -webkit-overflow-scrolling: touch !important; }
     .stats-panel *, .lb-panel *, .modal-panel * { touch-action: pan-y; }
+
+    .stats-tabs { position: static; top: auto; }
+    .lb-sort-tabs { position: static; top: auto; }
 }
 </style>
 </head>
@@ -2017,11 +2020,9 @@ function buildAllGamesStats() {
     '<div class="stats-sub-label">Today</div>' +
     '<div id="todayStatsSection"></div>' +
     '<div class="stats-sub-label">Overall</div>' +
-    '<div class="stats-hero">' +
-      '<div class="stats-hero-stat"><span class="stats-hero-value" id="st-played">0</span><span class="stats-hero-label">Days Played</span></div>' +
-      '<div class="stats-hero-stat"><span class="stats-hero-value" id="st-streak">0</span><span class="stats-hero-label">Current Streak</span></div>' +
-    '</div>' +
     '<div class="stats-section-label">Games</div>' +
+    '<div class="stats-row"><span class="stats-label">Days played</span><span class="stats-value" id="st-played">0</span></div>' +
+    '<div class="stats-row"><span class="stats-label">Current streak</span><span class="stats-value" id="st-streak">0</span></div>' +
     '<div class="stats-row"><span class="stats-label">Longest streak</span><span class="stats-value" id="st-longest-streak">0</span></div>' +
     '<div class="stats-row"><span class="stats-label">Unfinished games</span><span class="stats-value" id="st-unfinished">0</span></div>' +
     '<div class="stats-row"><span class="stats-label">Pure wins (no hints)</span><span class="stats-value" id="st-pure-wins">0</span></div>' +
