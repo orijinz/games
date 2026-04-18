@@ -1407,7 +1407,10 @@
     .lb-rubric-grid { gap: 2px 8px; }
     .lb-rubric-row { font-size: 0.68rem; }
     .lb-rubric-row span:last-child { font-size: 0.62rem; }
-  }
+  
+    .stats-panel, .lb-panel, .modal-panel { touch-action: pan-y !important; -webkit-overflow-scrolling: touch !important; }
+    .stats-panel *, .lb-panel *, .modal-panel * { touch-action: pan-y; }
+}
 </style>
 </head>
 <body>
@@ -2043,7 +2046,7 @@ function requestAllGamesData() {
 }
 
 function agFormatTime(s) { if (s == null) return '--'; var m = Math.floor(s/60), sec = s%60; return m + ':' + (sec<10?'0':'') + sec; }
-function agToDateStr(d) { if (!d) return ''; var s = (typeof d === 'string') ? d : new Date(d).toISOString(); return s.slice(0,10); }
+function agToDateStr(d) { if (!d) return ''; if (typeof d === 'string') return d.slice(0,10); var dt = new Date(d); return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0'); }
 
 function renderAllGames() {
   if (!allGamesData) return;
