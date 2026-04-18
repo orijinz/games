@@ -1950,6 +1950,9 @@ function switchStatsTab(tab) {
   document.getElementById('statsTabThis').style.display = tab === 'this' ? '' : 'none';
   document.getElementById('statsTabAll').style.display = tab === 'all' ? '' : 'none';
   if (tab === 'all' && allGamesData) renderAllGames();
+  // Force iOS to recalculate scroll height after tab switch
+  var panel = document.getElementById('statsPanel');
+  if (panel) { panel.scrollTop = 0; panel.style.overflowY = 'hidden'; panel.offsetHeight; panel.style.overflowY = 'scroll'; }
 }
 
 function requestAllGamesData() {
@@ -2034,6 +2037,9 @@ function renderAllGames() {
   });
 
   document.getElementById('allGamesContent').innerHTML = html;
+  // Force scroll recalculation after dynamic content load
+  var sp = document.getElementById('statsPanel') || document.querySelector('.modal-panel');
+  if (sp) { sp.style.overflowY = 'hidden'; sp.offsetHeight; sp.style.overflowY = 'scroll'; }
 }
 
 function shareStats() {
