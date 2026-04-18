@@ -1744,8 +1744,8 @@ function closeMenu() {
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
 
-function lockScroll() { document.body.style.overflow = 'hidden'; document.body.style.position = 'fixed'; document.body.style.width = '100%'; document.body.style.top = '-' + window.scrollY + 'px'; }
-function unlockScroll() { var top = document.body.style.top; document.body.style.overflow = ''; document.body.style.position = ''; document.body.style.width = ''; document.body.style.top = ''; window.scrollTo(0, parseInt(top || '0') * -1); }
+function lockScroll() { document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
+function unlockScroll() { document.documentElement.style.overflow = ''; document.body.style.overflow = ''; }
 
 function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
 function menuHelp()     { closeMenu(); openHelp(); }
