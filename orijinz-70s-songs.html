@@ -928,6 +928,7 @@
     justify-content: center;
     padding: max(10vh, 60px) 12px 12px;
     justify-content: center;
+    overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y;
   }
   .stats-overlay.open    { display: flex; }
   .stats-overlay.visible { opacity: 1; }
@@ -937,8 +938,8 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     width: min(480px, 92vw);
-    max-height: min(600px, 70vh);
-    overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain;
+    
+    
     padding: 0 0 24px;
     transform: translateY(16px);
     transition: transform 0.3s ease;
@@ -1150,7 +1151,8 @@
     align-items: flex-start;
     justify-content: center;
     padding: max(10vh, 60px) 12px 12px;
-    }
+      overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y;
+  }
   .lb-overlay.open    { display: flex; }
   .lb-overlay.visible { opacity: 1; }
 
@@ -1159,8 +1161,8 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     width: min(500px, 94vw);
-    max-height: min(600px, 85vh);
-    overflow-y: scroll; -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain;
+    
+    
     padding: 0 0 24px;
     transform: translateY(16px);
     transition: transform 0.3s ease;
