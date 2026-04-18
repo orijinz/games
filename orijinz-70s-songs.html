@@ -1148,8 +1148,7 @@
     align-items: flex-start;
     justify-content: center;
     padding: max(10vh, 60px) 12px 12px;
-    overflow-y: auto;
-  }
+    }
   .lb-overlay.open    { display: flex; }
   .lb-overlay.visible { opacity: 1; }
 
@@ -1775,6 +1774,7 @@
 // MENU
 // =================================================================
 function openMenu() {
+  lockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.add('open');
@@ -1784,6 +1784,7 @@ function openMenu() {
   });
 }
 function closeMenu() {
+  unlockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.remove('visible');
@@ -1791,6 +1792,10 @@ function closeMenu() {
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeStats(); closeLeaderboard(); closeHelp(); closeSettings(); } });
+
+
+function lockScroll() { document.body.style.overflow = 'hidden'; document.body.style.position = 'fixed'; document.body.style.width = '100%'; document.body.style.top = '-' + window.scrollY + 'px'; }
+function unlockScroll() { var top = document.body.style.top; document.body.style.overflow = ''; document.body.style.position = ''; document.body.style.width = ''; document.body.style.top = ''; window.scrollTo(0, parseInt(top || '0') * -1); }
 
 function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
@@ -1926,6 +1931,7 @@ function buildAllGamesStats() {
 }
 
 function openStats() {
+  lockScroll();
   buildAllGamesStats();
   const s      = getStats();
   const played = s.gamesPlayed;
@@ -1985,6 +1991,7 @@ function openStats() {
 }
 
 function closeStats() {
+  unlockScroll();
   const overlay = document.getElementById('statsOverlay');
   overlay.classList.remove('visible');
   setTimeout(() => overlay.classList.remove('open'), 300);
@@ -2065,11 +2072,13 @@ function renderAllGames() {
 }
 
 function openHelp() {
+  lockScroll();
   const overlay = document.getElementById('helpOverlay');
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
 function closeHelp() {
+  unlockScroll();
   const overlay = document.getElementById('helpOverlay');
   if (!overlay) return;
   overlay.classList.remove('visible');
@@ -2093,6 +2102,7 @@ document.addEventListener('touchend', e => {
 }, { passive: true });
 
 function openSettings() {
+  lockScroll();
   const overlay = document.getElementById('settingsOverlay');
   const cb = document.getElementById('settingShowOnLeaderboard');
   if (cb) cb.checked = localStorage.getItem('showOnLeaderboard') !== 'false';
@@ -2103,6 +2113,7 @@ function openSettings() {
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
 function closeSettings() {
+  unlockScroll();
   const overlay = document.getElementById('settingsOverlay');
   if (!overlay) return;
   overlay.classList.remove('visible');
@@ -2266,6 +2277,7 @@ function saveLbData(d) {
 }
 
 function openLeaderboard() {
+  lockScroll();
   lbDateOffset = 0;
   updateLbDateUI();
   const overlay = document.getElementById('lbOverlay');
@@ -2274,6 +2286,7 @@ function openLeaderboard() {
   renderLeaderboard();
 }
 function closeLeaderboard() {
+  unlockScroll();
   const overlay = document.getElementById('lbOverlay');
   overlay.classList.remove('visible');
   setTimeout(() => overlay.classList.remove('open'), 300);

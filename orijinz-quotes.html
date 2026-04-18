@@ -834,8 +834,7 @@
     background: rgba(0,0,0,0.55); z-index: 300;
     opacity: 0; transition: opacity 0.25s ease;
     align-items: flex-start; justify-content: center;
-    padding: max(10vh, 60px) 12px 12px; overflow-y: auto;
-  }
+    padding: max(10vh, 60px) 12px 12px; }
   .lb-overlay.open    { display: flex; }
   .lb-overlay.visible { opacity: 1; }
   .lb-panel {
@@ -1256,18 +1255,24 @@
 // MENU
 // =================================================================
 function openMenu() {
+  lockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.add('open');
   requestAnimationFrame(() => { overlay.classList.add('visible'); panel.classList.add('open'); });
 }
 function closeMenu() {
+  unlockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.remove('visible');
   panel.classList.remove('open');
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
+
+function lockScroll() { document.body.style.overflow = 'hidden'; document.body.style.position = 'fixed'; document.body.style.width = '100%'; document.body.style.top = '-' + window.scrollY + 'px'; }
+function unlockScroll() { var top = document.body.style.top; document.body.style.overflow = ''; document.body.style.position = ''; document.body.style.width = ''; document.body.style.top = ''; window.scrollTo(0, parseInt(top || '0') * -1); }
+
 function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
@@ -1392,6 +1397,7 @@ function buildAllGamesStats() {
 }
 
 function openStats() {
+  lockScroll();
   buildAllGamesStats();
   const s = getStats();
   document.getElementById('st-played').textContent        = s.gamesPlayed;
@@ -1438,6 +1444,7 @@ function openStats() {
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
 function closeStats() {
+  unlockScroll();
   const overlay = document.getElementById('statsOverlay');
   overlay.classList.remove('visible');
   setTimeout(() => overlay.classList.remove('open'), 300);
@@ -1517,11 +1524,13 @@ function renderAllGames() {
 }
 
 function openHelp() {
+  lockScroll();
   const overlay = document.getElementById('helpOverlay');
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
 function closeHelp() {
+  unlockScroll();
   const overlay = document.getElementById('helpOverlay');
   if (!overlay) return;
   overlay.classList.remove('visible');
@@ -1545,6 +1554,7 @@ document.addEventListener('touchend', e => {
 }, { passive: true });
 
 function openSettings() {
+  lockScroll();
   const overlay = document.getElementById('settingsOverlay');
   const cb = document.getElementById('settingShowOnLeaderboard');
   if (cb) cb.checked = localStorage.getItem('showOnLeaderboard') !== 'false';
@@ -1555,6 +1565,7 @@ function openSettings() {
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
 function closeSettings() {
+  unlockScroll();
   const overlay = document.getElementById('settingsOverlay');
   if (!overlay) return;
   overlay.classList.remove('visible');
@@ -1687,6 +1698,7 @@ function lbTierEmoji(score) {
 function getLbData()    { try { return JSON.parse(localStorage.getItem('orijinzQuotesLb') || '[]'); } catch(e) { return []; } }
 function saveLbData(d)  { try { localStorage.setItem('orijinzQuotesLb', JSON.stringify(d)); } catch(e) {} }
 function openLeaderboard() {
+  lockScroll();
   lbDateOffset = 0;
   updateLbDateUI();
   renderLeaderboard();
@@ -1695,6 +1707,7 @@ function openLeaderboard() {
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
 function closeLeaderboard() {
+  unlockScroll();
   const overlay = document.getElementById('lbOverlay');
   overlay.classList.remove('visible');
   setTimeout(() => overlay.classList.remove('open'), 300);

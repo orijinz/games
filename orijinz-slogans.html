@@ -1729,18 +1729,24 @@ document.addEventListener('click', function() {
 
 // ── Menu ──────────────────────────────────────────────────────────────────────
 function openMenu() {
+  lockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.add('open');
   requestAnimationFrame(() => { overlay.classList.add('visible'); panel.classList.add('open'); });
 }
 function closeMenu() {
+  unlockScroll();
   const overlay = document.getElementById('menuOverlay');
   const panel   = document.getElementById('menuPanel');
   overlay.classList.remove('visible');
   panel.classList.remove('open');
   setTimeout(() => overlay.classList.remove('open'), 300);
 }
+
+function lockScroll() { document.body.style.overflow = 'hidden'; document.body.style.position = 'fixed'; document.body.style.width = '100%'; document.body.style.top = '-' + window.scrollY + 'px'; }
+function unlockScroll() { var top = document.body.style.top; document.body.style.overflow = ''; document.body.style.position = ''; document.body.style.width = ''; document.body.style.top = ''; window.scrollTo(0, parseInt(top || '0') * -1); }
+
 function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
 function menuHelp()     { closeMenu(); openHelp(); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
@@ -1786,11 +1792,13 @@ window.addEventListener('message', function(evt) {
 
 // ── Modal helpers ─────────────────────────────────────────────────────────────
 function openModal(id) {
+  lockScroll();
   const el = document.getElementById(id);
   el.classList.add('open');
   requestAnimationFrame(() => el.classList.add('visible'));
 }
 function closeModal(id) {
+  unlockScroll();
   const el = document.getElementById(id);
   el.classList.remove('visible');
   setTimeout(() => el.classList.remove('open'), 350);
@@ -1914,17 +1922,23 @@ function buildAllGamesStats() {
     '</div>';
 }
 
-function openStats()     { populateStats(); switchStatsTab('this'); if (!allGamesData) requestAllGamesData(); openModal('statsOverlay'); }
-function closeStats()    { closeModal('statsOverlay'); }
+function openStats()     {
+  lockScroll(); populateStats(); switchStatsTab('this'); if (!allGamesData) requestAllGamesData(); openModal('statsOverlay'); }
+function closeStats()    {
+  unlockScroll(); closeModal('statsOverlay'); }
 function openSettings()  {
+  lockScroll();
   const cb2 = document.getElementById('settingNativeKeyboard'); if (cb2) cb2.checked = localStorage.getItem('nativeKeyboard') === 'true';
   const kbSection = document.getElementById('keyboardSettingsSection');
   if (kbSection) kbSection.style.display = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? '' : 'none';
   openModal('settingsOverlay');
 }
-function closeSettings() { closeModal('settingsOverlay'); }
-function openHelp()      { openModal('helpOverlay'); }
-function closeHelp()     { closeModal('helpOverlay'); }
+function closeSettings() {
+  unlockScroll(); closeModal('settingsOverlay'); }
+function openHelp()      {
+  lockScroll(); openModal('helpOverlay'); }
+function closeHelp()     {
+  unlockScroll(); closeModal('helpOverlay'); }
 
 function saveNativeKeyboardSetting(val) {
   localStorage.setItem('nativeKeyboard', val ? 'true' : 'false');
@@ -2165,12 +2179,14 @@ function lbTierEmoji(score) {
 }
 
 function openLeaderboard() {
+  lockScroll();
   lbDateOffset = 0;
   updateLbDateUI();
   openModal('lbOverlay');
   renderLeaderboard();
 }
-function closeLeaderboard() { closeModal('lbOverlay'); }
+function closeLeaderboard() {
+  unlockScroll(); closeModal('lbOverlay'); }
 
 function setLbSort(field) {
   lbSortBy = field;
