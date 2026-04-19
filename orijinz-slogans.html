@@ -543,7 +543,10 @@ body.page-blur .letter-tile.active {
   .game-accord-body { display: none; }
   .game-accord.open .game-accord-body { display: block; }
   #allGamesSection .stats-section-label { margin-top: 0; }
-  #allGamesSection .stats-row { padding-left: 24px; padding-right: 24px; justify-content: space-between; }
+  #allGamesSection .stats-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 24px; margin-bottom: 0; gap: 0; border-bottom: 1px solid rgba(94,38,16,0.4); }
+  #allGamesSection .stats-row:last-child { border-bottom: none; }
+  #allGamesSection .stats-label { font-size: 0.85rem; color: var(--text-muted); font-family: 'Nunito Sans', sans-serif; }
+  #allGamesSection .stats-value { font-family: 'Space Mono', monospace; font-size: 0.92rem; font-weight: 700; color: var(--text); min-width: 56px; text-align: right; }
   .stats-sub-label {
     font-family: 'Space Mono', monospace;
     font-size: 0.54rem;
@@ -711,7 +714,12 @@ body.page-blur .letter-tile.active {
     .modal-panel { width: 100% !important; max-height: none !important; border-radius: 0 !important; height: 100% !important; }
     .modal-header { padding: 14px 16px 10px; }
     .modal-title { font-size: 1.1rem; }
-
+    .stats-section-label { padding: 10px 16px 4px; font-size: 0.52rem; }
+    #allGamesSection .stats-row { padding: 8px 16px; }
+    #allGamesSection .stats-label { font-size: 0.82rem; }
+    #allGamesSection .stats-value { font-size: 0.82rem; }
+    .stats-tabs { padding: 0 16px; }
+    .stats-tab { padding: 8px 12px; font-size: 0.55rem; }
 
     .puzzle-num-mini { top: 6px; left: 24px; }
     .date-badge      { top: 6px; right: 24px; }
@@ -1912,7 +1920,9 @@ function renderAllGames() {
     var g = AG_GAMES[key]; var st = stats.find(function(s) { return s.game === key; });
     if (!st || !st.gamesPlayed) return;
     var avg = st.gamesPlayed > 0 ? Math.round((st.totalScore||0) / st.gamesPlayed) : '--';
-    html += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';"><div class="ag-game-hdr">' + g.emoji + ' ' + g.label + '</div><div class="ag-game-stats"><div class="ag-row"><span class="ag-lbl">Played</span><span class="ag-val">' + st.gamesPlayed + '</span></div><div class="ag-row"><span class="ag-lbl">Streak</span><span class="ag-val">' + (st.currentStreak||0) + '</span></div><div class="ag-row"><span class="ag-lbl">Best Streak</span><span class="ag-val">' + (st.longestStreak||0) + '</span></div><div class="ag-row"><span class="ag-lbl">Avg Score</span><span class="ag-val">' + avg + '</span></div></div></div>';
+    var bestForGame = results.filter(function(r) { return r.game === key && r.wonGame; }).reduce(function(min, r) { return (r.score < min) ? r.score : min; }, Infinity);
+    var bestStr = bestForGame === Infinity ? '--' : bestForGame;
+    html += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';"><div class="ag-game-hdr">' + g.emoji + ' ' + g.label + '</div><div class="ag-game-stats"><div class="ag-row"><span class="ag-lbl">Played</span><span class="ag-val">' + st.gamesPlayed + '</span></div><div class="ag-row"><span class="ag-lbl">Best Score</span><span class="ag-val">' + bestStr + '</span></div><div class="ag-row"><span class="ag-lbl">Best Streak</span><span class="ag-val">' + (st.longestStreak||0) + '</span></div><div class="ag-row"><span class="ag-lbl">Avg Score</span><span class="ag-val">' + avg + '</span></div></div></div>';
   });
   document.getElementById('allGamesContent').innerHTML = html;
   // Force scroll recalculation after dynamic content load
