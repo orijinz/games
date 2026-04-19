@@ -799,29 +799,6 @@
     text-transform: uppercase;
   }
 
-  /* DEV BUTTONS (hidden, hover to reveal) */
-  #resetBtn, #nextBtn {
-    -webkit-appearance: none;
-    appearance: none;
-    position: absolute;
-    top: 8px;
-    width: 28px; height: 28px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 50%;
-    color: transparent;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  #resetBtn { left: 8px; }
-  #nextBtn  { left: 42px; }
-  #resetBtn:hover, #nextBtn:hover {
-    color: var(--text-muted);
-    border-color: var(--border);
-    background: var(--bg3);
-  }
-
   /* HAMBURGER MENU */
   #menuBtn {
     -webkit-appearance: none;
@@ -1484,8 +1461,6 @@
   <span class="date-badge" id="dateBadge"></span>
   <div class="logo"><span class="icon-o"><span class="o-shadow">O</span><span class="o-mid">O</span><span class="o-top">O</span></span><span class="logo-brand">rijinz</span><span class="logo-spacer"></span><span class="logo-daily">Daily</span></div>
   <div class="header-sub">Read the synopsis. Guess the movie.</div>
-  <button id="resetBtn" onclick="devReset()" title="Dev Reset">&#x21BA;</button>
-  <button id="nextBtn"  onclick="devNext()"  title="Next Puzzle">&#x276F;</button>
 </header>
 
 <!-- Side menu -->
@@ -1699,19 +1674,8 @@
   <div class="section-divider"><span>keyboard</span></div>
   <div class="keyboard" id="keyboard"></div>
 
-  <!-- Next puzzle button (visible at bottom) -->
-  <div style="display:flex; justify-content:center; margin-top:18px; margin-bottom:12px;">
-    <button id="nextPuzzleBtn" onclick="devNextById()" style="background:var(--accent-dark); color:#fff; border:2px solid var(--accent); border-radius:8px; padding:12px 36px; font-family:'Nunito Sans',sans-serif; font-size:0.95rem; font-weight:700; cursor:pointer; letter-spacing:0.5px; transition:all 0.15s;">NEXT &#x25B6;</button>
-  </div>
-
   </div><!-- end game-zone -->
 
-  <!-- Dev toolbar (only shown on github.io or local) -->
-  <div id="devToolbar" style="display:none; margin-top:18px; display:none; gap:10px; justify-content:center; flex-wrap:wrap;">
-    <button onclick="devNext()"  style="-webkit-appearance:none;appearance:none;background:#2e1850;color:#f0c860;border:1px solid #f0c860;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#9654; Random Movie</button>
-    <button onclick="devReset()" style="-webkit-appearance:none;appearance:none;background:#2e1850;color:#f0c860;border:1px solid #f0c860;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#8635; Reset</button>
-    <button onclick="devGoTo(prompt('Go to puzzle #:'))" style="-webkit-appearance:none;appearance:none;background:#2e1850;color:#f0c860;border:1px solid #f0c860;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#8594; Go To #</button>
-  </div>
 </main>
 
 <!-- Statistics modal -->
@@ -2330,7 +2294,22 @@ function sendResultToWix(won) {
 
 window.addEventListener('message', function(event) {
   if (!event.data) return;
-  if (event.data.type === 'orijinz_pageurl') {
+  if (event.data.type === 'orijinz_played_status' && event.data.played && !gameOver) {
+    var r = event.data.result;
+    gameOver = true; stopTimer();
+    elapsedSeconds = r.timeSecs || 0;
+    revealCount = r.lettersRevealed || 0;
+    wrongCount = r.wrongLetters || 0;
+    listenPenalty = r.listenSecs || 0;
+    defShown = r.definitionUsed || false;
+    wixResultSent = true;
+    document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
+    wixLeaderboardData = event.data;
+    var todayStr = getDateStringForOffset(0);
+    lbDataCache[todayStr] = event.data;
+    saveState();
+    showResult(r.wonGame !== false);
+  } else if (event.data.type === 'orijinz_pageurl') {
     wixPageUrl = event.data.url;
   } else if (event.data.type === 'orijinz_leaderboard') {
     wixLeaderboardData = event.data;
@@ -2758,6 +2737,9 @@ function initGame() {
     showResult(true);
   } else {
     startTimer();
+    var pd = new Date();
+    var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
+    window.parent.postMessage({ type: 'orijinz_check_played', game: 'movies', puzzleDate: pdStr }, '*');
   }
   updateRevealBtn();
   updateClueButtons();
@@ -2769,7 +2751,6 @@ function initGame() {
     const hb = document.getElementById('hintBtn');
     if (hb) { hb.disabled = true; hb.innerHTML = '&#x1F4A1; Hint (used)'; }
   }
-  initDevTap();
   if (!gameOver && window.innerWidth <= 480) {
     setTimeout(() => {
       const kb = document.getElementById('keyboard');
@@ -2925,8 +2906,6 @@ function updateKeyboard() {
 document.addEventListener('keydown', e => {
   var ae = document.activeElement;
   if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
-  if (e.ctrlKey && e.key === ']') { e.preventDefault(); devNext();  return; }
-  if (e.ctrlKey && e.key === '[') { e.preventDefault(); devReset(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   if      (e.key === 'Enter')     handleKey('ENTER');
   else if (e.key === 'Backspace') handleKey('\u232B');
@@ -3377,9 +3356,7 @@ function showResult(won) {
   const sw      = document.getElementById('synopsisCardWrap');
   const hw      = document.getElementById('hintWrap');
 
-  // Hide the next button and video card
-  const nextBtn = document.getElementById('nextPuzzleBtn');
-  if (nextBtn) nextBtn.style.display = 'none';
+  // Hide the video card
   const vc = document.getElementById('videoCard');
   if (vc) vc.style.display = 'none';
 
@@ -3533,37 +3510,8 @@ function showToast(msg, duration) {
 }
 
 // =================================================================
-// DEV TOOLS
+// DEV: Ctrl+Shift+G → go to any puzzle by ID
 // =================================================================
-function devReset() { try { localStorage.removeItem('orijinzMoviesState'); localStorage.removeItem('orijinzMoviesStats'); localStorage.removeItem('orijinzMoviesLeaderboard'); } catch(e) {} location.reload(); }
-function devNext() {
-  const state = safeGetState();
-  let randIdx;
-  do { randIdx = Math.floor(Math.random() * PUZZLES.length); } while (randIdx === puzzleIndex);
-  safeSaveState({
-    ...state,
-    devPuzzleIndex: randIdx,
-    lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
-    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenPenalty: 0, hintShown: false
-  });
-  location.reload();
-}
-function devNextById() {
-  if (!puzzle) return;
-  const nextId = puzzle.id + 1;
-  const idx = PUZZLES.findIndex(p => p.id === nextId);
-  if (idx === -1) { alert('No puzzle #' + nextId + ' — you reached the end!'); return; }
-  const state = safeGetState();
-  safeSaveState({
-    ...state,
-    devPuzzleIndex: idx,
-    lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
-    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenPenalty: 0, hintShown: false
-  });
-  location.reload();
-}
 function devGoTo(n) {
   n = parseInt(n, 10);
   if (!n) return;
@@ -3574,42 +3522,13 @@ function devGoTo(n) {
     ...state,
     devPuzzleIndex: idx,
     lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
-    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0,
-    listenPenalty: 0, hintShown: false
+    defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0
   });
   location.reload();
 }
-// Handle URL parameters
-try {
-  const p = new URLSearchParams(location.search);
-  if (p.has('next'))   devNext();
-  else if (p.has('reset'))  devReset();
-  else if (p.has('puzzle')) devGoTo(+p.get('puzzle'));
-} catch(e) {}
-// Show dev toolbar only on github.io or local file
-try {
-  const h = location.hostname;
-  if (h.includes('github.io') || h === 'localhost' || h === '') {
-    const tb = document.getElementById('devToolbar');
-    if (tb) tb.style.display = 'flex';
-  }
-} catch(e) {}
-let devTapCount = 0, devTapTimer = null;
-function initDevTap() {
-  const el = document.getElementById('puzzleNum');
-  if (!el) return;
-  el.style.cursor = 'pointer';
-  el.addEventListener('click', function() {
-    devTapCount++;
-    clearTimeout(devTapTimer);
-    devTapTimer = setTimeout(() => { devTapCount = 0; }, 800);
-    if (devTapCount >= 3) { devTapCount = 0; devNext(); }
-  });
-  el.addEventListener('contextmenu', function(e) { e.preventDefault(); devReset(); });
-  let holdTimer;
-  el.addEventListener('touchstart', function() { holdTimer = setTimeout(devReset, 900); }, {passive:true});
-  el.addEventListener('touchend',   function() { clearTimeout(holdTimer); }, {passive:true});
-}
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'G') { e.preventDefault(); devGoTo(prompt('Go to puzzle #:')); }
+});
 
 // =================================================================
 // START

@@ -722,29 +722,6 @@
     text-transform: uppercase;
   }
 
-  /* DEV BUTTONS (hidden, hover to reveal) */
-  #resetBtn, #nextBtn {
-    -webkit-appearance: none;
-    appearance: none;
-    position: absolute;
-    top: 8px;
-    width: 28px; height: 28px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 50%;
-    color: transparent;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  #resetBtn { left: 8px; }
-  #nextBtn  { left: 42px; }
-  #resetBtn:hover, #nextBtn:hover {
-    color: var(--text-muted);
-    border-color: var(--border);
-    background: var(--bg3);
-  }
-
   /* HAMBURGER MENU */
   #menuBtn {
     -webkit-appearance: none;
@@ -1399,8 +1376,6 @@
   <span class="date-badge" id="dateBadge"></span>
   <div class="logo"><span class="icon-o"><span class="o-shadow">O</span><span class="o-mid">O</span><span class="o-top">O</span></span><span class="logo-brand">rijinz</span><span class="logo-spacer"></span><span class="logo-daily">Daily</span></div>
   <div class="header-sub">Read the origin. Guess the word or phrase.</div>
-  <button id="resetBtn" onclick="devReset()" title="Dev Reset">&#x21BA;</button>
-  <button id="nextBtn"  onclick="devNext()"  title="Next Puzzle">&#x276F;</button>
 </header>
 
 <!-- Side menu -->
@@ -1584,12 +1559,6 @@
 
   </div><!-- end game-zone -->
 
-  <!-- Dev toolbar (only shown on github.io) -->
-  <div id="devToolbar" style="display:none; margin-top:18px; display:none; gap:10px; justify-content:center; flex-wrap:wrap;">
-    <button onclick="devNext()"  style="-webkit-appearance:none;appearance:none;background:#2e3260;color:#f5c842;border:1px solid #f5c842;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#9654; Next Puzzle</button>
-    <button onclick="devReset()" style="-webkit-appearance:none;appearance:none;background:#2e3260;color:#f5c842;border:1px solid #f5c842;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#8635; Reset</button>
-    <button onclick="devGoTo(prompt('Go to puzzle #:'))" style="-webkit-appearance:none;appearance:none;background:#2e3260;color:#f5c842;border:1px solid #f5c842;border-radius:6px;padding:8px 18px;font-family:Space Mono,monospace;font-size:0.7rem;cursor:pointer;">&#8594; Go To #</button>
-  </div>
 </main>
 
 <!-- Statistics modal -->
@@ -2495,7 +2464,6 @@ function initGame() {
   }
   updateRevealBtn();
   updateDefBtn();
-  initDevTap();
   if (!gameOver && window.innerWidth <= 480) {
     setTimeout(() => {
       const kb = document.getElementById('keyboard');
@@ -3177,22 +3145,8 @@ function showToast(msg, duration) {
 }
 
 // =================================================================
-// DEV TOOLS
-// URL params: ?next (advance), ?reset (reset), ?puzzle=N (go to puzzle N)
-// Desktop: Ctrl+] = next, Ctrl+[ = reset
-// Mobile: triple-tap puzzle number = next, long-press = reset
+// DEV: Ctrl+Shift+G → go to any puzzle by ID
 // =================================================================
-function devReset() { try { localStorage.removeItem('orijinzWPState'); localStorage.removeItem('orijinzWPStats'); localStorage.removeItem('orijinzWPLeaderboard'); } catch(e) {} location.reload(); }
-function devNext() {
-  const state = safeGetState();
-  safeSaveState({
-    ...state,
-    devPuzzleIndex: ((puzzleIndex + 1) % PUZZLES.length),
-    lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
-    defShown: false, revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0
-  });
-  location.reload();
-}
 function devGoTo(n) {
   n = parseInt(n, 10);
   if (!n) return;
@@ -3207,37 +3161,9 @@ function devGoTo(n) {
   });
   location.reload();
 }
-// Handle URL parameters
-try {
-  const p = new URLSearchParams(location.search);
-  if (p.has('next'))   devNext();
-  else if (p.has('reset'))  devReset();
-  else if (p.has('puzzle')) devGoTo(+p.get('puzzle'));
-} catch(e) {}
-// Show dev toolbar only on github.io or local file
-try {
-  const h = location.hostname;
-  if (h.includes('github.io') || h === 'localhost' || h === '') {
-    const tb = document.getElementById('devToolbar');
-    if (tb) tb.style.display = 'flex';
-  }
-} catch(e) {}
-let devTapCount = 0, devTapTimer = null;
-function initDevTap() {
-  const el = document.getElementById('puzzleNum');
-  if (!el) return;
-  el.style.cursor = 'pointer';
-  el.addEventListener('click', function() {
-    devTapCount++;
-    clearTimeout(devTapTimer);
-    devTapTimer = setTimeout(() => { devTapCount = 0; }, 800);
-    if (devTapCount >= 3) { devTapCount = 0; devNext(); }
-  });
-  el.addEventListener('contextmenu', function(e) { e.preventDefault(); devReset(); });
-  let holdTimer;
-  el.addEventListener('touchstart', function() { holdTimer = setTimeout(devReset, 900); }, {passive:true});
-  el.addEventListener('touchend',   function() { clearTimeout(holdTimer); }, {passive:true});
-}
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'G') { e.preventDefault(); devGoTo(prompt('Go to puzzle #:')); }
+});
 
 // =================================================================
 // START

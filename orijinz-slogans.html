@@ -344,15 +344,6 @@ body.page-blur .letter-tile.active {
 .tidbit-label { font-family: 'Space Mono', monospace; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.18em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
 .tidbit-text  { font-size: 0.92rem; color: var(--text-muted); line-height: 1.65; }
 
-/* BOTTOM NAV */
-.bottom-nav { display: flex; gap: 8px; justify-content: center; width: 100%; }
-.nav-btn {
-  -webkit-appearance: none; appearance: none; padding: 8px 14px;
-  background: transparent; border: 1.5px solid var(--border); border-radius: 22px;
-  font-family: 'Space Mono', monospace; font-size: 0.58rem;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer;
-}
-
 /* TOAST */
 #toast {
   position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -921,11 +912,6 @@ body.page-blur .letter-tile.active {
     </div>
   </div>
 
-  <div class="bottom-nav">
-    <button class="nav-btn" onclick="devNext()"  title="Next puzzle">&#x25B6; Next</button>
-    <button class="nav-btn" onclick="devReset()" title="Reset">&#x21BA; Reset</button>
-    <button class="nav-btn" onclick="devGoTo(prompt('Go to puzzle #:'))" title="Go to puzzle by id">&#8594; Go To #</button>
-  </div>
 </main>
 
 <!-- Statistics modal -->
@@ -1260,9 +1246,11 @@ function initGame() {
     sendResultToWix();
   } else {
     startTimer();
+    var pd = new Date();
+    var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
+    window.parent.postMessage({ type: 'orijinz_check_played', game: 'slogans', puzzleDate: pdStr }, '*');
   }
 
-  initDevTap();
 }
 
 function saveState() {
@@ -1416,8 +1404,6 @@ function refreshInputTiles() {
 document.addEventListener('keydown', e => {
   var ae = document.activeElement;
   if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
-  if (e.ctrlKey && e.key === ']') { e.preventDefault(); devNext();  return; }
-  if (e.ctrlKey && e.key === '[') { e.preventDefault(); devReset(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   if      (e.key === 'Enter')     handleKey('ENTER');
   else if (e.key === 'Backspace') handleKey('\u232B');
@@ -1684,9 +1670,6 @@ function showResult(won) {
   const cs      = document.querySelector('.clue-section');
   const sc      = document.getElementById('sloganCardWrap');
   const rp      = document.getElementById('resultPanel');
-
-  const nextBtn = document.getElementById('nextPuzzleBtn');
-  if (nextBtn) nextBtn.style.display = 'none';
 
   [sc, cs].forEach(el => { if (el) { el.style.transition = 'opacity 1.5s ease'; el.style.opacity = '0'; } });
 
@@ -2353,7 +2336,21 @@ function sendResultToWix() {
 
 window.addEventListener('message', function(event) {
   if (!event.data) return;
-  if (event.data.type === 'orijinz_pageurl') {
+  if (event.data.type === 'orijinz_played_status' && event.data.played && !gameOver) {
+    var r = event.data.result;
+    gameOver = true; stopTimer();
+    elapsedSeconds = r.timeSecs || 0;
+    revealCount = r.lettersRevealed || 0;
+    wrongCount = r.wrongLetters || 0;
+    wixResultSent = true;
+    document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
+    wixLeaderboardData = event.data;
+    wixMemberId = event.data.memberId || null;
+    var todayStr = getDateStringForOffset(0);
+    lbDataCache[todayStr] = event.data;
+    saveState();
+    showResult(r.wonGame !== false);
+  } else if (event.data.type === 'orijinz_pageurl') {
     wixPageUrl = event.data.url;
   } else if (event.data.type === 'orijinz_leaderboard') {
     wixLeaderboardData = event.data;
@@ -2463,40 +2460,26 @@ function launchConfetti() {
   draw();
 }
 
-// ── Dev tools ──────────────────────────────────────────────────────────────────
-function showMenu() {}
-
-let tapCount = 0, tapTimer;
-function initDevTap() {
-  const el = document.getElementById('puzzleNum');
-  if (!el) return;
-  el.addEventListener('click', () => {
-    if (++tapCount >= 3) { clearTimeout(tapTimer); tapCount = 0; devNext(); return; }
-    clearTimeout(tapTimer);
-    tapTimer = setTimeout(() => { tapCount = 0; }, 500);
-  });
-  el.addEventListener('contextmenu', e => { e.preventDefault(); devReset(); });
-}
-
-function devReset() {
-  try { localStorage.removeItem(STATE_KEY); localStorage.removeItem(STATS_KEY); localStorage.removeItem(LB_KEY); } catch(e) {}
-  location.reload();
-}
-function devNext() {
-  const existing = safeGetState();
-  safeSaveState({ ...existing, devPuzzleIndex: (puzzleIndex + 1) % PUZZLES.length, lastPlayed: new Date().toDateString() });
-  location.reload();
-}
-
+// =================================================================
+// DEV: Ctrl+Shift+G → go to any puzzle by ID
+// =================================================================
 function devGoTo(n) {
   n = parseInt(n, 10);
   if (!n) return;
   const idx = PUZZLES.findIndex(p => p.id === n);
   if (idx === -1) { alert('#' + n + ' not found'); return; }
-  const existing = safeGetState();
-  safeSaveState({ ...existing, devPuzzleIndex: idx, lastPlayed: new Date().toDateString() });
+  const state = safeGetState();
+  safeSaveState({
+    ...state,
+    devPuzzleIndex: idx,
+    lastPlayed: new Date().toDateString(), guesses: [], revealed: [],
+    revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0
+  });
   location.reload();
 }
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === 'G') { e.preventDefault(); devGoTo(prompt('Go to puzzle #:')); }
+});
 
 // ── Start ──────────────────────────────────────────────────────────────────────
 window.addEventListener('blur',  () => document.body.classList.add('page-blur'));
