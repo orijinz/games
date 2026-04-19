@@ -1910,7 +1910,12 @@ function renderAllGames() {
       if (played[r.game]) return; played[r.game] = true;
       var g = AG_GAMES[r.game] || { label: r.game, emoji: '', color: '#888' };
       var badge = r.wonGame ? '<span class="ag-badge won">\u2713 Won</span>' : '<span class="ag-badge lost">\u2717 Lost</span>';
-      todayHtml += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';"><div class="ag-game-hdr">' + g.emoji + ' ' + g.label + badge + '</div><div class="ag-game-stats"><div class="ag-row"><span class="ag-lbl">Score</span><span class="ag-val">' + (r.score||'--') + '</span></div><div class="ag-row"><span class="ag-lbl">Time</span><span class="ag-val">' + agFormatTime(r.timeSecs) + '</span></div><div class="ag-row"><span class="ag-lbl">Reveals</span><span class="ag-val">' + (r.lettersRevealed||0) + '</span></div><div class="ag-row"><span class="ag-lbl">Wrong</span><span class="ag-val">' + (r.wrongLetters||0) + '</span></div></div></div>';
+      var extra = '';
+      if (r.game === 'wordsandphrases') extra = '<div class="ag-row"><span class="ag-lbl">Definition</span><span class="ag-val">' + (r.definitionUsed ? 'Yes' : 'No') + '</span></div>';
+      else if (r.game === 'quotes') extra = '<div class="ag-row"><span class="ag-lbl">Hint</span><span class="ag-val">' + (r.definitionUsed ? 'Yes' : 'No') + '</span></div>';
+      else if (r.game === '70ssongs') extra = '<div class="ag-row"><span class="ag-lbl">Audio listened</span><span class="ag-val">' + (r.listenSecs||0) + 's</span></div>';
+      else if (r.game === 'movies') extra = '<div class="ag-row"><span class="ag-lbl">Trailer watched</span><span class="ag-val">' + (r.listenSecs||0) + 's</span></div>';
+      todayHtml += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';"><div class="ag-game-hdr">' + g.emoji + ' ' + g.label + badge + '</div><div class="ag-game-stats"><div class="ag-row"><span class="ag-lbl">Score</span><span class="ag-val">' + (r.score||'--') + '</span></div><div class="ag-row"><span class="ag-lbl">Time</span><span class="ag-val">' + agFormatTime(r.timeSecs) + '</span></div><div class="ag-row"><span class="ag-lbl">Reveals</span><span class="ag-val">' + (r.lettersRevealed||0) + '</span></div>' + extra + '<div class="ag-row"><span class="ag-lbl">Wrong Letters</span><span class="ag-val">' + (r.wrongLetters||0) + '</span></div></div></div>';
     });
   }
   document.getElementById('todayGamesContent').innerHTML = todayHtml;
