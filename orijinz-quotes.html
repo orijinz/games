@@ -2639,6 +2639,14 @@ function devGoTo(n) {
 document.addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.shiftKey && e.key === 'G') { e.preventDefault(); devGoTo(prompt('Go to puzzle #:')); }
 });
+(function() {
+  var el = document.getElementById('puzzleNum');
+  if (!el) return;
+  var ht;
+  el.addEventListener('touchstart', function() { ht = setTimeout(function() { devGoTo(prompt('Go to puzzle #:')); }, 2000); }, {passive:true});
+  el.addEventListener('touchend', function() { clearTimeout(ht); }, {passive:true});
+  el.addEventListener('touchmove', function() { clearTimeout(ht); }, {passive:true});
+})();
 
 // =================================================================
 // START
