@@ -2488,6 +2488,10 @@ function initGame() {
     showResult(true);
   } else {
     startTimer();
+    // Check if this puzzle was already played on another device
+    var pd = new Date();
+    var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
+    window.parent.postMessage({ type: 'orijinz_check_played', game: 'wordsandphrases', puzzleDate: pdStr }, '*');
   }
   updateRevealBtn();
   updateDefBtn();
@@ -3075,7 +3079,25 @@ function sendResultToWix(won) {
 
 window.addEventListener('message', function(event) {
   if (!event.data) return;
-  if (event.data.type === 'orijinz_pageurl') {
+  if (event.data.type === 'orijinz_played_status' && event.data.played && !gameOver) {
+    // Already played on another device — show results
+    var r = event.data.result;
+    gameOver = true;
+    stopTimer();
+    elapsedSeconds = r.timeSecs || 0;
+    revealCount    = r.lettersRevealed || 0;
+    wrongCount     = r.wrongLetters || 0;
+    defShown       = r.definitionUsed || false;
+    wixResultSent  = true; // Don't re-send to Wix
+    document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
+    // Populate leaderboard cache from the response
+    wixLeaderboardData = event.data;
+    var todayStr = getDateStringForOffset(0);
+    lbDataCache[todayStr] = event.data;
+    // Save state locally so refresh doesn't re-trigger
+    saveState();
+    showResult(r.wonGame !== false);
+  } else if (event.data.type === 'orijinz_pageurl') {
     wixPageUrl = event.data.url;
   } else if (event.data.type === 'orijinz_leaderboard') {
     wixLeaderboardData = event.data;
