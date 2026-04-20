@@ -2640,7 +2640,7 @@ document.addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.shiftKey && e.key === 'G') { e.preventDefault(); devGoTo(prompt('Go to puzzle #:')); }
 });
 (function() {
-  var el = document.getElementById('puzzleNum');
+  var el = document.getElementById('devTrigger');
   if (!el) return;
   var ht;
   el.addEventListener('touchstart', function() { ht = setTimeout(function() { devGoTo(prompt('Go to puzzle #:')); }, 2000); }, {passive:true});
@@ -2772,7 +2772,7 @@ window.addEventListener('resize', fitWordGroups);
       <div class="footer-newsletter-msg" id="footerNewsletterMsg"></div>
     </form>
   </div>
-  <div class="footer-copyright"><a href="https://www.entspire.com/about-us" target="_top" style="color:var(--text-dim);text-decoration:none;">About Us</a> &middot; &copy; 2026 by Orijinz &amp; Entspire</div>
+  <div class="footer-copyright"><a href="https://www.entspire.com/about-us" target="_top" style="color:var(--text-dim);text-decoration:none;">About Us</a> &middot; &copy; 2026 by Orijinz &amp; <span id="devTrigger">Entspire</span></div>
 </footer>
 <style>
   .site-footer {
