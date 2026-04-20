@@ -2050,9 +2050,11 @@ function initGame() {
     showResult(true);
   } else {
     startTimer();
-    var pd = new Date();
-    var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
-    window.parent.postMessage({ type: 'orijinz_check_played', game: 'quotes', puzzleDate: pdStr }, '*');
+    if (safeGetState().devPuzzleIndex === undefined) {
+      var pd = new Date();
+      var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
+      window.parent.postMessage({ type: 'orijinz_check_played', game: 'quotes', puzzleDate: pdStr }, '*');
+    }
   }
   updateRevealBtn();
   if (!gameOver && window.innerWidth <= 480) {

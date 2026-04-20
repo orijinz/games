@@ -2457,10 +2457,12 @@ function initGame() {
     showResult(true);
   } else {
     startTimer();
-    // Check if this puzzle was already played on another device
-    var pd = new Date();
-    var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
-    window.parent.postMessage({ type: 'orijinz_check_played', game: 'wordsandphrases', puzzleDate: pdStr }, '*');
+    // Check if this puzzle was already played on another device (skip if dev override)
+    if (safeGetState().devPuzzleIndex === undefined) {
+      var pd = new Date();
+      var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
+      window.parent.postMessage({ type: 'orijinz_check_played', game: 'wordsandphrases', puzzleDate: pdStr }, '*');
+    }
   }
   updateRevealBtn();
   updateDefBtn();
