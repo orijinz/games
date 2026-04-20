@@ -2642,10 +2642,14 @@ document.addEventListener('keydown', function(e) {
 (function() {
   var el = document.getElementById('devTrigger');
   if (!el) return;
-  var ht;
-  el.addEventListener('touchstart', function() { ht = setTimeout(function() { devGoTo(prompt('Go to puzzle #:')); }, 2000); }, {passive:true});
-  el.addEventListener('touchend', function() { clearTimeout(ht); }, {passive:true});
-  el.addEventListener('touchmove', function() { clearTimeout(ht); }, {passive:true});
+  var ht, fired;
+  el.style.webkitTouchCallout = 'none';
+  el.style.webkitUserSelect = 'none';
+  el.style.userSelect = 'none';
+  el.addEventListener('touchstart', function(e) { e.preventDefault(); fired = false; ht = setTimeout(function() { fired = true; devGoTo(prompt('Go to puzzle #:')); }, 2000); });
+  el.addEventListener('touchend', function(e) { e.preventDefault(); clearTimeout(ht); });
+  el.addEventListener('touchmove', function() { clearTimeout(ht); });
+  el.addEventListener('contextmenu', function(e) { e.preventDefault(); });
 })();
 
 // =================================================================
