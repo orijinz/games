@@ -1246,17 +1246,18 @@ function initGame() {
   updateCurrentInputDisplay();
   updateRevealBtn();
 
+  // Always check with Wix if current member has played (handles user switching on same device)
+  if (safeGetState().devPuzzleIndex === undefined) {
+    var pd = new Date();
+    var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
+    window.parent.postMessage({ type: 'orijinz_check_played', game: 'slogans', puzzleDate: pdStr }, '*');
+  }
   if (gameOver) {
     document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
     showResult(true);
     sendResultToWix();
   } else {
     startTimer();
-    if (safeGetState().devPuzzleIndex === undefined) {
-      var pd = new Date();
-      var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
-      window.parent.postMessage({ type: 'orijinz_check_played', game: 'slogans', puzzleDate: pdStr }, '*');
-    }
   }
 
 }
@@ -2344,20 +2345,26 @@ function sendResultToWix() {
 
 window.addEventListener('message', function(event) {
   if (!event.data) return;
-  if (event.data.type === 'orijinz_played_status' && event.data.played && !gameOver) {
-    var r = event.data.result;
-    gameOver = true; stopTimer();
-    elapsedSeconds = r.timeSecs || 0;
-    revealCount = r.lettersRevealed || 0;
-    wrongCount = r.wrongLetters || 0;
-    wixResultSent = true;
-    document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
-    wixLeaderboardData = event.data;
-    wixMemberId = event.data.memberId || null;
-    var todayStr = getDateStringForOffset(0);
-    lbDataCache[todayStr] = event.data;
-    saveState();
-    showResult(r.wonGame !== false);
+  if (event.data.type === 'orijinz_played_status') {
+    if (event.data.played && !gameOver) {
+      var r = event.data.result;
+      gameOver = true; stopTimer();
+      elapsedSeconds = r.timeSecs || 0;
+      revealCount = r.lettersRevealed || 0;
+      wrongCount = r.wrongLetters || 0;
+      wixResultSent = true;
+      document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
+      wixLeaderboardData = event.data;
+      wixMemberId = event.data.memberId || null;
+      var todayStr = getDateStringForOffset(0);
+      lbDataCache[todayStr] = event.data;
+      saveState();
+      showResult(r.wonGame !== false);
+    } else if (!event.data.played && gameOver) {
+      // Different user on same device — reset and reload
+      safeSaveState({ streak: 0, lastPlayed: '', guesses: [], revealed: [], revealCount: 0, wrongCount: 0, gameOver: false, elapsed: 0 });
+      location.reload();
+    }
   } else if (event.data.type === 'orijinz_pageurl') {
     wixPageUrl = event.data.url;
   } else if (event.data.type === 'orijinz_leaderboard') {
