@@ -1890,6 +1890,97 @@ function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }
 function menuGame(url)   { closeMenu(); try { window.top.location.href = url; } catch(e) { window.location.href = url; } }
 
+// --- In-app WebView detection + fallback for Wix members-only pages (403 fix) ---
+function isInAppWebView() {
+  var ua = navigator.userAgent || '';
+  // iOS: real browsers identify themselves with Version/, CriOS/, FxiOS/, EdgiOS/, OPiOS/, or YaBrowser/.
+  // A WKWebView embedded in an app has *none* of these tokens.
+  if (/iPhone|iPad|iPod/.test(ua)) {
+    var isRealIOSBrowser =
+      /Version\//.test(ua) ||
+      /CriOS\//.test(ua)   ||
+      /FxiOS\//.test(ua)   ||
+      /EdgiOS\//.test(ua)  ||
+      /OPiOS\//.test(ua)   ||
+      /YaBrowser\//.test(ua);
+    if (!isRealIOSBrowser) return true;
+  }
+  // Android WebView: ' wv)' token
+  if (/Android/.test(ua) && /; wv\)/.test(ua)) return true;
+  // Common app-injected hints (in case the host app brands its UA)
+  if (/Orijinz|Entspire/i.test(ua)) return true;
+  return false;
+}
+// Debug helper: triple-tap the page header to see the User-Agent — useful to
+// confirm/widen WebView detection if the overlay still doesn't show in the app.
+(function(){
+  var taps = 0, timer;
+  document.addEventListener('click', function(e){
+    var t = e.target.closest && e.target.closest('header');
+    if (!t) return;
+    taps++;
+    clearTimeout(timer);
+    timer = setTimeout(function(){
+      if (taps >= 3) alert('UA:\n' + (navigator.userAgent || '(none)') + '\n\nDetected as in-app WebView: ' + isInAppWebView());
+      taps = 0;
+    }, 600);
+  }, true);
+})();
+var APP_RESTRICTED_PATHS = ['/account-settings', '/profile', '/my-subscriptions', '/account/my-account'];
+function isAppRestrictedUrl(url) {
+  try {
+    var u = new URL(url, location.href);
+    if (!/entspire\.com$/i.test(u.host)) return false;
+    return APP_RESTRICTED_PATHS.some(function(p) { return u.pathname.indexOf(p) === 0; });
+  } catch (e) { return false; }
+}
+function showOpenInBrowserOverlay(url) {
+  var ov = document.getElementById('openInBrowserOverlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'openInBrowserOverlay';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;';
+    ov.innerHTML =
+      '<div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;max-width:420px;width:100%;padding:24px;color:var(--text);font-family:\'Nunito Sans\',sans-serif;">' +
+        '<div style="font-family:\'Nunito\',sans-serif;font-size:1.1rem;font-weight:900;margin-bottom:10px;">Open in your browser</div>' +
+        '<div style="font-size:0.9rem;color:var(--text-muted);line-height:1.5;margin-bottom:14px;">Account pages need to be opened in Safari or Chrome — your browser already has your sign-in. Copy the link below and paste it into your browser.</div>' +
+        '<div id="openInBrowserUrl" style="font-family:\'Space Mono\',monospace;font-size:0.78rem;background:rgba(0,0,0,0.3);padding:10px 12px;border-radius:6px;word-break:break-all;color:var(--gold);margin-bottom:16px;"></div>' +
+        '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+          '<button id="openInBrowserCopy" style="padding:9px 16px;background:var(--accent);color:var(--white);border:none;border-radius:6px;font-weight:700;cursor:pointer;">Copy Link</button>' +
+          '<button id="openInBrowserClose" style="padding:9px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;">Close</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e) { if (e.target === ov) ov.style.display = 'none'; });
+    ov.querySelector('#openInBrowserClose').addEventListener('click', function() { ov.style.display = 'none'; });
+    ov.querySelector('#openInBrowserCopy').addEventListener('click', function() {
+      var u = ov.querySelector('#openInBrowserUrl').textContent;
+      try {
+        navigator.clipboard.writeText(u).then(function() { showToast('Link copied — paste in your browser', 2500); });
+      } catch (e) {
+        var range = document.createRange();
+        range.selectNode(ov.querySelector('#openInBrowserUrl'));
+        getSelection().removeAllRanges(); getSelection().addRange(range);
+        showToast('Link selected — long-press to copy', 2500);
+      }
+    });
+  }
+  ov.querySelector('#openInBrowserUrl').textContent = url;
+  ov.style.display = 'flex';
+  // Opportunistic: if the host app's WebView delegate handles _blank → Safari, this works
+  try { window.open(url, '_blank'); } catch (e) {}
+}
+// Wrap menuGame so account-only URLs don't 403 inside the app
+var _origMenuGame = menuGame;
+menuGame = function(url) {
+  closeMenu();
+  if (isInAppWebView() && isAppRestrictedUrl(url)) {
+    showOpenInBrowserOverlay(url);
+    return;
+  }
+  return _origMenuGame(url);
+};
+
 function submitMenuNewsletter(e) {
   e.preventDefault();
   const input = document.getElementById('menuNewsletterEmail');
