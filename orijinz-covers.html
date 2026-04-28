@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Orijinz Daily Covers</title>
+<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Nunito+Sans:wght@300;400;600;700&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -153,6 +154,126 @@
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: var(--gold);
+  }
+
+  /* COVER STACK — wraps the iframe and the mystery overlay.
+     Fixed height + overflow:hidden clips any iframe edges that would otherwise
+     peek past the overlay. Border-radius matches the song-card. */
+  .cover-stack {
+    position: relative;
+    width: 100%;
+    height: 152px;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  .cover-stack > .spotify-embed-wrap {
+    /* iframe always rendered (so audio can play); clipped by parent overflow */
+    width: 100%;
+    height: 100%;
+  }
+  /* MYSTERY CARD — overlays the iframe via absolute positioning.
+     Uses the same dark navy + '?' background pattern as .song-card so the
+     overlay visually merges with the parent card and fully obscures the iframe
+     (which must stay in the layout so audio can play). */
+  .mystery-card {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background-color: var(--panel);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ctext x='4' y='29' font-family='Georgia%2Cserif' font-size='28' font-weight='bold' fill='rgba(104%2C152%2C232%2C0.08)'%3E%3F%3C%2Ftext%3E%3C%2Fsvg%3E");
+    background-size: 36px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 18px 16px;
+    z-index: 2;
+  }
+  .mystery-card.hidden { display: none; }
+  /* Inner content fades in *after* the card paints, so the user never sees
+     the play button render in its fallback-font dimensions before web-fonts load. */
+  .mystery-card .eq-bars,
+  .mystery-card .mystery-play-btn {
+    opacity: 0;
+    animation: mysteryContentIn 0.15s ease 0.12s forwards;
+  }
+  @keyframes mysteryContentIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .mystery-play-btn {
+    -webkit-appearance: none; appearance: none;
+    padding: 12px 32px;
+    background: var(--accent);
+    color: var(--gold);
+    border: 2px solid var(--accent-light);
+    border-radius: 999px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem; font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    /* Fixed dimensions prevent re-flow when the web font swaps in */
+    min-width: 220px;
+    height: 44px;
+  }
+  .mystery-play-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+  .mystery-play-btn:active { transform: translateY(1px); }
+  .mystery-play-btn.playing { background: var(--accent-dark); }
+  .mystery-hint {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  /* 5-BAR EQUALIZER */
+  .eq-bars {
+    display: flex;
+    gap: 5px;
+    align-items: flex-end;
+    justify-content: center;
+    height: 40px;
+  }
+  .eq-bars span {
+    width: 6px;
+    background: linear-gradient(180deg, var(--accent-light), var(--accent));
+    border-radius: 3px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+  /* Idle (static): varied bar heights so it looks like a frozen equalizer */
+  .eq-bars span:nth-child(1) { height: 18px; }
+  .eq-bars span:nth-child(2) { height: 28px; }
+  .eq-bars span:nth-child(3) { height: 14px; }
+  .eq-bars span:nth-child(4) { height: 32px; }
+  .eq-bars span:nth-child(5) { height: 22px; }
+  /* Playing: animated pulse, slower than before (1.6s vs 0.85s) */
+  .eq-bars.playing span {
+    opacity: 0.95;
+    animation: eqPulse 1.6s ease-in-out infinite;
+  }
+  .eq-bars.playing span:nth-child(1) { animation-delay: 0s;   }
+  .eq-bars.playing span:nth-child(2) { animation-delay: 0.3s; }
+  .eq-bars.playing span:nth-child(3) { animation-delay: 0.6s; }
+  .eq-bars.playing span:nth-child(4) { animation-delay: 0.2s; }
+  .eq-bars.playing span:nth-child(5) { animation-delay: 0.45s;}
+  @keyframes eqPulse {
+    0%, 100% { height: 12px; }
+    25%      { height: 36px; }
+    50%      { height: 18px; }
+    75%      { height: 30px; }
+  }
+  /* REVEAL SONG NAME button — same shape as Reveal Letter */
+  #revealSongBtn {
+    /* inherits .clue-btn styling */
   }
 
   .spotify-embed-wrap {
@@ -1414,7 +1535,15 @@
       <div class="song-card-header">
         <div class="song-label">Today's Cover</div>
       </div>
-      <div class="spotify-embed-wrap" id="coverEmbedWrap"></div>
+      <!-- Cover stack: iframe stays in the layout (so audio can play) and
+           the mystery card is layered on top of it via z-index. -->
+      <div class="cover-stack">
+        <div class="spotify-embed-wrap" id="coverEmbedWrap"></div>
+        <div class="mystery-card" id="mysteryCard">
+          <div class="eq-bars" id="eqBars"><span></span><span></span><span></span><span></span><span></span></div>
+          <button class="mystery-play-btn" id="mysteryPlayBtn" onclick="mysteryPlayClick()">&#x25B6; Tap PLAY to listen</button>
+        </div>
+      </div>
       <div class="cover-credit" id="coverCredit"></div>
     </div>
   </div>
@@ -1424,6 +1553,9 @@
     <button class="clue-btn" id="revealBtn" onclick="revealLetter()">
       &#x1F521; Reveal a Letter
       <span class="clue-count" id="revealUsed"></span>
+    </button>
+    <button class="clue-btn" id="revealSongBtn" onclick="revealSongName()">
+      &#x1F50D; Reveal Song Name
     </button>
   </div>
 
@@ -1468,6 +1600,7 @@
           <table class="score-breakdown">
             <tr><td>&#x23F1;</td><td>Your time +</td></tr>
             <tr><td>&#x1F521;</td><td>15s per letter revealed +</td></tr>
+            <tr><td>&#x1F50D;</td><td>30s if Reveal Song Name used +</td></tr>
             <tr><td>&#x26A0;&#xFE0F;</td><td>5s per wrong letter</td></tr>
           </table>
         </div>
@@ -1485,6 +1618,10 @@
     <div class="play-song-panel" id="playSongPanel">
       <div class="play-song-label">&#x266A; The Original</div>
       <div id="originalEmbed"></div>
+    </div>
+    <div class="play-song-panel" id="coverSongPanel" style="margin-top:12px">
+      <div class="play-song-label">&#x1F3A4; The Cover</div>
+      <div id="coverEmbedResult"></div>
     </div>
   </div>
 
@@ -1540,7 +1677,7 @@
     <!-- Scoring rubric -->
     <div class="lb-rubric">
       <div class="lb-rubric-title">Scoring &mdash; Lower is Better</div>
-      <div class="lb-rubric-penalty" style="margin-bottom:10px; margin-top:0; font-style:normal; color:var(--text-muted);">Your score = Your time + 15 seconds per letter revealed + 5 seconds per wrong letter</div>
+      <div class="lb-rubric-penalty" style="margin-bottom:10px; margin-top:0; font-style:normal; color:var(--text-muted);">Your score = Your time + 15 seconds per letter revealed + 30 seconds if Reveal Song Name is used + 5 seconds per wrong letter</div>
       <div class="lb-rubric-grid">
         <div class="lb-rubric-row"><span>&#x1F3C6; Legendary</span><span>&lt; 20</span></div>
         <div class="lb-rubric-row"><span>&#x1F30C; Otherworldly</span><span>&lt; 40</span></div>
@@ -1624,13 +1761,16 @@
       <p style="margin:0 0 16px;color:var(--text);font-weight:700;font-size:1.05rem;">Orijinz Daily Covers</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">How do you play?</p>
-      <p style="margin:0 0 16px;">Listen to a cover of a famous song and guess the original artist by typing in your answer &#8212; a timer starts when you begin. Spotify will play up to 30 seconds of the cover. If you are logged into Spotify you can listen to more but Spotify will open and switch your browser to a Spotify.</p>
+      <p style="margin:0 0 16px;">You are trying to guess the original artist of a song covered by another musician. Click/Tap <span class="btn-ref">&#x25B6; Tap PLAY to listen</span> the cover. Your timer starts when you press any button. Spotify will play up to 30 seconds of the cover for free; if you are logged into Spotify you may be able to listen to more.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">What is Reveal a Letter?</p>
-      <p style="margin:0 0 16px;">Tap <span class="btn-ref">&#x1F521; Reveal a Letter</span> and a random letter from the artist&#39;s name is shown. You can reveal as many letters as you like &#8212; even the full answer if you&#39;re stuck.</p>
+      <p style="margin:0 0 16px;">Click/Tap <span class="btn-ref">&#x1F521; Reveal a Letter</span> and a random letter from the original artist&#39;s name is shown. You can reveal as many letters as you like &#8212; even the full answer if you&#39;re stuck.</p>
+
+      <p style="margin:0;color:#f5c842;font-weight:700;">What is Reveal Song Name?</p>
+      <p style="margin:0 0 16px;">Tap <span class="btn-ref">&#x1F50D; Reveal Song Name</span> to unmask the song title and the cover artist. A very useful hint if hearing the cover alone isn&#39;t enough.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">How is my score calculated?</p>
-      <p style="margin:0 0 16px;">Lower is better. Score = your time + 15 seconds per letter revealed + 5 seconds per wrong letter guessed.</p>
+      <p style="margin:0 0 16px;">Lower is better. Score = your time + 15 seconds per letter revealed + 30 seconds if Reveal Song Name is used + 5 seconds per wrong letter guessed.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Where do I see everyone&#39;s scores?</p>
       <p style="margin:0 0 16px;">After you play, tap <span class="btn-ref"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Results</span> to view your results and the results of other players on the Orijinz leaderboard. There are three tabs &#8212; Score, Games Played, and Streak (games played in a row). If you click the arrows next to &#34;Today&#39;s Results&#34; you can see the outcomes for each of the past three days.</p>
@@ -1884,7 +2024,7 @@ function recordGameResult(won) {
     s.unfinished++;
   }
   if (won) {
-    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0);
     if (s.lastPuzzleDate !== todayKey) s.gamesPlayed++;
     s.totalReveals  += revealCount;
     s.totalTime     += elapsedSeconds;
@@ -2067,6 +2207,7 @@ function renderAllGames() {
       var extra = '';
       if (r.game === 'wordsandphrases') extra = '<div class="ag-row"><span class="ag-lbl">Definition</span><span class="ag-val">' + (r.definitionUsed ? 'Yes' : 'No') + '</span></div>';
       else if (r.game === 'quotes') extra = '<div class="ag-row"><span class="ag-lbl">Hint</span><span class="ag-val">' + (r.definitionUsed ? 'Yes' : 'No') + '</span></div>';
+      else if (r.game === 'covers') extra = '<div class="ag-row"><span class="ag-lbl">Song Name</span><span class="ag-val">' + (r.definitionUsed ? 'Yes' : 'No') + '</span></div>';
       else if (r.game === '70ssongs') extra = '<div class="ag-row"><span class="ag-lbl">Audio listened</span><span class="ag-val">' + (r.listenSecs||0) + 's</span></div>';
       else if (r.game === 'movies') extra = '<div class="ag-row"><span class="ag-lbl">Trailer watched</span><span class="ag-val">' + (r.listenSecs||0) + 's</span></div>';
       todayHtml += '<div class="ag-game" style="border-left:3px solid ' + g.color + ';"><div class="ag-game-hdr">' + g.emoji + ' ' + g.label + badge + '</div><div class="ag-game-stats"><div class="ag-row"><span class="ag-lbl">Score</span><span class="ag-val">' + (r.score||'--') + '</span></div><div class="ag-row"><span class="ag-lbl">Time</span><span class="ag-val">' + agFormatTime(r.timeSecs) + '</span></div><div class="ag-row"><span class="ag-lbl">Reveals</span><span class="ag-val">' + (r.lettersRevealed||0) + '</span></div>' + extra + '<div class="ag-row"><span class="ag-lbl">Wrong Letters</span><span class="ag-val">' + (r.wrongLetters||0) + '</span></div></div></div>';
@@ -2197,7 +2338,7 @@ function sendResultToWix(won) {
   // when the response arrives, or after 3 seconds (safety timeout).
   waitingForWixLeaderboard = true;
   setTimeout(() => { waitingForWixLeaderboard = false; }, 3000);
-  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0);
   const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
   window.parent.postMessage({
     type:              'orijinz_result',
@@ -2208,7 +2349,11 @@ function sendResultToWix(won) {
     score,
     timeSecs:          elapsedSeconds,
     lettersRevealed:   revealCount,
-    definitionUsed:    false,
+    /* Reuses the definitionUsed field — mirrors how Words & Phrases tracks
+       its Definition hint. For Covers, "Yes" means Reveal Song Name was used.
+       Saved into GameResults.definitionUsed and incremented in
+       MemberStats.totalDefinitions by the existing Velo backend. */
+    definitionUsed:    (revealSongPenalty > 0),
     wrongLetters:      wrongCount,
     wonGame:           won,
     showOnLeaderboard: showOnLB
@@ -2543,7 +2688,7 @@ let puzzle, answer, answerClean;
 let currentGuess = [], cursorPos = 0, guesses = [], gameOver = false;
 let inputTileRefs = [];
 let animating = false;
-let revealedLetters = new Set(), revealCount = 0, wrongCount = 0;
+let revealedLetters = new Set(), revealCount = 0, wrongCount = 0, revealSongPenalty = 0;
 let streak = 0, puzzleIndex = 0;
 let wixResultSent = false, wixPageUrl = '', wixLeaderboardData = null;
 // True between sending a result to Wix and receiving the leaderboard back.
@@ -2576,6 +2721,100 @@ function getDayPuzzleIndex() {
   const now   = new Date();
   const diff  = Math.floor((now - start) / 86400000);
   return ((diff % PUZZLES.length) + PUZZLES.length) % PUZZLES.length;
+}
+
+// =================================================================
+// SPOTIFY IFRAME API + MYSTERY CARD
+// =================================================================
+var spotifyController = null;
+var pendingPlay = false;
+var timerStarted = false;
+var songRevealed = false;
+
+window.onSpotifyIframeApiReady = function(IFrameAPI) {
+  window._spotifyAPI = IFrameAPI;
+  // If a controller request was queued before API loaded, fulfill it now.
+  if (window._pendingControllerSetup) {
+    window._pendingControllerSetup();
+    window._pendingControllerSetup = null;
+  }
+};
+
+function setupSpotifyController(trackId) {
+  var doSetup = function() {
+    var target = document.getElementById('spotifyEmbedTarget');
+    if (!target) return;
+    var options = {
+      uri: 'spotify:track:' + trackId,
+      width: '100%',
+      height: 152
+    };
+    window._spotifyAPI.createController(target, options, function(EmbedController) {
+      spotifyController = EmbedController;
+      EmbedController.addListener('playback_update', function(e) {
+        var isPaused = e && e.data && e.data.isPaused;
+        setMysteryPlaying(!isPaused);
+      });
+      if (pendingPlay) {
+        try { spotifyController.play(); } catch(e) {}
+        pendingPlay = false;
+      }
+    });
+  };
+  if (window._spotifyAPI) doSetup();
+  else window._pendingControllerSetup = doSetup;
+}
+
+var isPlaying = false;
+function mysteryPlayClick() {
+  if (gameOver) return;
+  if (!timerStarted) { startTimer(); timerStarted = true; }
+
+  if (!spotifyController) {
+    // Controller not ready yet — queue a play and reflect optimistic state
+    pendingPlay = true;
+    setMysteryPlaying(true);
+    saveState();
+    return;
+  }
+
+  if (isPlaying) {
+    try { spotifyController.pause(); } catch(e) {}
+    setMysteryPlaying(false);
+  } else {
+    try { spotifyController.play(); } catch(e) {}
+    setMysteryPlaying(true);
+  }
+  saveState();
+}
+
+function setMysteryPlaying(playing) {
+  isPlaying = playing;
+  var bars = document.getElementById('eqBars');
+  if (bars) bars.classList.toggle('playing', playing);
+  var btn = document.getElementById('mysteryPlayBtn');
+  if (btn) {
+    btn.classList.toggle('playing', playing);
+    btn.innerHTML = playing ? '\u23F8 Pause' : '\u25B6 Tap PLAY to listen';
+  }
+}
+
+function revealSongName() {
+  if (gameOver || songRevealed) return;
+  songRevealed = true;
+  if (!timerStarted) { startTimer(); timerStarted = true; }
+  // Hide mystery card, show real Spotify embed
+  var mc = document.getElementById('mysteryCard');
+  var ew = document.getElementById('coverEmbedWrap');
+  if (mc) mc.classList.add('hidden');
+  // wrapper was already visible (mystery card overlay was hiding it via z-index)
+  if (ew) ew.style.display = '';
+  // Disable the reveal button
+  var rb = document.getElementById('revealSongBtn');
+  if (rb) { rb.disabled = true; rb.innerHTML = '\uD83D\uDD0D Song Name Revealed'; rb.style.opacity = '0.5'; }
+  // Apply 30s penalty (tracked in revealCount-style but separate)
+  revealSongPenalty = 30;
+  saveState();
 }
 
 // =================================================================
@@ -2656,8 +2895,11 @@ function initGame() {
     revealedLetters = new Set(stored.revealed || []);
     revealCount     = stored.revealCount || 0;
     wrongCount      = stored.wrongCount  || 0;
+    revealSongPenalty = stored.revealSongPenalty || 0;
     gameOver        = stored.gameOver   || false;
     elapsedSeconds  = stored.elapsed    || 0;
+  } else {
+    revealSongPenalty = 0;
   }
 
   puzzle      = PUZZLES[puzzleIndex];
@@ -2668,12 +2910,23 @@ function initGame() {
   document.getElementById('dateBadge').textContent = now.toLocaleDateString('en-US', {month:'short', day:'numeric'});
   document.getElementById('puzzleNum').textContent = '#' + (puzzle.id || (puzzleIndex + 1));
 
-  // Render the cover Spotify embed
+  // Render the cover Spotify embed via Iframe API (hidden until Reveal Song Name)
   const embedWrap = document.getElementById('coverEmbedWrap');
+  const mysteryCard = document.getElementById('mysteryCard');
+  spotifyController = null;
+  songRevealed = false;
+  timerStarted = false;
   if (puzzle.cover_id) {
-    embedWrap.innerHTML = '<iframe src="https://open.spotify.com/embed/track/' + puzzle.cover_id + '?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:12px;display:block;"></iframe>';
+    embedWrap.innerHTML = '<div id="spotifyEmbedTarget"></div>';
+    // Wrapper stays visible — mystery card overlays it via z-index. Audio
+    // playback in a display:none iframe is blocked in some browsers.
+    embedWrap.style.display = '';
+    if (mysteryCard) mysteryCard.classList.remove('hidden');
+    setupSpotifyController(puzzle.cover_id);
   } else {
     embedWrap.innerHTML = '';
+    embedWrap.style.display = 'none';
+    if (mysteryCard) mysteryCard.classList.add('hidden');
   }
 
 
@@ -2704,7 +2957,13 @@ function initGame() {
     document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
     showResult(true);
   } else {
-    startTimer();
+    // Timer no longer auto-starts; it begins on Play tap or Reveal Song Name tap.
+    // EXCEPT for mid-game resume: if the player already accumulated time, keep going.
+    document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
+    if (elapsedSeconds > 0) {
+      startTimer();
+      timerStarted = true;
+    }
   }
   updateRevealBtn();
   if (!gameOver && window.innerWidth <= 480) {
@@ -2720,7 +2979,7 @@ function saveState() {
   safeSaveState({
     streak, lastPlayed: new Date().toDateString(),
     guesses, revealed: [...revealedLetters],
-    revealCount, wrongCount, gameOver, elapsed: elapsedSeconds,
+    revealCount, wrongCount, revealSongPenalty, gameOver, elapsed: elapsedSeconds,
     ...(existing.devPuzzleIndex !== undefined ? { devPuzzleIndex: existing.devPuzzleIndex } : {})
   });
 }
@@ -3186,7 +3445,8 @@ function showResult(won) {
     else                  { emoji.textContent = '\uD83C\uDF31'; hl.textContent = 'You Got It!'; }
     const revealStr = revealCount > 0 ? ' \u00B7 ' + revealCount + ' letter' + (revealCount === 1 ? '' : 's') + ' revealed' : '';
     const wrongStr  = wrongCount  > 0 ? ' \u00B7 ' + wrongCount  + ' letter' + (wrongCount  === 1 ? '' : 's') + ' guessed incorrectly' : '';
-    msg.innerHTML = 'Solved in ' + timeStr + revealStr + wrongStr + '.<br>Share the fun with friends!';
+    const songStr = (revealSongPenalty > 0) ? ' \u00B7 song name revealed' : '';
+    msg.innerHTML = 'Solved in ' + timeStr + revealStr + songStr + wrongStr + '.<br>Share the fun with friends!';
   } else {
     emoji.textContent = '\uD83C\uDFB5';
     hl.textContent    = 'Better luck tomorrow!';
@@ -3198,6 +3458,15 @@ function showResult(won) {
     const embedDiv = document.getElementById('originalEmbed');
     embedDiv.innerHTML = '<iframe class="spotify-embed" src="https://open.spotify.com/embed/track/' + puzzle.original_id + '?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
     document.getElementById('playSongPanel').classList.add('visible');
+  }
+  // Show the cover song embed below — confirms what they just heard
+  if (puzzle.cover_id) {
+    var coverDiv = document.getElementById('coverEmbedResult');
+    if (coverDiv) {
+      coverDiv.innerHTML = '<iframe class="spotify-embed" src="https://open.spotify.com/embed/track/' + puzzle.cover_id + '?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+      var coverPanel = document.getElementById('coverSongPanel');
+      if (coverPanel) coverPanel.classList.add('visible');
+    }
   }
 
 
