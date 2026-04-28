@@ -2753,7 +2753,14 @@ function setupSpotifyController(trackId) {
     window._spotifyAPI.createController(target, options, function(EmbedController) {
       spotifyController = EmbedController;
       EmbedController.addListener('playback_update', function(e) {
-        var isPaused = e && e.data && e.data.isPaused;
+        if (!e || !e.data) return;
+        var isPaused = e.data.isPaused;
+        var pos = e.data.position;        // milliseconds
+        var dur = e.data.duration;        // milliseconds
+        // Natural end-of-preview: Spotify often stops without re-emitting
+        // isPaused:true, so detect via position vs duration with a small margin.
+        var ended = (dur > 0 && pos >= dur - 200);
+        if (ended) { setMysteryPlaying(false); return; }
         setMysteryPlaying(!isPaused);
       });
       if (pendingPlay) {
@@ -2779,13 +2786,12 @@ function mysteryPlayClick() {
     return;
   }
 
-  if (isPlaying) {
-    try { spotifyController.pause(); } catch(e) {}
-    setMysteryPlaying(false);
-  } else {
-    try { spotifyController.play(); } catch(e) {}
-    setMysteryPlaying(true);
-  }
+  // togglePlay() = resume from paused position, pause if playing,
+  // or start from 0 if never played / preview already ended.
+  // Direct play() always restarts from 0 in Spotify's iframe API.
+  try { spotifyController.togglePlay(); } catch(e) {}
+  // Optimistic UI flip; playback_update listener corrects if needed.
+  setMysteryPlaying(!isPlaying);
   saveState();
 }
 
