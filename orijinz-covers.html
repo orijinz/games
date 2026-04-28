@@ -1542,7 +1542,7 @@
         <div class="spotify-embed-wrap" id="coverEmbedWrap"></div>
         <div class="mystery-card" id="mysteryCard">
           <div class="eq-bars" id="eqBars"><span></span><span></span><span></span><span></span><span></span></div>
-          <button class="mystery-play-btn" id="mysteryPlayBtn" onclick="mysteryPlayClick()">&#x25B6; Tap PLAY to listen</button>
+          <button class="mystery-play-btn" id="mysteryPlayBtn" onclick="mysteryPlayClick()" disabled>&#x25B6; Loading&hellip;</button>
         </div>
       </div>
       <div class="cover-credit" id="coverCredit"></div>
@@ -2752,6 +2752,9 @@ function setupSpotifyController(trackId) {
     };
     window._spotifyAPI.createController(target, options, function(EmbedController) {
       spotifyController = EmbedController;
+      // Enable the play button now that we can actually drive playback
+      var btn = document.getElementById('mysteryPlayBtn');
+      if (btn) { btn.disabled = false; btn.innerHTML = '▶ Tap PLAY to listen'; }
       EmbedController.addListener('playback_update', function(e) {
         if (!e || !e.data) return;
         var isPaused = e.data.isPaused;
@@ -2763,10 +2766,6 @@ function setupSpotifyController(trackId) {
         if (ended) { setMysteryPlaying(false); return; }
         setMysteryPlaying(!isPaused);
       });
-      if (pendingPlay) {
-        try { spotifyController.play(); } catch(e) {}
-        pendingPlay = false;
-      }
     });
   };
   if (window._spotifyAPI) doSetup();
@@ -2776,15 +2775,9 @@ function setupSpotifyController(trackId) {
 var isPlaying = false;
 function mysteryPlayClick() {
   if (gameOver) return;
+  // Button is disabled until controller is ready; this guard is just defensive.
+  if (!spotifyController) return;
   if (!timerStarted) { startTimer(); timerStarted = true; }
-
-  if (!spotifyController) {
-    // Controller not ready yet — queue a play and reflect optimistic state
-    pendingPlay = true;
-    setMysteryPlaying(true);
-    saveState();
-    return;
-  }
 
   // togglePlay() = resume from paused position, pause if playing,
   // or start from 0 if never played / preview already ended.
