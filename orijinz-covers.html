@@ -2750,6 +2750,31 @@ function setupSpotifyController(trackId) {
       width: '100%',
       height: 152
     };
+    // Chromium autoplay policy: cross-origin iframes need an explicit
+    // `allow` attribute set BEFORE first load for postMessage-driven
+    // playback (e.g. spotifyController.togglePlay()) to be honored on
+    // fresh https origins like github.io. Spotify's iframe API does not
+    // set this consistently. Watch for the iframe insertion and stamp
+    // the attribute the instant it appears, before its src starts
+    // fetching.
+    var wrap = document.getElementById('coverEmbedWrap');
+    if (wrap && 'MutationObserver' in window) {
+      var allowVal = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+      var mo = new MutationObserver(function(muts, obs) {
+        for (var i = 0; i < muts.length; i++) {
+          var added = muts[i].addedNodes;
+          for (var j = 0; j < added.length; j++) {
+            var n = added[j];
+            if (n && n.tagName === 'IFRAME') {
+              try { n.setAttribute('allow', allowVal); } catch(e) {}
+              obs.disconnect();
+              return;
+            }
+          }
+        }
+      });
+      mo.observe(wrap, { childList: true, subtree: true });
+    }
     window._spotifyAPI.createController(target, options, function(EmbedController) {
       spotifyController = EmbedController;
       // Enable the play button now that we can actually drive playback
