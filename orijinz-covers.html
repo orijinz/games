@@ -2941,6 +2941,30 @@ function setupCoverAudio(puzzle) {
   }
 }
 
+// Fade out cover audio over ~1.5s when the player wins. The clip would
+// otherwise run to its 30s natural end, talking over the confetti / result
+// screen. No-op if audio isn't currently playing or has already ended.
+function fadeOutCoverAudio(durationMs) {
+  var dur = durationMs || 1500;
+  if (audioEl && !audioEl.paused) {
+    var startVol = audioEl.volume;
+    var startT   = Date.now();
+    var iv = setInterval(function(){
+      var t = Math.min(1, (Date.now() - startT) / dur);
+      try { audioEl.volume = startVol * (1 - t); } catch(e) {}
+      if (t >= 1) {
+        clearInterval(iv);
+        try { audioEl.pause(); audioEl.volume = startVol; } catch(e) {}
+      }
+    }, 50);
+    return;
+  }
+  // Iframe fallback: no volume API, just pause if currently playing.
+  if (spotifyController && isPlaying) {
+    try { spotifyController.togglePlay(); } catch(e) {}
+  }
+}
+
 function mysteryPlayClick() {
   if (gameOver) return;
   if (!timerStarted) { startTimer(); timerStarted = true; }
@@ -3378,7 +3402,7 @@ function submitGuess() {
   const won    = fullGuess === answerClean;
 
   wrongCount += states.filter((st, i) => st === 'wrong' && !revealedLetters.has(i)).length;
-  if (won) { gameOver = true; stopTimer(); }
+  if (won) { gameOver = true; stopTimer(); fadeOutCoverAudio(); }
   animateGuessSubmit(states, won, () => {
     guesses.push({ word: fullGuess, states });
     currentGuess = []; cursorPos = 0;
