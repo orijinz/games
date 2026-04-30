@@ -923,7 +923,13 @@
     font-size: 0.78rem; color: var(--text-muted);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  /* User's own row gets an editable input — discoverable place to type a location */
+  /* User's own row gets an editable input — discoverable place to type a location.
+     Border state communicates status:
+       editing (focused, any content)   → dashed accent  ("you are typing")
+       empty + not focused              → dashed muted   ("fill me in")
+       filled + not focused             → solid          ("saved / accepted")
+     The transition from dashed→solid on blur is the visible "your input was
+     taken" signal. */
   .lb-entry-location-input {
     width: 100%; box-sizing: border-box;
     background: transparent;
@@ -934,8 +940,19 @@
     font-family: 'Nunito Sans', sans-serif;
     font-size: 0.78rem;
     outline: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
   }
-  .lb-entry-location-input:focus { border-style: solid; border-color: var(--accent); background: rgba(0,206,184,0.06); }
+  .lb-entry-location-input:focus {
+    border-style: dashed;
+    border-color: var(--accent);
+    background: rgba(0,206,184,0.06);
+  }
+  /* Filled AND not focused — solid border means "your entry is saved" */
+  .lb-entry-location-input:not(:placeholder-shown):not(:focus) {
+    border-style: solid;
+    border-color: rgba(0,206,184,0.55);
+    background: transparent;
+  }
   .lb-entry-location-input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: italic; }
   .lb-entry-score { width: 60px; text-align: right; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 700; flex-shrink: 0; }
   .lb-entry-tier  { width: 28px; text-align: center; font-size: 1rem; flex-shrink: 0; }
@@ -2039,7 +2056,7 @@ function renderLeaderboard() {
     const nameDisplay = escHtml(e.name || 'Add your name and it will go here');
     const locValue    = escHtml(e.location || '');
     const locCell = isMe
-      ? '<input type="text" class="lb-entry-location-input" maxlength="60" placeholder="e.g. Seattle, WA" value="' + locValue + '" oninput="onLeaderboardLocInput(this)" onblur="onLeaderboardLocBlur(this)">'
+      ? '<input type="text" class="lb-entry-location-input" maxlength="60" placeholder="e.g. Seattle, WA" value="' + locValue + '" oninput="onLeaderboardLocInput(this)" onblur="onLeaderboardLocBlur(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}">'
       : locValue;
     return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
       '<div class="lb-entry-rank">' + (i+1) + '</div>' +
