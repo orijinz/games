@@ -2779,10 +2779,17 @@ function renderLeaderboard() {
 // their own row's input and blurs/Enter, save locally and post an
 // `orijinz_update_location` message to Wix to patch today's
 // GameResults + MemberStats records, then refresh the leaderboard.
+//
+// Cross-game continuity: if Wix's row for this game has no location
+// (e.g. the player set it in another game and hasn't played this one
+// since), pre-fill from localStorage so the placeholder doesn't
+// reappear and the user doesn't have to re-type their city.
 function _lbLocCell(e, mine) {
   if (mine) {
+    var v = e.location || '';
+    if (!v) { try { v = localStorage.getItem('orijinzLocation') || ''; } catch(err) {} }
     return '<input type="text" class="lb-row-location-input" maxlength="60" '
-         + 'placeholder="e.g. Seattle, WA" value="' + escHtml(e.location || '') + '" '
+         + 'placeholder="e.g. Seattle, WA" value="' + escHtml(v) + '" '
          + 'oninput="onLeaderboardLocInput(this)" '
          + 'onblur="onLeaderboardLocBlur(this)" '
          + 'onkeydown="if(event.key===&quot;Enter&quot;){event.preventDefault();this.blur();}">';

@@ -2045,9 +2045,15 @@ function renderLeaderboard() {
   list.innerHTML = sorted.map((e, i) => {
     const isMe = e.deviceId === devId;
     const nameDisplay = escHtml(e.name || 'Add your name and it will go here');
-    const locValue    = escHtml(e.location || '');
+    // For the user's own input, fall back to localStorage if Wix has no
+    // location for this game's record (e.g. they set it in another game).
+    let inputValue = e.location || '';
+    if (!inputValue && isMe) {
+      try { inputValue = localStorage.getItem('orijinzLocation') || ''; } catch(err) {}
+    }
+    const locValue = escHtml(e.location || '');
     const locCell = isMe
-      ? '<input type="text" class="lb-entry-location-input" maxlength="60" placeholder="e.g. Seattle, WA" value="' + locValue + '" oninput="onLeaderboardLocInput(this)" onblur="onLeaderboardLocBlur(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}">'
+      ? '<input type="text" class="lb-entry-location-input" maxlength="60" placeholder="e.g. Seattle, WA" value="' + escHtml(inputValue) + '" oninput="onLeaderboardLocInput(this)" onblur="onLeaderboardLocBlur(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}">'
       : locValue;
     return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
       '<div class="lb-entry-rank">' + (i+1) + '</div>' +

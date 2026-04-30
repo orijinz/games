@@ -644,7 +644,7 @@ body.page-blur .letter-tile.active {
 .lb-row.lb-mine { background: rgba(255,136,32,0.08); }
 .lb-row-rank    { width: 28px; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--text-muted); }
 .lb-row-name    { flex: 1; font-weight: 600; }
-.lb-row-location{ width: 90px; flex-shrink: 0; font-size: 0.75rem; color: var(--text-muted); }
+.lb-row-location{ flex: 1; min-width: 0; font-size: 0.75rem; color: var(--text-muted); }
   /* Inline location edit — user's own row only.
      Border state communicates status:
        focused (any content)       → dashed accent  ("you are typing")
@@ -2557,10 +2557,17 @@ function shareResult() {
 // their own row's input and blurs/Enter, save locally and post an
 // `orijinz_update_location` message to Wix to patch today's
 // GameResults + MemberStats records, then refresh the leaderboard.
+//
+// Cross-game continuity: if Wix's row for this game has no location
+// (e.g. the player set it in another game and hasn't played this one
+// since), pre-fill from localStorage so the placeholder doesn't
+// reappear and the user doesn't have to re-type their city.
 function _lbLocCell(e, mine) {
   if (mine) {
+    var v = e.location || '';
+    if (!v) { try { v = localStorage.getItem('orijinzLocation') || ''; } catch(err) {} }
     return '<input type="text" class="lb-row-location-input" maxlength="60" '
-         + 'placeholder="e.g. Seattle, WA" value="' + escHtml(e.location || '') + '" '
+         + 'placeholder="e.g. Seattle, WA" value="' + escHtml(v) + '" '
          + 'oninput="onLeaderboardLocInput(this)" '
          + 'onblur="onLeaderboardLocBlur(this)" '
          + 'onkeydown="if(event.key===&quot;Enter&quot;){event.preventDefault();this.blur();}">';
