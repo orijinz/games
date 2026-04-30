@@ -1290,6 +1290,35 @@
   .lb-row-rank   { width: 28px; text-align: center; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
   .lb-row-name     { flex: 1; font-family: 'Nunito Sans', sans-serif; color: var(--text); font-weight: 600; }
   .lb-row-location { flex: 1; font-family: 'Nunito Sans', sans-serif; color: var(--gold); font-weight: 600; font-size: 0.82rem; }
+  /* Inline location edit — user's own row only.
+     Border state communicates status:
+       focused (any content)       → dashed accent  ("you are typing")
+       empty + not focused         → dashed muted   ("fill me in")
+       filled + not focused        → solid          ("saved / accepted") */
+  .lb-row-location-input {
+    width: 100%; box-sizing: border-box;
+    background: transparent;
+    border: 1px dashed rgba(0,206,184,0.5);
+    border-radius: 4px;
+    padding: 3px 6px;
+    color: var(--text);
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.78rem;
+    outline: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .lb-row-location-input:focus {
+    border-style: dashed;
+    border-color: var(--accent);
+    background: rgba(0,206,184,0.06);
+  }
+  .lb-row-location-input:not(:placeholder-shown):not(:focus) {
+    border-style: solid;
+    border-color: rgba(0,206,184,0.55);
+    background: transparent;
+  }
+  .lb-row-location-input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: italic; }
+
   .lb-row-played { width: 72px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--text-muted); }
   .lb-row-streak { width: 72px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--text-muted); }
   .lb-row-score  { width: 56px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.82rem; font-weight: 700; color: var(--accent); }
@@ -2556,7 +2585,7 @@ function renderLeaderboard() {
     if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">' + (lbDateOffset === 0 ? 'No scores yet today \u2014 be the first!' : 'No scores for this date') + '</div>'; return; }
     list.innerHTML = entries.map((e, i) => {
       const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
+      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
     }).join('');
 
   } else {
@@ -2577,7 +2606,7 @@ function renderLeaderboard() {
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
       list.innerHTML = players.map((e, i) => {
         const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span><span class="lb-row-streak">' + e.streak + '</span></div>';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span><span class="lb-row-streak">' + e.streak + '</span></div>';
       }).join('');
     } else {
       players.sort((a, b) => b.streak - a.streak);
@@ -2585,7 +2614,7 @@ function renderLeaderboard() {
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
       list.innerHTML = players.map((e, i) => {
         const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + escHtml(e.location || '') + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span><span class="lb-row-played">' + e.played + '</span></div>';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span><span class="lb-row-played">' + e.played + '</span></div>';
       }).join('');
     }
   }
