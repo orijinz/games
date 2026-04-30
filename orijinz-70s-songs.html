@@ -2620,6 +2620,37 @@ function renderLeaderboard() {
   }
 }
 
+// Inline-leaderboard location editing — when the user types into
+// their own row's input and blurs/Enter, save locally and post an
+// `orijinz_update_location` message to Wix to patch today's
+// GameResults + MemberStats records, then refresh the leaderboard.
+function _lbLocCell(e, mine) {
+  if (mine) {
+    return '<input type="text" class="lb-row-location-input" maxlength="60" '
+         + 'placeholder="e.g. Seattle, WA" value="' + escHtml(e.location || '') + '" '
+         + 'oninput="onLeaderboardLocInput(this)" '
+         + 'onblur="onLeaderboardLocBlur(this)" '
+         + 'onkeydown="if(event.key===&quot;Enter&quot;){event.preventDefault();this.blur();}">';
+  }
+  return escHtml(e.location || '');
+}
+function onLeaderboardLocInput(el) {
+  try { localStorage.setItem('orijinzLocation', String(el.value || '').trim().slice(0, 60)); } catch(e) {}
+}
+function onLeaderboardLocBlur(el) {
+  var loc = String(el.value || '').trim().slice(0, 60);
+  try { localStorage.setItem('orijinzLocation', loc); } catch(e) {}
+  var today = (function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})();
+  try {
+    window.parent.postMessage({
+      type:       'orijinz_update_location',
+      game:       '70ssongs',
+      puzzleDate: today,
+      location:   loc
+    }, '*');
+  } catch(e) {}
+}
+
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
