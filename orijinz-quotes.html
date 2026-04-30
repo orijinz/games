@@ -2039,7 +2039,7 @@ function renderLeaderboard() {
     const nameDisplay = escHtml(e.name || 'Add your name and it will go here');
     const locValue    = escHtml(e.location || '');
     const locCell = isMe
-      ? '<input type="text" class="lb-entry-location-input" maxlength="60" placeholder="Enter location, e.g. Seattle, WA" value="' + locValue + '" oninput="onLeaderboardLocInput(this)" onblur="onLeaderboardLocBlur(this)">'
+      ? '<input type="text" class="lb-entry-location-input" maxlength="60" placeholder="e.g. Seattle, WA" value="' + locValue + '" oninput="onLeaderboardLocInput(this)" onblur="onLeaderboardLocBlur(this)">'
       : locValue;
     return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
       '<div class="lb-entry-rank">' + (i+1) + '</div>' +
