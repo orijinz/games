@@ -1347,11 +1347,13 @@
   .lb-row-rank   { width: 28px; text-align: center; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
   .lb-row-name     { flex: 1; font-family: 'Nunito Sans', sans-serif; color: var(--text); font-weight: 600; }
   .lb-row-location { flex: 1; font-family: 'Nunito Sans', sans-serif; color: var(--gold); font-weight: 600; font-size: 0.82rem; }
-  /* Inline location edit — user's own row only.
+  /* Inline location edit — user's own row only. Contenteditable <div>
+     so longer city/state names wrap to a second line instead of being
+     hidden inside a fixed-width input.
      Border state communicates status:
-       focused (any content)       → dashed accent  ("you are typing")
-       empty + not focused         → dashed muted   ("fill me in")
-       filled + not focused        → solid          ("saved / accepted") */
+       focused (any content)  → dashed accent  ("you are typing")
+       empty + not focused    → dashed muted + placeholder visible
+       filled + not focused   → solid          ("saved / accepted") */
   .lb-row-location-input {
     width: 100%; box-sizing: border-box;
     background: transparent;
@@ -1361,20 +1363,37 @@
     color: var(--text);
     font-family: 'Nunito Sans', sans-serif;
     font-size: 0.78rem;
+    line-height: 1.35;
     outline: none;
     transition: border-color 0.15s ease, background 0.15s ease;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    min-height: 1.5em;
+    cursor: text;
   }
   .lb-row-location-input:focus {
     border-style: dashed;
     border-color: var(--accent);
     background: rgba(0,206,184,0.06);
   }
-  .lb-row-location-input:not(:placeholder-shown):not(:focus) {
+  .lb-row-location-input:not(:empty):not(:focus) {
     border-style: solid;
     border-color: rgba(0,206,184,0.55);
     background: transparent;
   }
-  .lb-row-location-input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: italic; }
+  .lb-row-location-input:empty:before {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    opacity: 0.7;
+    font-style: italic;
+    pointer-events: none;
+  }
+  .lb-row-location-input:empty:focus:before { opacity: 0.4; }
+  /* end inline location edit */
+
+  .lb-row-location-input:empty:focus:before { opacity: 0.4; }
+
 
   .lb-row-played { width: 72px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--text-muted); }
   .lb-row-streak { width: 72px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--text-muted); }
@@ -1843,7 +1862,7 @@
       <p style="margin:0 0 16px;">Lower is better. Score = your time + 2&#215; seconds of trailer watched + 15 seconds per letter revealed + 5 seconds per wrong letter guessed. Don&#39;t accidently skip ahead past the 30 second mark in the trailer as there is a massive penalty: each extra second &#215; 5 is added to your score.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Where do I see everyone&#39;s scores?</p>
-      <p style="margin:0 0 16px;">After you play, tap <span class="btn-ref"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Results</span> to view your results and the results of other players on the Orijinz leaderboard. There are three tabs &#8212; Score, Games Played, and Streak (games played in a row). If you click the arrows next to &#34;Today&#39;s Results&#34; you can see the outcomes for each of the past three days.</p>
+      <p style="margin:0 0 16px;">After you play, tap <span class="btn-ref"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Results</span> to view your results and the results of other players on the Orijinz leaderboard. There are three tabs &#8212; Score, Games Played, and Streak (games played in a row). If you click the arrows next to &#34;Today&#39;s Results&#34; you can see the outcomes for each of the past three days. You can also enter your Location in the results panel (example: San Francisco, CA) to show other players where you are from.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Can I remove my name from the Leaderboard?</p>
       <p style="margin:0 0 16px;">Yes! Many players just want to play for fun without worrying about scores. To remove your name from the leaderboard, click the <svg style="vertical-align:middle;margin:0 2px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg> menu, choose &#34;Settings&#34; and toggle off &#34;Show me on the leaderboard.&#34;</p>
@@ -2708,9 +2727,13 @@ function renderLeaderboard() {
 }
 
 // Inline-leaderboard location editing — when the user types into
-// their own row's input and blurs/Enter, save locally and post an
+// their own row's editor and blurs/Enter, save locally and post an
 // `orijinz_update_location` message to Wix to patch today's
 // GameResults + MemberStats records, then refresh the leaderboard.
+//
+// We use a contenteditable <div> rather than <input> so longer
+// city/state names wrap to a second line on narrow mobile screens
+// instead of being truncated mid-word inside a fixed-width input.
 //
 // Cross-game continuity: if Wix's row for this game has no location
 // (e.g. the player set it in another game and hasn't played this one
@@ -2720,19 +2743,26 @@ function _lbLocCell(e, mine) {
   if (mine) {
     var v = e.location || '';
     if (!v) { try { v = localStorage.getItem('orijinzLocation') || ''; } catch(err) {} }
-    return '<input type="text" class="lb-row-location-input" maxlength="60" '
-         + 'placeholder="e.g. Seattle, WA" value="' + escHtml(v) + '" '
+    return '<div class="lb-row-location-input" contenteditable="true" '
+         + 'data-placeholder="e.g. Seattle, WA" '
+         + 'spellcheck="false" '
          + 'oninput="onLeaderboardLocInput(this)" '
          + 'onblur="onLeaderboardLocBlur(this)" '
-         + 'onkeydown="if(event.key===&quot;Enter&quot;){event.preventDefault();this.blur();}">';
+         + 'onkeydown="if(event.key===&quot;Enter&quot;){event.preventDefault();this.blur();}">'
+         + escHtml(v) + '</div>';
   }
   return escHtml(e.location || '');
 }
+function _lbLocText(el) { return (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 60); }
 function onLeaderboardLocInput(el) {
-  try { localStorage.setItem('orijinzLocation', String(el.value || '').trim().slice(0, 60)); } catch(e) {}
+  // Enforce 60-char cap by truncating overflow without losing caret position too dramatically
+  var v = _lbLocText(el);
+  if ((el.innerText || '').length > 60) el.innerText = v;
+  try { localStorage.setItem('orijinzLocation', v); } catch(e) {}
 }
 function onLeaderboardLocBlur(el) {
-  var loc = String(el.value || '').trim().slice(0, 60);
+  var loc = _lbLocText(el);
+  el.innerText = loc;  // normalize trailing whitespace / pasted newlines
   try { localStorage.setItem('orijinzLocation', loc); } catch(e) {}
   var today = (function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})();
   try {
