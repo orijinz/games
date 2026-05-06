@@ -2436,19 +2436,19 @@ function renderLeaderboard() {
     }
     if (lbSortBy === 'played') {
       players.sort((a, b) => b.played - a.played);
-      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-played lb-col-active">Played</span><span class="lb-col-streak" style="color:var(--text-muted)">Streak</span>';
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-played lb-col-active">Played</span>';
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
       list.innerHTML = players.map((e, i) => {
         const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-played lb-col-active">' + (e.played||0) + '</span><span class="lb-row-streak">' + (e.streak||0) + '</span></div>';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-played lb-col-active">' + (e.played||0) + '</span></div>';
       }).join('');
     } else {
       players.sort((a, b) => b.streak - a.streak);
-      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-streak lb-col-active">Streak</span><span class="lb-col-played" style="color:var(--text-muted)">Played</span>';
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-streak lb-col-active">Streak</span>';
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
       list.innerHTML = players.map((e, i) => {
         const mine = (wixMemberId && e.memberId === wixMemberId) ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-streak lb-col-active">' + (e.streak||0) + '</span><span class="lb-row-played">' + (e.played||0) + '</span></div>';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name||'Anonymous') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-streak lb-col-active">' + (e.streak||0) + '</span></div>';
       }).join('');
     }
   }
