@@ -1416,15 +1416,19 @@ function showOpenInBrowserOverlay(url) {
   }
   ov.querySelector('#openInBrowserUrl').textContent = url;
   ov.style.display = 'flex';
-  // Opportunistic: if the host app's WebView delegate handles _blank → Safari, this works
-  try { window.open(url, '_blank'); } catch (e) {}
 }
 // Wrap menuGame so account-only URLs don't 403 inside the app
 var _origMenuGame = menuGame;
 menuGame = function(url) {
   closeMenu();
-  if (isInAppWebView() && isAppRestrictedUrl(url)) {
-    showOpenInBrowserOverlay(url);
+  if (isAppRestrictedUrl(url)) {
+    try {
+      var u = new URL(url, location.href);
+      window.parent.postMessage({ type: 'orijinz_navigate', url: u.pathname + u.search }, '*');
+    } catch (e) {}
+    if (isInAppWebView()) {
+      showOpenInBrowserOverlay(url);
+    }
     return;
   }
   return _origMenuGame(url);
@@ -2159,7 +2163,8 @@ function pauseTimer() {
   clearInterval(timerInterval); timerInterval = null;
 }
 function resumeTimer() { if (timerInterval !== null || gameOver) return; startTimer(); }
-document.addEventListener('visibilitychange', () => { if (document.hidden) pauseTimer(); else resumeTimer(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { pauseTimer(); if (!gameOver) saveState(); } else resumeTimer(); });
+window.addEventListener('pagehide', () => { if (!gameOver) { pauseTimer(); saveState(); } });
 
 // =================================================================
 // INIT

@@ -2015,15 +2015,24 @@ function showOpenInBrowserOverlay(url) {
   }
   ov.querySelector('#openInBrowserUrl').textContent = url;
   ov.style.display = 'flex';
-  // Opportunistic: if the host app's WebView delegate handles _blank → Safari, this works
-  try { window.open(url, '_blank'); } catch (e) {}
 }
 // Wrap menuGame so account-only URLs don't 403 inside the app
 var _origMenuGame = menuGame;
 menuGame = function(url) {
   closeMenu();
-  if (isInAppWebView() && isAppRestrictedUrl(url)) {
-    showOpenInBrowserOverlay(url);
+  if (isAppRestrictedUrl(url)) {
+    // Always try to route through Wix's own router first — it handles
+    // authentication in the mobile app where raw navigation causes 403.
+    try {
+      var u = new URL(url, location.href);
+      window.parent.postMessage({ type: 'orijinz_navigate', url: u.pathname + u.search }, '*');
+    } catch (e) {}
+    // Show the copy-link overlay as a fallback for users who are in a
+    // context where the postMessage navigation doesn't fire (e.g. a truly
+    // standalone WebView with no Wix parent).
+    if (isInAppWebView()) {
+      showOpenInBrowserOverlay(url);
+    }
     return;
   }
   return _origMenuGame(url);
@@ -2708,19 +2717,19 @@ function renderLeaderboard() {
     }
     if (lbSortBy === 'played') {
       players.sort((a, b) => b.played - a.played);
-      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-played">Played</span><span class="lb-col-streak" style="color:var(--text-muted)">Streak</span>';
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-played">Played</span>';
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
       list.innerHTML = players.map((e, i) => {
         const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span><span class="lb-row-streak">' + e.streak + '</span></div>';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span></div>';
       }).join('');
     } else {
       players.sort((a, b) => b.streak - a.streak);
-      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-streak">Streak</span><span class="lb-col-played" style="color:var(--text-muted)">Played</span>';
+      hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-streak">Streak</span>';
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
       list.innerHTML = players.map((e, i) => {
         const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span><span class="lb-row-played">' + e.played + '</span></div>';
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span></div>';
       }).join('');
     }
   }
@@ -2861,8 +2870,9 @@ function resumeTimer() {
   startTimer();
 }
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { pauseTimer(); } else { resumeTimer(); }
+  if (document.hidden) { pauseTimer(); if (!gameOver) saveState(); } else { resumeTimer(); }
 });
+window.addEventListener('pagehide', () => { if (!gameOver) { pauseTimer(); saveState(); } });
 
 // =================================================================
 // INIT
