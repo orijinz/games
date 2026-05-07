@@ -976,6 +976,10 @@
   .lb-entry-tier   { width: 28px; text-align: center; font-size: 1rem; flex-shrink: 0; }
   .lb-entry-played { width: 60px; text-align: right; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 700; flex-shrink: 0; }
   .lb-entry-streak { width: 60px; text-align: right; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+  .lb-pager { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 20px; border-top: 1px solid rgba(30,84,80,0.3); }
+  .lb-pager-btn { background: transparent; border: 1px solid rgba(0,206,184,0.4); border-radius: 6px; color: var(--accent); padding: 6px 18px; font-size: 1.1rem; cursor: pointer; min-width: 44px; }
+  .lb-pager-btn:disabled { opacity: 0.3; cursor: default; }
+  .lb-pager-info { font-size: 0.82rem; color: var(--text-muted); font-family: 'Space Mono', monospace; }
   .lb-empty { padding: 24px; text-align: center; color: var(--text-muted); font-style: italic; font-size: 0.88rem; }
   @media (max-width: 480px) {
 
@@ -1293,6 +1297,7 @@
       <span class="lb-col-tier"></span>
     </div>
     <div id="lbList"></div>
+    <div id="lbPager" class="lb-pager"></div>
   </div>
 </div>
 
@@ -1915,6 +1920,8 @@ function handleLbOverlayClick(e) {
 }
 
 let lbSortField = 'score';
+let lbPage = 0;
+const LB_PAGE_SIZE = 10;
 let lbDateOffset = 0;
 const lbDataCache = {};
 
@@ -1973,6 +1980,7 @@ function loadLbDataForCurrentDate() {
 }
 
 function setLbSort(field) {
+  lbPage = 0;
   lbSortField = field;
   document.querySelectorAll('.lb-sort-tab').forEach(t => t.classList.toggle('active', t.id === 'lbTab-' + field));
   renderLeaderboard();
@@ -2070,7 +2078,9 @@ function renderLeaderboard() {
     all = getAllPlayerStats();
   }
   const sorted = [...all].sort((a, b) => field === 'score' ? (a.score - b.score) : field === 'played' ? (b.played - a.played) : (b.streak - a.streak));
-  if (!sorted.length) { list.innerHTML = '<div class="lb-empty">' + (field === 'score' && lbDateOffset !== 0 ? 'No scores for this date' : 'No results yet. Play and submit your score!') + '</div>'; return; }
+  if (!sorted.length) { list.innerHTML = '<div class="lb-empty">' + (field === 'score' && lbDateOffset !== 0 ? 'No scores for this date' : 'No results yet. Play and submit your score!') + '</div>'; const _p = document.getElementById('lbPager'); if (_p) _p.innerHTML = ''; return; }
+  const _offset = lbPage * LB_PAGE_SIZE;
+  const _paged  = sorted.slice(_offset, _offset + LB_PAGE_SIZE);
   const hdr = document.getElementById('lbListHeader');
   if (field === 'score') {
     if (hdr) hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
@@ -2079,7 +2089,7 @@ function renderLeaderboard() {
   } else {
     if (hdr) hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-streak lb-col-active">Streak</span>';
   }
-  list.innerHTML = sorted.map((e, i) => {
+  list.innerHTML = _paged.map((e, i) => {
     const isMe = e.deviceId === devId;
     const nameDisplay = escHtml(e.name || 'Add your name and it will go here');
     // For the user's own input, fall back to localStorage if Wix has no
@@ -2094,24 +2104,39 @@ function renderLeaderboard() {
       : locValue;
     if (field === 'played') {
       return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
-        '<div class="lb-entry-rank">' + (i+1) + '</div>' +
+        '<div class="lb-entry-rank">' + (_offset + i + 1) + '</div>' +
         '<div class="lb-entry-name">' + nameDisplay + '</div>' +
         '<div class="lb-entry-location">' + locCell + '</div>' +
         '<div class="lb-entry-played">' + e.played + '</div></div>';
     } else if (field === 'streak') {
       return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
-        '<div class="lb-entry-rank">' + (i+1) + '</div>' +
+        '<div class="lb-entry-rank">' + (_offset + i + 1) + '</div>' +
         '<div class="lb-entry-name">' + nameDisplay + '</div>' +
         '<div class="lb-entry-location">' + locCell + '</div>' +
         '<div class="lb-entry-streak">' + e.streak + '</div></div>';
     }
     return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
-      '<div class="lb-entry-rank">' + (i+1) + '</div>' +
+      '<div class="lb-entry-rank">' + (_offset + i + 1) + '</div>' +
       '<div class="lb-entry-name">' + nameDisplay + '</div>' +
       '<div class="lb-entry-location">' + locCell + '</div>' +
       '<div class="lb-entry-score">' + e.score + '</div>' +
       '<div class="lb-entry-tier">' + lbTierEmoji(e.score) + '</div></div>';
   }).join('');
+  _renderLbPager(sorted.length);
+}
+function changeLbPage(delta) {
+  lbPage += delta;
+  renderLeaderboard();
+}
+function _renderLbPager(total) {
+  const pager = document.getElementById('lbPager');
+  if (!pager) return;
+  const pages = Math.ceil(total / LB_PAGE_SIZE);
+  if (pages <= 1) { pager.innerHTML = ''; return; }
+  pager.innerHTML =
+    '<button class="lb-pager-btn" onclick="changeLbPage(-1)"' + (lbPage === 0 ? ' disabled' : '') + '>‹</button>' +
+    '<span class="lb-pager-info">' + (lbPage + 1) + ' / ' + pages + '</span>' +
+    '<button class="lb-pager-btn" onclick="changeLbPage(1)"' + (lbPage >= pages - 1 ? ' disabled' : '') + '>›</button>';
 }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toggleScoreInfo(e) {

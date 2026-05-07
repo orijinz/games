@@ -1343,6 +1343,10 @@
   .lb-row-score  { width: 56px; text-align: right; flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: 0.82rem; font-weight: 700; color: var(--accent); }
   .lb-row-tier   { width: 28px; text-align: center; flex-shrink: 0; font-size: 1rem; }
   .lb-col-active { color: var(--accent) !important; font-weight: 700; }
+  .lb-pager { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 20px; border-top: 1px solid rgba(30,84,80,0.3); }
+  .lb-pager-btn { background: transparent; border: 1px solid rgba(0,206,184,0.4); border-radius: 6px; color: var(--accent); padding: 6px 18px; font-size: 1.1rem; cursor: pointer; min-width: 44px; }
+  .lb-pager-btn:disabled { opacity: 0.3; cursor: default; }
+  .lb-pager-info { font-size: 0.82rem; color: var(--text-muted); font-family: 'Space Mono', monospace; }
   .lb-empty {
     padding: 28px 20px;
     text-align: center;
@@ -1715,6 +1719,7 @@
       <span class="lb-col-tier"></span>
     </div>
     <div id="lbList"></div>
+    <div id="lbPager" class="lb-pager"></div>
   </div>
 </div>
 
@@ -2474,6 +2479,8 @@ function handleLbOverlayClick(e) {
 }
 
 let lbSortBy = 'score';
+let lbPage = 0;
+const LB_PAGE_SIZE = 10;
 let lbDateOffset = 0;
 const lbDataCache = {};
 
@@ -2532,6 +2539,7 @@ function loadLbDataForCurrentDate() {
 }
 
 function setLbSort(field) {
+  lbPage = 0;
   lbSortBy = field;
   ['score','played','streak'].forEach(f => {
     document.getElementById('lbTab-' + f).classList.toggle('active', f === field);
@@ -2606,10 +2614,12 @@ function renderLeaderboard() {
     }
     hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
     if (entries.length === 0) { list.innerHTML = '<div class="lb-empty">' + (lbDateOffset === 0 ? 'No scores yet today \u2014 be the first!' : 'No scores for this date') + '</div>'; return; }
-    list.innerHTML = entries.map((e, i) => {
+    const _offset = lbPage * LB_PAGE_SIZE;
+    const _paged  = entries.slice(_offset, _offset + LB_PAGE_SIZE);
+    list.innerHTML = _paged.map((e, i) => {
       const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
-    }).join('');
+      return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (_offset + i + 1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-score">' + e.score + '</span><span class="lb-row-tier">' + lbTierEmoji(e.score) + '</span></div>';
+    }).join(''); _renderLbPager(entries.length);
 
   } else {
     form.style.display = 'none';
@@ -2627,20 +2637,38 @@ function renderLeaderboard() {
       players.sort((a, b) => b.played - a.played);
       hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-played">Played</span>';
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
-      list.innerHTML = players.map((e, i) => {
+      const _offset = lbPage * LB_PAGE_SIZE;
+      const _paged  = players.slice(_offset, _offset + LB_PAGE_SIZE);
+      list.innerHTML = _paged.map((e, i) => {
         const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span></div>';
-      }).join('');
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (_offset + i + 1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-played lb-col-active">' + e.played + '</span></div>';
+      }).join(''); _renderLbPager(players.length);
     } else {
       players.sort((a, b) => b.streak - a.streak);
       hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location" style="color:var(--gold)">Location</span><span class="lb-col-streak">Streak</span>';
       if (players.length === 0) { list.innerHTML = '<div class="lb-empty">No data yet \u2014 submit a score first!</div>'; return; }
-      list.innerHTML = players.map((e, i) => {
+      const _offset = lbPage * LB_PAGE_SIZE;
+      const _paged  = players.slice(_offset, _offset + LB_PAGE_SIZE);
+      list.innerHTML = _paged.map((e, i) => {
         const mine = e.deviceId === deviceId ? ' lb-mine' : '';
-        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (i+1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span></div>';
-      }).join('');
+        return '<div class="lb-row' + mine + '"><span class="lb-row-rank">' + (_offset + i + 1) + '</span><span class="lb-row-name">' + escHtml(e.name || 'Add your name and it will go here') + '</span><span class="lb-row-location">' + _lbLocCell(e, mine) + '</span><span class="lb-row-streak lb-col-active">' + e.streak + '</span></div>';
+      }).join(''); _renderLbPager(players.length);
     }
   }
+}
+function changeLbPage(delta) {
+  lbPage += delta;
+  renderLeaderboard();
+}
+function _renderLbPager(total) {
+  const pager = document.getElementById('lbPager');
+  if (!pager) return;
+  const pages = Math.ceil(total / LB_PAGE_SIZE);
+  if (pages <= 1) { pager.innerHTML = ''; return; }
+  pager.innerHTML =
+    '<button class="lb-pager-btn" onclick="changeLbPage(-1)"' + (lbPage === 0 ? ' disabled' : '') + '>&#x2039;</button>' +
+    '<span class="lb-pager-info">' + (lbPage + 1) + ' / ' + pages + '</span>' +
+    '<button class="lb-pager-btn" onclick="changeLbPage(1)"' + (lbPage >= pages - 1 ? ' disabled' : '') + '>&#x203a;</button>';
 }
 
 // Inline-leaderboard location editing — when the user types into
