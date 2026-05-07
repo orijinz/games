@@ -907,6 +907,9 @@
   .lb-col-location { flex: 1; min-width: 0; }
   .lb-col-score    { width: 60px; text-align: right; }
   .lb-col-tier     { width: 28px; text-align: center; }
+  .lb-col-played   { width: 60px; text-align: right; }
+  .lb-col-streak   { width: 60px; text-align: right; }
+  .lb-col-active   { color: var(--accent); font-weight: 700; }
 
   .lb-entry {
     display: flex; padding: 12px 20px; align-items: center; gap: 8px;
@@ -969,8 +972,10 @@
     pointer-events: none;
   }
   .lb-entry-location-input:empty:focus:before { opacity: 0.4; }
-  .lb-entry-score { width: 60px; text-align: right; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 700; flex-shrink: 0; }
-  .lb-entry-tier  { width: 28px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+  .lb-entry-score  { width: 60px; text-align: right; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+  .lb-entry-tier   { width: 28px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+  .lb-entry-played { width: 60px; text-align: right; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+  .lb-entry-streak { width: 60px; text-align: right; font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 700; flex-shrink: 0; }
   .lb-empty { padding: 24px; text-align: center; color: var(--text-muted); font-style: italic; font-size: 0.88rem; }
   @media (max-width: 480px) {
 
@@ -1284,7 +1289,7 @@
       <span class="lb-col-rank">#</span>
       <span class="lb-col-name">Player</span>
       <span class="lb-col-location">Location</span>
-      <span class="lb-col-score">Score</span>
+      <span class="lb-col-score lb-col-active">Score</span>
       <span class="lb-col-tier"></span>
     </div>
     <div id="lbList"></div>
@@ -2066,6 +2071,14 @@ function renderLeaderboard() {
   }
   const sorted = [...all].sort((a, b) => field === 'score' ? (a.score - b.score) : field === 'played' ? (b.played - a.played) : (b.streak - a.streak));
   if (!sorted.length) { list.innerHTML = '<div class="lb-empty">' + (field === 'score' && lbDateOffset !== 0 ? 'No scores for this date' : 'No results yet. Play and submit your score!') + '</div>'; return; }
+  const hdr = document.getElementById('lbListHeader');
+  if (field === 'score') {
+    if (hdr) hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-score lb-col-active">Score</span><span class="lb-col-tier"></span>';
+  } else if (field === 'played') {
+    if (hdr) hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-played lb-col-active">Played</span>';
+  } else {
+    if (hdr) hdr.innerHTML = '<span class="lb-col-rank">#</span><span class="lb-col-name">Player</span><span class="lb-col-location">Location</span><span class="lb-col-streak lb-col-active">Streak</span>';
+  }
   list.innerHTML = sorted.map((e, i) => {
     const isMe = e.deviceId === devId;
     const nameDisplay = escHtml(e.name || 'Add your name and it will go here');
@@ -2079,11 +2092,24 @@ function renderLeaderboard() {
     const locCell = isMe
       ? '<div class="lb-entry-location-input" contenteditable="true" data-placeholder="e.g. Seattle, WA" spellcheck="false" oninput="onLeaderboardLocInput(this)" onblur="onLeaderboardLocBlur(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}">' + escHtml(inputValue) + '</div>'
       : locValue;
+    if (field === 'played') {
+      return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
+        '<div class="lb-entry-rank">' + (i+1) + '</div>' +
+        '<div class="lb-entry-name">' + nameDisplay + '</div>' +
+        '<div class="lb-entry-location">' + locCell + '</div>' +
+        '<div class="lb-entry-played">' + e.played + '</div></div>';
+    } else if (field === 'streak') {
+      return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
+        '<div class="lb-entry-rank">' + (i+1) + '</div>' +
+        '<div class="lb-entry-name">' + nameDisplay + '</div>' +
+        '<div class="lb-entry-location">' + locCell + '</div>' +
+        '<div class="lb-entry-streak">' + e.streak + '</div></div>';
+    }
     return '<div class="lb-entry' + (isMe ? ' me' : '') + '">' +
       '<div class="lb-entry-rank">' + (i+1) + '</div>' +
       '<div class="lb-entry-name">' + nameDisplay + '</div>' +
       '<div class="lb-entry-location">' + locCell + '</div>' +
-      '<div class="lb-entry-score">' + (field === 'score' ? e.score : field === 'played' ? e.played : e.streak) + '</div>' +
+      '<div class="lb-entry-score">' + e.score + '</div>' +
       '<div class="lb-entry-tier">' + lbTierEmoji(e.score) + '</div></div>';
   }).join('');
 }
