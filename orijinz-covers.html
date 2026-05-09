@@ -136,11 +136,11 @@
     padding: 20px 22px;
     position: relative;
     overflow: hidden;
-    animation: cardReveal 0.5s ease-out;
+    animation: cardReveal 0.35s ease-out 0.2s both;
   }
   @keyframes cardReveal {
-    from { transform: translateY(8px); }
-    to   { transform: translateY(0); }
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
   .song-card-header {
     display: flex;
@@ -163,13 +163,17 @@
     position: relative;
     width: 100%;
     height: 152px;
+    min-height: 152px;
     overflow: hidden;
     border-radius: 8px;
   }
   .cover-stack > .spotify-embed-wrap {
-    /* iframe always rendered (so audio can play); clipped by parent overflow */
+    /* iframe always rendered (so audio can play); clipped by parent overflow.
+       Reset inherited .spotify-embed-wrap margins that don't apply here. */
     width: 100%;
     height: 100%;
+    margin: 0;
+    border-radius: 0;
   }
   /* MYSTERY CARD — overlays the iframe via absolute positioning.
      Uses the same dark navy + '?' background pattern as .song-card so the
@@ -177,9 +181,9 @@
      (which must stay in the layout so audio can play). */
   .mystery-card {
     position: absolute;
-    inset: 0;
+    top: 0; left: 0;
     width: 100%;
-    height: 100%;
+    height: 152px;
     box-sizing: border-box;
     border-radius: 8px;
     background-color: var(--panel);
@@ -194,17 +198,6 @@
     z-index: 2;
   }
   .mystery-card.hidden { display: none; }
-  /* Inner content fades in *after* the card paints, so the user never sees
-     the play button render in its fallback-font dimensions before web-fonts load. */
-  .mystery-card .eq-bars,
-  .mystery-card .mystery-play-btn {
-    opacity: 0;
-    animation: mysteryContentIn 0.15s ease 0.12s forwards;
-  }
-  @keyframes mysteryContentIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
   .mystery-play-btn {
     -webkit-appearance: none; appearance: none;
     padding: 12px 32px;
@@ -225,6 +218,7 @@
   }
   .mystery-play-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
   .mystery-play-btn:active { transform: translateY(1px); }
+  .mystery-play-btn:disabled { opacity: 1; cursor: default; }
   .mystery-play-btn.playing { background: var(--accent-dark); }
 
   /* REVEALED CARD — replaces the mystery card after "Reveal Song Name".
@@ -234,9 +228,9 @@
      of the Spotify iframe and only one is visible at a time. */
   .revealed-card {
     position: absolute;
-    inset: 0;
+    top: 0; left: 0;
     width: 100%;
-    height: 100%;
+    height: 152px;
     box-sizing: border-box;
     border-radius: 8px;
     background: var(--panel);
@@ -3957,6 +3951,7 @@ function safeInit() {
 document.addEventListener('DOMContentLoaded', safeInit);
 if (document.readyState !== 'loading') safeInit();
 window.addEventListener('resize', fitWordGroups);
+
 </script>
 
 
