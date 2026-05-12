@@ -1822,19 +1822,15 @@ function showOpenInBrowserOverlay(url) {
   }
   ov.querySelector('#openInBrowserUrl').textContent = url;
   ov.style.display = 'flex';
+  // Opportunistic: if the host app's WebView delegate handles _blank → Safari, this works
+  try { window.open(url, '_blank'); } catch (e) {}
 }
 // Wrap menuGame so account-only URLs don't 403 inside the app
 var _origMenuGame = menuGame;
 menuGame = function(url) {
   closeMenu();
-  if (isAppRestrictedUrl(url)) {
-    try {
-      var u = new URL(url, location.href);
-      window.parent.postMessage({ type: 'orijinz_navigate', url: u.pathname + u.search }, '*');
-    } catch (e) {}
-    if (isInAppWebView()) {
-      showOpenInBrowserOverlay(url);
-    }
+  if (isInAppWebView() && isAppRestrictedUrl(url)) {
+    showOpenInBrowserOverlay(url);
     return;
   }
   return _origMenuGame(url);
@@ -2583,9 +2579,8 @@ function resumeTimer() {
   startTimer();
 }
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { pauseTimer(); if (!gameOver) saveState(); } else { resumeTimer(); }
+  if (document.hidden) { pauseTimer(); } else { resumeTimer(); }
 });
-window.addEventListener('pagehide', () => { if (!gameOver) { pauseTimer(); saveState(); } });
 
 // =================================================================
 // INIT
@@ -3262,7 +3257,8 @@ function sendResultToWix(won) {
     definitionUsed:   defShown,
     wrongLetters:     wrongCount,
     wonGame:          won,
-    showOnLeaderboard: showOnLB
+    showOnLeaderboard: showOnLB,
+    location:          (function(){try{return localStorage.getItem('orijinzLocation')||'';}catch(e){return '';}}())
   }, '*');
 }
 

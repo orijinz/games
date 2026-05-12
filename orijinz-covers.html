@@ -2504,7 +2504,8 @@ function sendResultToWix(won) {
     definitionUsed:    (revealSongPenalty > 0),
     wrongLetters:      wrongCount,
     wonGame:           won,
-    showOnLeaderboard: showOnLB
+    showOnLeaderboard: showOnLB,
+    location:          (function(){try{return localStorage.getItem('orijinzLocation')||'';}catch(e){return '';}}())
   }, '*');
 }
 

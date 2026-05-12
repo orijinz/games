@@ -2353,7 +2353,8 @@ function sendResultToWix(won) {
     wrongLetters:      wrongCount,
     clipDuration:      selectedDuration,
     wonGame:           won,
-    showOnLeaderboard: showOnLB
+    showOnLeaderboard: showOnLB,
+    location:          (function(){try{return localStorage.getItem('orijinzLocation')||'';}catch(e){return '';}}())
   }, '*');
 }
 
