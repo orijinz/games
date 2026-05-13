@@ -1019,7 +1019,8 @@
   .toggle-switch input:checked + .toggle-track { background: var(--accent); }
   .toggle-track::before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
   .toggle-switch input:checked + .toggle-track::before { transform: translateX(20px); }
-  .settings-select { background: var(--tile-default); color: var(--text); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; cursor: pointer; max-width: 150px; flex-shrink: 0; }
+  .settings-select { background: #1a2240; color: #e0e8f0; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; cursor: pointer; max-width: 160px; flex-shrink: 0; }
+  .settings-select option { background-color: #1a2240; color: #e0e8f0; }
 
   .stats-hero {
     display: flex;
@@ -1759,10 +1760,10 @@
     <div class="settings-row">
       <div>
         <div class="settings-row-label">My home game</div>
-        <div class="settings-row-desc">Go straight to this game when you open Orijinz Daily</div>
+        <div class="settings-row-desc">Go straight to this game or page when you visit entspire.com or open the Orijinz Daily App</div>
       </div>
       <select id="homeGameSelect" class="settings-select" onchange="saveHomeGameSetting(this.value)">
-        <option value="">&#8212; None &#8212;</option>
+        <option value="">The Orijinz Home Page</option>
       </select>
     </div>
   </div>
@@ -2308,7 +2309,7 @@ function renderHomeGameDropdown(games, currentHome) {
   var sel = document.getElementById('homeGameSelect');
   if (!sel) return;
   var LABELS = { wordsandphrases: 'Words & Phrases', '70ssongs': '70s Songs', covers: 'Covers', movies: 'Movies', quotes: 'Quotes', slogans: 'Slogans' };
-  sel.innerHTML = '<option value="">— None —</option>';
+  sel.innerHTML = '<option value="">The Orijinz Home Page</option>';
   (games || []).forEach(function(gId) {
     var opt = document.createElement('option');
     opt.value = gId;
