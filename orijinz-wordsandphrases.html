@@ -1799,23 +1799,17 @@ function showOpenInBrowserOverlay(url) {
     ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;';
     ov.innerHTML =
       '<div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;max-width:420px;width:100%;padding:24px;color:var(--text);font-family:\'Nunito Sans\',sans-serif;">' +
-        '<div style="font-family:\'Nunito\',sans-serif;font-size:1.1rem;font-weight:900;margin-bottom:10px;">Open in Safari or Chrome</div>' +
-        '<div style="font-size:0.9rem;color:var(--text-muted);line-height:1.5;margin-bottom:14px;">Account pages require your browser sign-in. Tap Open or copy the link and paste it into Safari or Chrome.</div>' +
+        '<div style="font-family:\'Nunito\',sans-serif;font-size:1.1rem;font-weight:900;margin-bottom:10px;">Manage Your Account</div>' +
+        '<div style="font-size:0.9rem;color:var(--text-muted);line-height:1.5;margin-bottom:14px;">Account and subscription pages must be opened in your browser, rather than the App. Copy this link into Edge, Safari, or Chrome — if you are not already signed in you will need to do so.</div>' +
         '<div id="openInBrowserUrl" style="font-family:\'Space Mono\',monospace;font-size:0.78rem;background:rgba(0,0,0,0.3);padding:10px 12px;border-radius:6px;word-break:break-all;color:var(--gold);margin-bottom:16px;"></div>' +
         '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
-          '<button id="openInBrowserOpen" style="padding:9px 16px;background:var(--accent);color:var(--white);border:none;border-radius:6px;font-weight:700;cursor:pointer;">Open</button>' +
-          '<button id="openInBrowserCopy" style="padding:9px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:6px;font-weight:700;cursor:pointer;">Copy Link</button>' +
+          '<button id="openInBrowserCopy" style="padding:9px 16px;background:var(--accent);color:var(--white);border:none;border-radius:6px;font-weight:700;cursor:pointer;">Copy Link</button>' +
           '<button id="openInBrowserClose" style="padding:9px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;">Close</button>' +
         '</div>' +
       '</div>';
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e) { if (e.target === ov) ov.style.display = 'none'; });
     ov.querySelector('#openInBrowserClose').addEventListener('click', function() { ov.style.display = 'none'; });
-    ov.querySelector('#openInBrowserOpen').addEventListener('click', function() {
-      var u = ov.querySelector('#openInBrowserUrl').textContent;
-      try { window.top.open(u, '_blank'); } catch(e) {}
-      try { window.open(u, '_blank'); } catch(e) {}
-    });
     ov.querySelector('#openInBrowserCopy').addEventListener('click', function() {
       var u = ov.querySelector('#openInBrowserUrl').textContent;
       try {
@@ -1831,12 +1825,17 @@ function showOpenInBrowserOverlay(url) {
   ov.querySelector('#openInBrowserUrl').textContent = url;
   ov.style.display = 'flex';
 }
-// Wrap menuGame so account-only URLs don't 403 inside the app
+// Wrap menuGame: in-app WebView shows copy-link overlay (Members Area pages
+// don't accept the app session); in a real browser navigate via Wix router.
 var _origMenuGame = menuGame;
 menuGame = function(url) {
   closeMenu();
   if (isAppRestrictedUrl(url)) {
-    try { var u = new URL(url, location.href); window.parent.postMessage({ type: 'orijinz_navigate', url: u.pathname + u.search }, '*'); } catch(e) {}
+    if (isInAppWebView()) {
+      showOpenInBrowserOverlay(url);
+    } else {
+      try { var u = new URL(url, location.href); window.parent.postMessage({ type: 'orijinz_navigate', url: u.pathname + u.search }, '*'); } catch(e) { window.top.location.href = url; }
+    }
     return;
   }
   return _origMenuGame(url);
