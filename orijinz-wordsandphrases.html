@@ -1836,7 +1836,7 @@ var _origMenuGame = menuGame;
 menuGame = function(url) {
   closeMenu();
   if (isAppRestrictedUrl(url)) {
-    showOpenInBrowserOverlay(url);
+    try { var u = new URL(url, location.href); window.parent.postMessage({ type: 'orijinz_navigate', url: u.pathname + u.search }, '*'); } catch(e) {}
     return;
   }
   return _origMenuGame(url);

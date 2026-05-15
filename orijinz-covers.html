@@ -2077,8 +2077,8 @@ function showOpenInBrowserOverlay(url) {
 var _origMenuGame = menuGame;
 menuGame = function(url) {
   closeMenu();
-  if (isInAppWebView() && isAppRestrictedUrl(url)) {
-    showOpenInBrowserOverlay(url);
+  if (isAppRestrictedUrl(url)) {
+    try { var u = new URL(url, location.href); window.parent.postMessage({ type: 'orijinz_navigate', url: u.pathname + u.search }, '*'); } catch(e) {}
     return;
   }
   return _origMenuGame(url);

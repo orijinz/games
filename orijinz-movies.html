@@ -1076,8 +1076,6 @@
   .toggle-switch input:checked + .toggle-track { background: var(--accent); }
   .toggle-track::before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
   .toggle-switch input:checked + .toggle-track::before { transform: translateX(20px); }
-  .settings-select { background: #1a2240; color: #e0e8f0; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; cursor: pointer; max-width: 160px; flex-shrink: 0; }
-  .settings-select option { background-color: #1a2240; color: #e0e8f0; }
 
   .stats-hero {
     display: flex;
@@ -1621,7 +1619,7 @@
     <div style="position:relative; width:100%; padding-top:56.25%;">
       <div id="ytIframeContainer" style="position:absolute;top:0;left:0;width:100%;height:100%;"></div>
       <!-- Top/bottom black bands — always visible to hide title/info -->
-      <div id="ytBandTop" style="position:absolute;top:0;left:0;right:0;height:24%;background:#000;z-index:2;pointer-events:none;"></div>
+      <div id="ytBandTop" style="position:absolute;top:0;left:0;right:0;height:16%;background:#000;z-index:2;pointer-events:none;"></div>
       <div id="ytBandBot" style="position:absolute;bottom:0;left:0;right:0;height:14%;background:#000;z-index:2;pointer-events:none;"></div>
       <!-- Full black mask with play-button cutout — hides thumbnail until user taps play -->
       <div id="ytMask" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:3;pointer-events:none;">
@@ -1845,16 +1843,6 @@
         <span class="toggle-track"></span>
       </label>
     </div>
-    <div class="stats-section-label">Home Game</div>
-    <div class="settings-row">
-      <div>
-        <div class="settings-row-label">My home game</div>
-        <div class="settings-row-desc">Go straight to this game or page when you visit entspire.com or open the Orijinz Daily App</div>
-      </div>
-      <select id="homeGameSelect" class="settings-select" onchange="saveHomeGameSetting(this.value)">
-        <option value="">The Orijinz Home Page</option>
-      </select>
-    </div>
   </div>
 </div>
 
@@ -2007,27 +1995,21 @@ function showOpenInBrowserOverlay(url) {
     ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;';
     ov.innerHTML =
       '<div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;max-width:420px;width:100%;padding:24px;color:var(--text);font-family:\'Nunito Sans\',sans-serif;">' +
-        '<div style="font-family:\'Nunito\',sans-serif;font-size:1.1rem;font-weight:900;margin-bottom:10px;">Open in Safari or Chrome</div>' +
-        '<div style="font-size:0.9rem;color:var(--text-muted);line-height:1.5;margin-bottom:14px;">Account pages require your browser sign-in. Tap Open or copy the link and paste it into Safari or Chrome.</div>' +
+        '<div style="font-family:\'Nunito\',sans-serif;font-size:1.1rem;font-weight:900;margin-bottom:10px;">Open in your browser</div>' +
+        '<div style="font-size:0.9rem;color:var(--text-muted);line-height:1.5;margin-bottom:14px;">Account pages need to be opened in Safari or Chrome — your browser already has your sign-in. Copy the link below and paste it into your browser.</div>' +
         '<div id="openInBrowserUrl" style="font-family:\'Space Mono\',monospace;font-size:0.78rem;background:rgba(0,0,0,0.3);padding:10px 12px;border-radius:6px;word-break:break-all;color:var(--gold);margin-bottom:16px;"></div>' +
         '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
-          '<button id="openInBrowserOpen" style="padding:9px 16px;background:var(--accent);color:var(--white);border:none;border-radius:6px;font-weight:700;cursor:pointer;">Open</button>' +
-          '<button id="openInBrowserCopy" style="padding:9px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:6px;font-weight:700;cursor:pointer;">Copy Link</button>' +
+          '<button id="openInBrowserCopy" style="padding:9px 16px;background:var(--accent);color:var(--white);border:none;border-radius:6px;font-weight:700;cursor:pointer;">Copy Link</button>' +
           '<button id="openInBrowserClose" style="padding:9px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;">Close</button>' +
         '</div>' +
       '</div>';
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e) { if (e.target === ov) ov.style.display = 'none'; });
     ov.querySelector('#openInBrowserClose').addEventListener('click', function() { ov.style.display = 'none'; });
-    ov.querySelector('#openInBrowserOpen').addEventListener('click', function() {
-      var u = ov.querySelector('#openInBrowserUrl').textContent;
-      try { window.top.open(u, '_blank'); } catch(e) {}
-      try { window.open(u, '_blank'); } catch(e) {}
-    });
     ov.querySelector('#openInBrowserCopy').addEventListener('click', function() {
       var u = ov.querySelector('#openInBrowserUrl').textContent;
       try {
-        navigator.clipboard.writeText(u).then(function() { showToast('Link copied — paste in Safari or Chrome', 2500); });
+        navigator.clipboard.writeText(u).then(function() { showToast('Link copied — paste in your browser', 2500); });
       } catch (e) {
         var range = document.createRange();
         range.selectNode(ov.querySelector('#openInBrowserUrl'));
@@ -2044,7 +2026,13 @@ var _origMenuGame = menuGame;
 menuGame = function(url) {
   closeMenu();
   if (isAppRestrictedUrl(url)) {
-    showOpenInBrowserOverlay(url);
+    try {
+      var u = new URL(url, location.href);
+      window.parent.postMessage({ type: 'orijinz_navigate', url: u.pathname + u.search }, '*');
+    } catch (e) {}
+    if (isInAppWebView()) {
+      showOpenInBrowserOverlay(url);
+    }
     return;
   }
   return _origMenuGame(url);
@@ -2368,7 +2356,6 @@ function openSettings() {
   const cb2 = document.getElementById('settingNativeKeyboard'); if (cb2) cb2.checked = localStorage.getItem('nativeKeyboard') === 'true';
   const kbSection = document.getElementById('keyboardSettingsSection');
   if (kbSection) kbSection.style.display = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? '' : 'none';
-  requestHomeOptions();
   overlay.classList.add('open');
   requestAnimationFrame(() => overlay.classList.add('visible'));
 }
@@ -2387,27 +2374,6 @@ function handleSettingsOverlayClick(e) {
 function saveNativeKeyboardSetting(val) {
   localStorage.setItem('nativeKeyboard', val ? 'true' : 'false');
   applyKeyboardMode();
-}
-var _homeGameOptions = null;
-function requestHomeOptions() {
-  try { window.parent.postMessage({ type: 'orijinz_request_home_options' }, '*'); } catch(e) {}
-}
-function renderHomeGameDropdown(games, currentHome) {
-  var sel = document.getElementById('homeGameSelect');
-  if (!sel) return;
-  var LABELS = { wordsandphrases: 'Words & Phrases', '70ssongs': '70s Songs', covers: 'Covers', movies: 'Movies', quotes: 'Quotes', slogans: 'Slogans' };
-  sel.innerHTML = '<option value="">The Orijinz Home Page</option>';
-  (games || []).forEach(function(gId) {
-    var opt = document.createElement('option');
-    opt.value = gId;
-    opt.textContent = LABELS[gId] || gId;
-    if (gId === currentHome) opt.selected = true;
-    sel.appendChild(opt);
-  });
-}
-function saveHomeGameSetting(gameId) {
-  try { localStorage.setItem('orijinzHomeGame', gameId || ''); } catch(e) {}
-  try { window.parent.postMessage({ type: 'orijinz_set_home', gameId: gameId || '' }, '*'); } catch(e) {}
 }
 function applyKeyboardMode() {
   const native  = localStorage.getItem('nativeKeyboard') === 'true';
@@ -2474,8 +2440,7 @@ function sendResultToWix(won) {
     wrongLetters:      wrongCount,
     trailerDuration:   selectedDuration,
     wonGame:           won,
-    showOnLeaderboard: showOnLB,
-    location:          (function(){try{return localStorage.getItem('orijinzLocation')||'';}catch(e){return '';}}())
+    showOnLeaderboard: showOnLB
   }, '*');
 }
 
@@ -2519,9 +2484,6 @@ window.addEventListener('message', function(event) {
     document.getElementById('allGamesLoading').style.display = 'none';
     document.getElementById('allGamesContent').style.display = '';
     renderAllGames();
-  } else if (event.data.type === 'orijinz_home_options') {
-    _homeGameOptions = event.data;
-    renderHomeGameDropdown(event.data.subscribedGames, event.data.currentHome);
   }
 });
 
