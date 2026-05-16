@@ -1759,7 +1759,7 @@ function isInAppWebView() {
   // Android WebView: ' wv)' token
   if (/Android/.test(ua) && /; wv\)/.test(ua)) return true;
   // Common app-injected hints (in case the host app brands its UA)
-  if (/Orijinz|Entspire/i.test(ua)) return true;
+  if (/Orijinz|Entspire|Convertify/i.test(ua)) return true;
   return false;
 }
 // Debug helper: triple-tap the page header to see the User-Agent — useful to
