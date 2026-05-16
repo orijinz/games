@@ -1996,17 +1996,11 @@ function menuGame(url)   { closeMenu(); try { window.top.location.href = url; } 
 // --- In-app WebView detection + fallback for Wix members-only pages (403 fix) ---
 function isInAppWebView() {
   var ua = navigator.userAgent || '';
-  // iOS: real browsers identify themselves with Version/, CriOS/, FxiOS/, EdgiOS/, OPiOS/, or YaBrowser/.
-  // A WKWebView embedded in an app has *none* of these tokens.
+  // iOS: real Safari always has navigator.standalone defined (false in browser, true as PWA).
+  // A native-app WKWebView (e.g. Wix iOS app) has navigator.standalone === undefined.
   if (/iPhone|iPad|iPod/.test(ua)) {
-    var isRealIOSBrowser =
-      /Version\//.test(ua) ||
-      /CriOS\//.test(ua)   ||
-      /FxiOS\//.test(ua)   ||
-      /EdgiOS\//.test(ua)  ||
-      /OPiOS\//.test(ua)   ||
-      /YaBrowser\//.test(ua);
-    if (!isRealIOSBrowser) return true;
+    if (/CriOS\//.test(ua) || /FxiOS\//.test(ua) || /EdgiOS\//.test(ua) || /OPiOS\//.test(ua)) return false;
+    return typeof navigator.standalone === 'undefined';
   }
   // Android WebView: ' wv)' token
   if (/Android/.test(ua) && /; wv\)/.test(ua)) return true;
