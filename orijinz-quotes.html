@@ -782,6 +782,38 @@
   .settings-select { background: #1a2240; color: #e0e8f0; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; cursor: pointer; max-width: 192px; flex-shrink: 0; }
   .settings-select option { background-color: #1a2240; color: #e0e8f0; }
 
+  /* HOME GAME TIP */
+  #homeGameTip {
+    position: fixed;
+    top: 72px;
+    left: 16px;
+    background: #f5c842;
+    color: #1a1a2e;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    max-width: 230px;
+    line-height: 1.5;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.45);
+    z-index: 10000;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.35s, transform 0.35s;
+    pointer-events: none;
+  }
+  #homeGameTip.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  #homeGameTip::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 22px;
+    border: 7px solid transparent;
+    border-bottom-color: #f5c842;
+    border-top: 0;
+  }
+
   .stats-section-label {
     font-family: 'Space Mono', monospace; font-size: 0.58rem;
     letter-spacing: 0.2em; text-transform: uppercase;
@@ -1042,6 +1074,7 @@
   <div class="logo"><span class="icon-o"><span class="o-shadow">O</span><span class="o-mid">O</span><span class="o-top">O</span></span><span class="logo-brand">rijinz</span><span class="logo-spacer"></span><span class="logo-daily">Daily</span></div>
   <div class="header-sub">Read the quote. Guess the source.</div>
 </header>
+<div id="homeGameTip"></div>
 
 <!-- Side menu -->
 <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
@@ -2930,6 +2963,29 @@ if (document.readyState !== 'loading') safeInit();
 window.addEventListener('blur',  () => document.body.classList.add('page-blur'));
 window.addEventListener('focus', () => document.body.classList.remove('page-blur'));
 window.addEventListener('resize', fitWordGroups);
+
+// One-time home game tip for new players
+(function() {
+  if (localStorage.getItem('orijinzSeenHomeTip') || localStorage.getItem('orijinzHomeGame')) return;
+  var tip = document.getElementById('homeGameTip');
+  if (!tip) return;
+  tip.innerHTML = 'Tip: Open <strong>Menu&nbsp;&#8250; Settings</strong> to set a Home Game — jump straight here every visit.';
+  var dismissTimer;
+  function dismiss() {
+    clearTimeout(dismissTimer);
+    tip.classList.remove('visible');
+    localStorage.setItem('orijinzSeenHomeTip', '1');
+    tip.addEventListener('transitionend', function() { tip.remove(); }, { once: true });
+  }
+  setTimeout(function() {
+    tip.classList.add('visible');
+    dismissTimer = setTimeout(dismiss, 9000);
+  }, 2500);
+  tip.addEventListener('click', dismiss);
+  document.addEventListener('click', function(e) {
+    if (tip.classList.contains('visible') && !tip.contains(e.target)) dismiss();
+  });
+})();
 </script>
 
 <!-- Settings modal -->
