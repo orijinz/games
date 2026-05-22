@@ -2742,6 +2742,13 @@ document.addEventListener('visibilitychange', () => {
 // =================================================================
 // INIT
 // =================================================================
+if (new URLSearchParams(location.search).get('reset') === '1') {
+  ['orijinzBooksState', 'orijinzBooksStats', 'orijinzBooksLeaderboard'].forEach(function(k) {
+    try { localStorage.removeItem(k); } catch(e) {}
+  });
+  location.replace(location.pathname);
+}
+
 function safeGetState() {
   try { return JSON.parse(localStorage.getItem('orijinzBooksState') || '{}'); } catch(e) { return {}; }
 }
