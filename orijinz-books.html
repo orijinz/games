@@ -1821,13 +1821,6 @@
         <option value="">The Orijinz Home Page</option>
       </select>
     </div>
-    <div class="settings-row">
-      <div>
-        <div class="settings-row-label">Reset today's game</div>
-        <div class="settings-row-desc">Clear your local progress so you can replay today's puzzle</div>
-      </div>
-      <button class="settings-btn-minor" onclick="resetTodayLocal()">Reset</button>
-    </div>
   </div>
 </div>
 
@@ -1925,7 +1918,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(
 function lockScroll() { document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
 function unlockScroll() { document.documentElement.style.overflow = ''; document.body.style.overflow = ''; }
 
-function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
+function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com/?home=1'; } catch(e) { window.location.href = 'https://www.entspire.com/?home=1'; } }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }

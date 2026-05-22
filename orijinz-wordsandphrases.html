@@ -1745,7 +1745,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(
 function lockScroll() { document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
 function unlockScroll() { document.documentElement.style.overflow = ''; document.body.style.overflow = ''; }
 
-function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com'; } catch(e) { window.location.href = 'https://www.entspire.com'; } }
+function menuHome()     { closeMenu(); try { window.top.location.href = 'https://www.entspire.com/?home=1'; } catch(e) { window.location.href = 'https://www.entspire.com/?home=1'; } }
 function menuHelp()     { closeMenu(); setTimeout(openHelp, 320); }
 function menuStats()    { closeMenu(); setTimeout(openStats, 320); }
 function menuSettings() { closeMenu(); setTimeout(openSettings, 320); }
