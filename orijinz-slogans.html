@@ -882,6 +882,10 @@ body.page-blur .letter-tile.active {
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       Words &amp; Phrases
     </button>
+    <button class="menu-item" onclick="menuGame('https://www.entspire.com/odbooks')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Books
+    </button>
     <button class="menu-item" onclick="menuGame('https://www.entspire.com/the-card-games')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       Our Card Games
@@ -2036,6 +2040,7 @@ const AG_GAMES = {
   quotes: { label: 'Quotes', emoji: '\uD83D\uDCAC', color: '#00CEB8' },
   slogans: { label: 'Slogans', emoji: '\uD83D\uDCE2', color: '#FF8820' },
   movies: { label: 'Movies', emoji: '\uD83C\uDFAC', color: '#9AAAB8' },
+  books: { label: 'Books', emoji: '\uD83D\uDCDA', color: '#C4774A' },
 };
 
 function switchStatsTab(tab) {
@@ -2217,7 +2222,7 @@ function requestHomeOptions() {
 function renderHomeGameDropdown(games, currentHome) {
   var sel = document.getElementById('homeGameSelect');
   if (!sel) return;
-  var LABELS = { wordsandphrases: 'Words & Phrases', '70ssongs': '70s Songs', covers: 'Covers', movies: 'Movies', quotes: 'Quotes', slogans: 'Slogans' };
+  var LABELS = { wordsandphrases: 'Words & Phrases', '70ssongs': '70s Songs', covers: 'Covers', movies: 'Movies', quotes: 'Quotes', slogans: 'Slogans', books: 'Books' };
   sel.innerHTML = '<option value="">The Orijinz Home Page</option>';
   (games || []).forEach(function(gId) {
     var opt = document.createElement('option');
