@@ -2762,6 +2762,7 @@ function resetTodayLocal() {
   ['orijinzBooksState', 'orijinzBooksStats', 'orijinzBooksLeaderboard'].forEach(function(k) {
     try { localStorage.removeItem(k); } catch(e) {}
   });
+  try { localStorage.setItem('orijinzBooksSkipWixCheck', '1'); } catch(e) {}
   location.reload();
 }
 
@@ -2829,7 +2830,9 @@ function initGame() {
   updateCurrentInputDisplay();
 
   // Always check with Wix if current member has played (handles user switching on same device)
-  if (safeGetState().devPuzzleIndex === undefined) {
+  var skipWixCheck = false;
+  try { skipWixCheck = localStorage.getItem('orijinzBooksSkipWixCheck') === '1'; localStorage.removeItem('orijinzBooksSkipWixCheck'); } catch(e) {}
+  if (!skipWixCheck && safeGetState().devPuzzleIndex === undefined) {
     var pd = new Date();
     var pdStr = pd.getFullYear() + '-' + String(pd.getMonth()+1).padStart(2,'0') + '-' + String(pd.getDate()).padStart(2,'0');
     window.parent.postMessage({ type: 'orijinz_check_played', game: 'books', puzzleDate: pdStr }, '*');
