@@ -2096,13 +2096,13 @@ function openStats() {
         '<div class="stats-row"><span class="stats-label">Time</span><span class="stats-value">' + timeStr + '</span></div>' +
         '<div class="stats-row"><span class="stats-label">Score</span><span class="stats-value">' + scoreStr + '</span></div>' +
         '<div class="stats-row"><span class="stats-label">Letters revealed</span><span class="stats-value">' + (lg.reveals || 0) + '</span></div>' +
-        '<div class="stats-row"><span class="stats-label">Trailer watched (sec)</span><span class="stats-value">' + (lg.listen || 0) + '</span></div>' +
+        '<div class="stats-row"><span class="stats-label">Audio listened (sec)</span><span class="stats-value">' + (lg.listen || 0) + '</span></div>' +
         '<div class="stats-row"><span class="stats-label">Wrong letters</span><span class="stats-value">' + (lg.wrong || 0) + '</span></div>';
     }
   }
 
   switchStatsTab('this');
-  if (!allGamesData) requestAllGamesData();
+  requestAllGamesData();
 
   const overlay = document.getElementById('statsOverlay');
   overlay.classList.add('open');
@@ -2137,7 +2137,7 @@ function switchStatsTab(tab) {
   var hidden = 'position:absolute;visibility:hidden;pointer-events:none;height:0;overflow:hidden;';
   ['statsTabThis','statsTabToday','statsTabAll'].forEach(function(id,i) { var t = ['this','today','all'][i]; document.getElementById(id).style.cssText = (t===tab) ? '' : hidden; });
   ['stTabThis','stTabToday','stTabAll'].forEach(function(id,i) { var t = ['this','today','all'][i]; document.getElementById(id).classList.toggle('active', t===tab); });
-  if (tab === 'all' && allGamesData) renderAllGames();
+  if ((tab === 'all' || tab === 'today') && allGamesData) renderAllGames();
   // Force iOS to recalculate scroll height after tab switch
   var panel = document.getElementById('statsPanel');
   if (panel) { panel.scrollTop = 0; panel.style.overflowY = 'hidden'; panel.offsetHeight; panel.style.overflowY = 'scroll'; }
