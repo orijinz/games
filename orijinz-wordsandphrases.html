@@ -3422,7 +3422,16 @@ function safeInit() {
 document.addEventListener('DOMContentLoaded', safeInit);
 if (document.readyState !== 'loading') safeInit();
 window.addEventListener('blur',  () => document.body.classList.add('page-blur'));
-window.addEventListener('focus', () => document.body.classList.remove('page-blur'));
+window.addEventListener('focus', () => {
+  document.body.classList.remove('page-blur');
+  if (!gameOver) { cursorPos = 0; setTimeout(() => updateCurrentInputDisplay(), 50); }
+});
+setInterval(() => {
+  if (!gameOver && document.activeElement === document.body) {
+    var tiles = document.querySelectorAll('.letter-tile.active');
+    if (tiles.length === 0) { cursorPos = 0; updateCurrentInputDisplay(); }
+  }
+}, 500);
 window.addEventListener('resize', fitWordGroups);
 
 // =================================================================
