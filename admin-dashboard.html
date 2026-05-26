@@ -94,6 +94,8 @@
   <h1>Orijinz Admin</h1>
   <div class="controls">
     <select id="presetRange" onchange="applyPreset()">
+      <option value="today">Today</option>
+      <option value="yesterday">Yesterday</option>
       <option value="7">Last 7 days</option>
       <option value="30" selected>Last 30 days</option>
       <option value="90">Last 90 days</option>
@@ -339,9 +341,16 @@ function setDefaultDates() {
 function applyPreset() {
   const v = document.getElementById('presetRange').value;
   if (v === '0') return;
-  const end   = new Date();
-  const start = new Date();
-  start.setDate(start.getDate() - (parseInt(v) - 1));
+  const today = new Date();
+  let start = new Date(), end = new Date();
+  if (v === 'today') {
+    // start and end both = today (already set)
+  } else if (v === 'yesterday') {
+    start.setDate(today.getDate() - 1);
+    end.setDate(today.getDate() - 1);
+  } else {
+    start.setDate(today.getDate() - (parseInt(v) - 1));
+  }
   document.getElementById('endDate').value   = fmtDate(end);
   document.getElementById('startDate').value = fmtDate(start);
   requestData();
