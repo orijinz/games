@@ -2339,16 +2339,16 @@ function sendResultToWix(won) {
   const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
   window.parent.postMessage({
     type:              'orijinz_result',
-    game:              'movies',
+    game:              'books',
     puzzleNumber:      puzzleIndex,
     puzzleAnswer:      answer,
     puzzleDate:        (function(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})(),
     score,
     timeSecs:          elapsedSeconds,
     lettersRevealed:   revealCount,
-    definitionUsed:    false,
+    definitionUsed:    hintShown,
     wrongLetters:      wrongCount,
-    trailerDuration:   selectedDuration,
+    clipDuration:      listenPenalty > 0 ? selectedDuration : 0,
     wonGame:           won,
     showOnLeaderboard: showOnLB
   }, '*');
