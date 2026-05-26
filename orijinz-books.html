@@ -1897,6 +1897,7 @@
 // MENU
 // =================================================================
 function openMenu() {
+  lockScroll();
   var panel = document.getElementById('menuPanel');
   panel.scrollTop = 0;
   document.querySelectorAll('.lb-overlay, .stats-overlay').forEach(function(el) { el.style.pointerEvents = 'none'; });
@@ -1905,6 +1906,7 @@ function openMenu() {
   requestAnimationFrame(function() { overlay.classList.add('visible'); panel.classList.add('open'); });;
 }
 function closeMenu() {
+  unlockScroll();
   document.querySelectorAll('.lb-overlay, .stats-overlay').forEach(function(el) { el.style.pointerEvents = ''; });
   var overlay = document.getElementById('menuOverlay');
   var panel = document.getElementById('menuPanel');
