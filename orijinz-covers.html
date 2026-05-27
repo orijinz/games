@@ -181,9 +181,7 @@
      (which must stay in the layout so audio can play). */
   .mystery-card {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 152px;
+    top: 0; left: 0; right: 0; bottom: 0;
     box-sizing: border-box;
     border-radius: 8px;
     background-color: var(--panel);
@@ -4032,11 +4030,11 @@ window.addEventListener('resize', fitWordGroups);
   function dismiss() {
     clearTimeout(dismissTimer);
     tip.classList.remove('visible');
-    localStorage.setItem('orijinzSeenHomeTip', '1');
     tip.addEventListener('transitionend', function() { tip.remove(); }, { once: true });
   }
   setTimeout(function() {
     tip.classList.add('visible');
+    localStorage.setItem('orijinzSeenHomeTip', '1');
     dismissTimer = setTimeout(dismiss, 9000);
   }, 2500);
   tip.addEventListener('click', dismiss);
