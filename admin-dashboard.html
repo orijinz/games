@@ -375,7 +375,7 @@ function showTab(name) {
 // ============================================================
 // HELPERS
 // ============================================================
-function fmtDate(d)     { return d.toISOString().slice(0, 10); }
+function fmtDate(d)     { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 function dateKey(item)  { return new Date(item.puzzleDate).toISOString().slice(0, 10); }
 function avg(arr)       { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
 function pct(n, d)      { return d > 0 ? Math.round((n / d) * 100) + '%' : '--'; }
