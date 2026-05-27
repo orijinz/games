@@ -357,9 +357,9 @@ function applyPreset() {
 }
 
 function requestData() {
-  const start = document.getElementById('startDate').value;
-  const end   = document.getElementById('endDate').value;
-  window.parent.postMessage({ type: 'orijinz_admin_request', start, end }, '*');
+  const startDate = document.getElementById('startDate').value;
+  const endDate   = document.getElementById('endDate').value;
+  window.parent.postMessage({ type: 'orijinz_admin_request', startDate, endDate }, '*');
 }
 
 // ============================================================
