@@ -2515,6 +2515,7 @@ function sendResultToWix(won) {
 window.addEventListener('message', function(event) {
   if (!event.data) return;
   if (event.data.type === 'orijinz_played_status') {
+    if (event.data.memberName) localStorage.setItem('orijinzSeenHomeTip', '1');
     if (event.data.played && !gameOver) {
       var r = event.data.result;
       gameOver = true; stopTimer();
@@ -3890,11 +3891,12 @@ window.addEventListener('resize', fitWordGroups);
   function dismiss() {
     clearTimeout(dismissTimer);
     tip.classList.remove('visible');
-    localStorage.setItem('orijinzSeenHomeTip', '1');
     tip.addEventListener('transitionend', function() { tip.remove(); }, { once: true });
   }
   setTimeout(function() {
+    if (localStorage.getItem('orijinzSeenHomeTip') || localStorage.getItem('orijinzHomeGame')) return;
     tip.classList.add('visible');
+    localStorage.setItem('orijinzSeenHomeTip', '1');
     dismissTimer = setTimeout(dismiss, 9000);
   }, 2500);
   tip.addEventListener('click', dismiss);
