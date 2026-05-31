@@ -1904,7 +1904,7 @@
       <p style="margin:0 0 16px;">Read the synopsis of a movie and guess the film title by typing in your answer &#8212; a timer starts when you begin.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">What is the Watch Trailer button?</p>
-      <p style="margin:0 0 16px;">Tap <span class="btn-ref">&#x25B6; Watch Trailer</span> to see a clip from the film. Choose 20, 25, or 30 seconds and watch as many times as you like.</p>
+      <p style="margin:0 0 16px;">Tap <span class="btn-ref">&#x25B6; Watch Trailer</span> to see a clip from the film. Choose 20, 25, or 30 seconds and watch as many times as you like. YouTube sometimes inserts ads before the trailer. The screen stays covered and the timer pauses during ad play.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">What is Reveal a Letter?</p>
       <p style="margin:0 0 16px;">Tap <span class="btn-ref">&#x1F521; Reveal a Letter</span> and a random letter from the film title is shown. You can reveal as many letters as you like &#8212; even the full answer if you&#39;re stuck.</p>
@@ -3514,20 +3514,17 @@ function watchTrailer() {
         onStateChange: function(e) {
           // wait until we've seen unstarted/paused/cued — then the next PLAYING is a real user press
           if (e.data === YT.PlayerState.UNSTARTED || e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.CUED) seenIdle = true;
-          // Always clear mask when video plays
-          if (e.data === YT.PlayerState.PLAYING) {
-            var mask = document.getElementById('ytMask');
-            if (mask) mask.style.display = 'none';
-          }
           if (seenIdle && e.data === YT.PlayerState.PLAYING && !videoTimer) {
             var dur = 0;
             try { dur = ytPlayer && ytPlayer.getDuration ? ytPlayer.getDuration() : 0; } catch(ex) {}
             if (dur > 0) {
-              // Actual clip is playing — start the countdown
+              // Actual clip is playing — lift the mask and start the countdown
               if (adWatchdog) { clearInterval(adWatchdog); adWatchdog = null; }
+              var mask = document.getElementById('ytMask');
+              if (mask) mask.style.display = 'none';
               startTimer();
             } else {
-              // getDuration() === 0 means a pre-roll ad is playing; hold the timer
+              // getDuration() === 0 means a pre-roll ad is playing; keep mask up, hold the timer
               if (timerEl) timerEl.textContent = 'Ad playing — timer paused';
               if (!adWatchdog) {
                 adWatchdog = setInterval(function() {
@@ -3536,6 +3533,8 @@ function watchTrailer() {
                   try { st = ytPlayer.getPlayerState(); d = ytPlayer.getDuration(); } catch(ex) { return; }
                   if (st === YT.PlayerState.PLAYING && d > 0 && !videoTimer) {
                     clearInterval(adWatchdog); adWatchdog = null;
+                    var mask2 = document.getElementById('ytMask');
+                    if (mask2) mask2.style.display = 'none';
                     startTimer();
                   }
                 }, 500);
