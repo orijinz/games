@@ -257,11 +257,6 @@
     background: rgba(200,146,42,0.08);
     box-shadow: 0 0 0 3px rgba(200,146,42,0.2);
   }
-  body.page-blur .letter-tile.active {
-    border-color: var(--letter-border);
-    background: transparent;
-    box-shadow: none;
-  }
   .timer-display {
     font-family: 'Space Mono', monospace;
     font-size: 1.1rem;
@@ -3438,6 +3433,7 @@ function launchConfetti() {
 // CLUES
 // =================================================================
 let videoTimer = null;
+let adWatchdog = null;
 let hintShown  = false;
 let ytPlayer   = null;
 let ytApiReady = false;
@@ -3524,10 +3520,31 @@ function watchTrailer() {
             if (mask) mask.style.display = 'none';
           }
           if (seenIdle && e.data === YT.PlayerState.PLAYING && !videoTimer) {
-            startTimer();
+            var dur = 0;
+            try { dur = ytPlayer && ytPlayer.getDuration ? ytPlayer.getDuration() : 0; } catch(ex) {}
+            if (dur > 0) {
+              // Actual clip is playing — start the countdown
+              if (adWatchdog) { clearInterval(adWatchdog); adWatchdog = null; }
+              startTimer();
+            } else {
+              // getDuration() === 0 means a pre-roll ad is playing; hold the timer
+              if (timerEl) timerEl.textContent = 'Ad playing — timer paused';
+              if (!adWatchdog) {
+                adWatchdog = setInterval(function() {
+                  if (!ytPlayer) { clearInterval(adWatchdog); adWatchdog = null; return; }
+                  var st = -1, d = 0;
+                  try { st = ytPlayer.getPlayerState(); d = ytPlayer.getDuration(); } catch(ex) { return; }
+                  if (st === YT.PlayerState.PLAYING && d > 0 && !videoTimer) {
+                    clearInterval(adWatchdog); adWatchdog = null;
+                    startTimer();
+                  }
+                }, 500);
+              }
+            }
           }
         },
         onError: function(e) {
+          if (adWatchdog) { clearInterval(adWatchdog); adWatchdog = null; }
           if (videoTimer) { clearInterval(videoTimer); videoTimer = null; }
           try { if (ytPlayer) ytPlayer.destroy(); } catch(ex) {} ytPlayer = null;
           const ytUrl = 'https://www.youtube.com/watch?v=' + puzzle.youtube_id;
@@ -3552,6 +3569,7 @@ function watchTrailer() {
 }
 
 function stopClip() {
+  if (adWatchdog) { clearInterval(adWatchdog); adWatchdog = null; }
   if (videoTimer) { clearInterval(videoTimer); videoTimer = null; }
   if (ytPlayer) { try { ytPlayer.destroy(); } catch(e) {} ytPlayer = null; }
   const c = document.getElementById('ytIframeContainer');
