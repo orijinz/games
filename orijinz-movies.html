@@ -2021,7 +2021,7 @@ function isInAppWebView() {
     }, 600);
   }, true);
 })();
-var APP_RESTRICTED_PATHS = ['/account-settings', '/profile', '/my-subscriptions', '/subscribe', '/account/my-account'];
+var APP_RESTRICTED_PATHS = ['/account-settings', '/profile', '/my-subscriptions', '/account/my-account'];
 function isAppRestrictedUrl(url) {
   try {
     var u = new URL(url, location.href);
