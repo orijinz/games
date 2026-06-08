@@ -3496,7 +3496,11 @@ function watchTrailer() {
               if (mask) mask.style.display = 'none';
               if (adOverlay) adOverlay.style.display = 'none';
               if (seenIdle && !videoTimer) { startTimer(); }
+              pauseTimer(); // pause game timer while trailer is playing
             }
+          }
+          if (e.data === YT.PlayerState.PAUSED && seenIdle) {
+            resumeTimer(); // game timer resumes if user pauses the trailer
           }
         },
         onError: function(e) {
@@ -3526,6 +3530,7 @@ function watchTrailer() {
 function stopClip() {
   if (videoTimer) { clearInterval(videoTimer); videoTimer = null; }
   if (ytPlayer) { try { ytPlayer.destroy(); } catch(e) {} ytPlayer = null; }
+  resumeTimer(); // resume game timer when trailer ends or is dismissed
   const c = document.getElementById('ytIframeContainer');
   if (c) c.innerHTML = '';
   document.getElementById('videoCard').style.display = 'none';
