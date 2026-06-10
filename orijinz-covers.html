@@ -220,6 +220,19 @@
   .mystery-play-btn:active { transform: translateY(1px); }
   .mystery-play-btn:disabled { opacity: 1; cursor: default; }
   .mystery-play-btn.playing { background: var(--accent-dark); }
+  /* Duration picker */
+  .duration-pick {
+    display: flex; align-items: center; justify-content: center; margin-top: 2px;
+  }
+  .dur-opt {
+    background: transparent; border: none; padding: 2px 10px;
+    font-family: 'Space Mono', monospace; font-size: 0.72rem;
+    color: var(--text-muted); cursor: pointer; border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .dur-opt.selected { color: var(--gold); font-weight: 700; }
+  .dur-opt:hover:not(.selected) { color: var(--text); }
+  .dur-sep { color: var(--border); font-size: 0.8rem; }
 
   /* REVEALED CARD — replaces the mystery card after "Reveal Song Name".
      Shows album art (left), song title + cover artist (middle), and a
@@ -1679,6 +1692,13 @@
         <div class="mystery-card" id="mysteryCard">
           <div class="eq-bars" id="eqBars"><span></span><span></span><span></span><span></span><span></span></div>
           <button class="mystery-play-btn" id="mysteryPlayBtn" onclick="mysteryPlayClick()" disabled>&#x25B6; Loading&hellip;</button>
+          <div class="duration-pick" id="durationPick">
+            <button class="dur-opt" id="dur10" onclick="selectDuration(10)">10s</button>
+            <span class="dur-sep">&#xB7;</span>
+            <button class="dur-opt" id="dur20" onclick="selectDuration(20)">20s</button>
+            <span class="dur-sep">&#xB7;</span>
+            <button class="dur-opt selected" id="dur30" onclick="selectDuration(30)">30s</button>
+          </div>
         </div>
         <div class="revealed-card hidden" id="revealedCard">
           <img class="revealed-art" id="revealedArt" alt="" />
@@ -1744,8 +1764,9 @@
           <div class="score-popover-title">How scores work &mdash; lower is better</div>
           <table class="score-breakdown">
             <tr><td>&#x23F1;</td><td>Your time +</td></tr>
-            <tr><td>&#x1F521;</td><td>15s per letter revealed +</td></tr>
+            <tr><td>&#x1F3A7;</td><td>Seconds listened doubled +</td></tr>
             <tr><td>&#x1F50D;</td><td>30s if Reveal Song Name used +</td></tr>
+            <tr><td>&#x1F521;</td><td>15s per letter revealed +</td></tr>
             <tr><td>&#x26A0;&#xFE0F;</td><td>5s per wrong letter</td></tr>
           </table>
         </div>
@@ -1822,7 +1843,7 @@
     <!-- Scoring rubric -->
     <div class="lb-rubric">
       <div class="lb-rubric-title">Scoring &mdash; Lower is Better</div>
-      <div class="lb-rubric-penalty" style="margin-bottom:10px; margin-top:0; font-style:normal; color:var(--text-muted);">Your score = Your time + 15 seconds per letter revealed + 30 seconds if Reveal Song Name is used + 5 seconds per wrong letter</div>
+      <div class="lb-rubric-penalty" style="margin-bottom:10px; margin-top:0; font-style:normal; color:var(--text-muted);">Your score = Your time + seconds listened doubled + 30s if Reveal Song Name used + 15s per letter revealed + 5s per wrong letter</div>
       <div class="lb-rubric-grid">
         <div class="lb-rubric-row"><span>&#x1F3C6; Legendary</span><span>&lt; 20</span></div>
         <div class="lb-rubric-row"><span>&#x1F30C; Otherworldly</span><span>&lt; 40</span></div>
@@ -1917,7 +1938,7 @@
       <p style="margin:0 0 16px;color:var(--text);font-weight:700;font-size:1.05rem;">Orijinz Daily Covers</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">How do you play?</p>
-      <p style="margin:0 0 16px;">You are trying to guess the original artist of a song covered by another musician. Click/Tap <span class="btn-ref">&#x25B6; Tap PLAY to listen</span> the cover. Your timer starts when you press any button. Spotify will play up to 30 seconds of the cover for free; if you are logged into Spotify you may be able to listen to more.</p>
+      <p style="margin:0 0 16px;">You are trying to guess the original artist of a song covered by another musician. First choose how long a clip you want to listen to, by tapping 10, 20 or 30 seconds. Then tap <span class="btn-ref">&#x25B6; Tap PLAY to listen</span>. To get the best score you want to listen the shortest possible time that will still help you correctly guess the song. You can listen to song clips as often as you like.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">What is Reveal a Letter?</p>
       <p style="margin:0 0 16px;">Click/Tap <span class="btn-ref">&#x1F521; Reveal a Letter</span> and a random letter from the original artist&#39;s name is shown. You can reveal as many letters as you like &#8212; even the full answer if you&#39;re stuck.</p>
@@ -1926,7 +1947,7 @@
       <p style="margin:0 0 16px;">Tap <span class="btn-ref">&#x1F50D; Reveal Song Name</span> to unmask the song title and the cover artist. A very useful hint if hearing the cover alone isn&#39;t enough.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">How is my score calculated?</p>
-      <p style="margin:0 0 16px;">Lower is better. Score = your time + 15 seconds per letter revealed + 30 seconds if Reveal Song Name is used + 5 seconds per wrong letter guessed.</p>
+      <p style="margin:0 0 16px;">Lower is better. Score = your time + 2&#215; seconds listened + 30 seconds if Reveal Song Name is used + 15 seconds per letter revealed + 5 seconds per wrong letter guessed.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Where do I see everyone&#39;s scores?</p>
       <p style="margin:0 0 16px;">After you play, tap <span class="btn-ref"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Results</span> to view your results and the results of other players on the Orijinz leaderboard. There are three tabs &#8212; Score, Games Played, and Streak (games played in a row). If you click the arrows next to &#34;Today&#39;s Results&#34; you can see the outcomes for each of the past three days. You can also enter your Location in the results panel (example: San Francisco, CA) to show other players where you are from.</p>
@@ -2176,7 +2197,7 @@ function recordGameResult(won) {
     s.unfinished++;
   }
   if (won) {
-    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0);
+    const score = elapsedSeconds + listenPenalty + (revealSongPenalty || 0) + (revealCount * 15) + (wrongCount * 5);
     if (s.lastPuzzleDate !== todayKey) s.gamesPlayed++;
     s.totalReveals  += revealCount;
     s.totalTime     += elapsedSeconds;
@@ -2513,7 +2534,7 @@ function sendResultToWix(won) {
   // when the response arrives, or after 3 seconds (safety timeout).
   waitingForWixLeaderboard = true;
   setTimeout(() => { waitingForWixLeaderboard = false; }, 3000);
-  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0);
+  const score = elapsedSeconds + listenPenalty + (revealSongPenalty || 0) + (revealCount * 15) + (wrongCount * 5);
   const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
   window.parent.postMessage({
     type:              'orijinz_result',
@@ -2529,6 +2550,7 @@ function sendResultToWix(won) {
        Saved into GameResults.definitionUsed and incremented in
        MemberStats.totalDefinitions by the existing Velo backend. */
     definitionUsed:    (revealSongPenalty > 0),
+    listenSecs:        totalSecsWatched,
     wrongLetters:      wrongCount,
     wonGame:           won,
     showOnLeaderboard: showOnLB
@@ -2939,6 +2961,7 @@ let currentGuess = [], cursorPos = 0, guesses = [], gameOver = false;
 let inputTileRefs = [];
 let animating = false;
 let revealedLetters = new Set(), revealCount = 0, wrongCount = 0, revealSongPenalty = 0;
+let listenPenalty = 0, totalSecsWatched = 0;
 let streak = 0, puzzleIndex = 0;
 let wixResultSent = false, wixPageUrl = '', wixLeaderboardData = null;
 // True between sending a result to Wix and receiving the leaderboard back.
@@ -2989,6 +3012,8 @@ var spotifyController = null;
 var audioEl = null;          // HTML5 audio (preferred when cover_preview exists)
 var pendingPlay = false;
 var timerStarted = false;
+var selectedDuration = 30;   // 10 / 20 / 30 seconds
+var clipTimer = null;
 var songRevealed = false;
 
 window.onSpotifyIframeApiReady = function(IFrameAPI) {
@@ -3098,6 +3123,7 @@ function setupCoverAudio(puzzle) {
 // otherwise run to its 30s natural end, talking over the confetti / result
 // screen. No-op if audio isn't currently playing or has already ended.
 function fadeOutCoverAudio(durationMs) {
+  if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
   var dur = durationMs || 1500;
   if (audioEl && !audioEl.paused) {
     var startVol = audioEl.volume;
@@ -3125,29 +3151,49 @@ function mysteryPlayClick() {
   // Path 1: HTML5 audio
   if (audioEl) {
     if (audioEl.paused) {
+      // Clear any existing clip timer before starting a new one
+      if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
       var p = audioEl.play();
       if (p && typeof p.catch === 'function') {
         p.catch(function(){
-          // Browser blocked playback — fall back to iframe togglePlay
           if (spotifyController) {
             try { spotifyController.togglePlay(); } catch(e) {}
             setMysteryPlaying(!isPlaying);
           }
         });
       }
+      // Accumulate listen penalty (same formula as 70s Songs: duration × 2)
+      listenPenalty += selectedDuration * 2;
+      totalSecsWatched += selectedDuration;
+      // Auto-stop after selectedDuration seconds
+      clipTimer = setTimeout(function() {
+        clipTimer = null;
+        if (audioEl) { try { audioEl.pause(); audioEl.currentTime = 0; } catch(e) {} }
+        setMysteryPlaying(false);
+      }, selectedDuration * 1000);
     } else {
+      if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
       audioEl.pause();
+      try { audioEl.currentTime = 0; } catch(e) {}
     }
     saveState();
     return;
   }
 
-  // Path 2: Spotify iframe API (fallback)
+  // Path 2: Spotify iframe API (fallback — no duration limit applied)
   if (!spotifyController) return;
   try { spotifyController.togglePlay(); } catch(e) {}
-  // Optimistic UI flip; playback_update listener corrects if needed.
   setMysteryPlaying(!isPlaying);
   saveState();
+}
+
+function selectDuration(secs) {
+  if (clipTimer) return; // don't change while a clip is running
+  selectedDuration = secs;
+  [10, 20, 30].forEach(function(d) {
+    var el = document.getElementById('dur' + d);
+    if (el) el.classList.toggle('selected', d === secs);
+  });
 }
 
 function setMysteryPlaying(playing) {
@@ -3274,13 +3320,17 @@ function initGame() {
   if (stored.lastPlayed === todayKey && stored.guesses) {
     guesses         = stored.guesses;
     revealedLetters = new Set(stored.revealed || []);
-    revealCount     = stored.revealCount || 0;
-    wrongCount      = stored.wrongCount  || 0;
+    revealCount       = stored.revealCount       || 0;
+    wrongCount        = stored.wrongCount        || 0;
     revealSongPenalty = stored.revealSongPenalty || 0;
-    gameOver        = stored.gameOver   || false;
-    elapsedSeconds  = stored.elapsed    || 0;
+    listenPenalty     = stored.listenPenalty     || 0;
+    totalSecsWatched  = stored.totalSecsWatched  || 0;
+    gameOver          = stored.gameOver          || false;
+    elapsedSeconds    = stored.elapsed           || 0;
   } else {
     revealSongPenalty = 0;
+    listenPenalty     = 0;
+    totalSecsWatched  = 0;
   }
 
   puzzle      = PUZZLES[puzzleIndex];
@@ -3359,7 +3409,7 @@ function saveState() {
   safeSaveState({
     streak, lastPlayed: new Date().toDateString(),
     guesses, revealed: [...revealedLetters],
-    revealCount, wrongCount, revealSongPenalty, gameOver, elapsed: elapsedSeconds,
+    revealCount, wrongCount, revealSongPenalty, listenPenalty, totalSecsWatched, gameOver, elapsed: elapsedSeconds,
     ...(existing.devPuzzleIndex !== undefined ? { devPuzzleIndex: existing.devPuzzleIndex } : {})
   });
 }
@@ -3808,7 +3858,7 @@ function showResult(won) {
   const timeStr = formatTime(elapsedSeconds);
 
   if (won) {
-    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+    const score = elapsedSeconds + listenPenalty + (revealSongPenalty || 0) + (revealCount * 15) + (wrongCount * 5);
     if      (score < 20)  { emoji.textContent = '\uD83C\uDFC6'; hl.textContent = 'Legendary!'; }
     else if (score < 40)  { emoji.textContent = '\uD83C\uDF0C'; hl.textContent = 'Otherworldly!'; }
     else if (score < 60)  { emoji.textContent = '\uD83D\uDD2E'; hl.textContent = 'Uncanny!'; }
@@ -3825,8 +3875,9 @@ function showResult(won) {
     else                  { emoji.textContent = '\uD83C\uDF31'; hl.textContent = 'You Got It!'; }
     const revealStr = revealCount > 0 ? ' \u00B7 ' + revealCount + ' letter' + (revealCount === 1 ? '' : 's') + ' revealed' : '';
     const wrongStr  = wrongCount  > 0 ? ' \u00B7 ' + wrongCount  + ' letter' + (wrongCount  === 1 ? '' : 's') + ' guessed incorrectly' : '';
-    const songStr = (revealSongPenalty > 0) ? ' \u00B7 song name revealed' : '';
-    msg.innerHTML = 'Solved in ' + timeStr + revealStr + songStr + wrongStr + '.<br>Share the fun with friends!';
+    const songStr   = (revealSongPenalty > 0) ? ' \u00B7 song name revealed' : '';
+    const listenStr = totalSecsWatched > 0 ? ' \u00B7 listened, ' + totalSecsWatched + 's' : '';
+    msg.innerHTML = 'Solved in ' + timeStr + listenStr + revealStr + songStr + wrongStr + '.<br>Share the fun with friends!';
   } else {
     emoji.textContent = '\uD83C\uDFB5';
     hl.textContent    = 'Better luck tomorrow!';
@@ -3862,7 +3913,7 @@ function showResult(won) {
   const s = getStats();
   document.getElementById('rs-played').textContent = s.gamesPlayed;
   document.getElementById('rs-streak').textContent = streak;
-  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+  const score = elapsedSeconds + listenPenalty + (revealSongPenalty || 0) + (revealCount * 15) + (wrongCount * 5);
   document.getElementById('rs-score').textContent = score;
   sendResultToWix(won);
 }
