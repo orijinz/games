@@ -2318,6 +2318,7 @@ function initGame() {
     document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
     showResult(true);
   } else {
+    document.body.classList.remove('page-blur'); // show active-tile highlight immediately on load
     startTimer();
   }
   updateRevealBtn();
@@ -3124,5 +3125,18 @@ window.addEventListener('resize', fitWordGroups);
   }
 </style>
 
+<script>
+(function() {
+  var ua = navigator.userAgent;
+  var isIOS = /iPhone|iPad|iPod/.test(ua);
+  var isAndroid = /Android/.test(ua);
+  if (!isIOS && !isAndroid) return;
+  document.querySelectorAll('.menu-app-btn, .footer-app-btn').forEach(function(el) {
+    var href = el.getAttribute('href') || '';
+    if (isIOS && href.indexOf('play.google') !== -1) el.style.display = 'none';
+    if (isAndroid && href.indexOf('apps.apple') !== -1) el.style.display = 'none';
+  });
+})();
+</script>
 </body>
 </html>

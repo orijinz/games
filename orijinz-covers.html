@@ -356,6 +356,42 @@
     /* inherits .clue-btn styling */
   }
 
+  /* DURATION PICKER + PROGRESS BAR (shared with 70s Songs style) */
+  .duration-pick {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+  }
+  .dur-opt {
+    background: transparent;
+    border: none;
+    padding: 2px 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .dur-opt.selected { color: var(--gold); font-weight: 700; }
+  .dur-opt:hover:not(.selected) { color: var(--text); }
+  .dur-sep { color: var(--border); font-size: 0.8rem; }
+  .listen-progress {
+    margin: 6px auto 0;
+    width: 180px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .listen-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
   .spotify-embed-wrap {
     width: calc(100% + 12px);
     margin-left: -6px;
@@ -1684,6 +1720,13 @@
         <div class="mystery-card" id="mysteryCard">
           <div class="eq-bars" id="eqBars"><span></span><span></span><span></span><span></span><span></span></div>
           <button class="mystery-play-btn" id="mysteryPlayBtn" onclick="mysteryPlayClick()" disabled>&#x25B6; Loading&hellip;</button>
+          <div class="duration-pick" id="durationPick">
+            <button class="dur-opt selected" id="dur10" onclick="selectDuration(10)">10s</button>
+            <span class="dur-sep">&#xB7;</span>
+            <button class="dur-opt" id="dur20" onclick="selectDuration(20)">20s</button>
+            <span class="dur-sep">&#xB7;</span>
+            <button class="dur-opt" id="dur30" onclick="selectDuration(30)">30s</button>
+          </div>
         </div>
         <div class="revealed-card hidden" id="revealedCard">
           <img class="revealed-art" id="revealedArt" alt="" />
@@ -1695,6 +1738,9 @@
         </div>
       </div>
       <div class="cover-credit" id="coverCredit"></div>
+      <div class="listen-progress" id="listenProgress" style="display:none">
+        <div class="listen-progress-bar" id="listenProgressBar"></div>
+      </div>
     </div>
   </div>
 
@@ -1749,6 +1795,7 @@
           <div class="score-popover-title">How scores work &mdash; lower is better</div>
           <table class="score-breakdown">
             <tr><td>&#x23F1;</td><td>Your time +</td></tr>
+            <tr><td>&#x1F3A7;</td><td>2&times; seconds listened +</td></tr>
             <tr><td>&#x1F521;</td><td>15s per letter revealed +</td></tr>
             <tr><td>&#x1F50D;</td><td>30s if Reveal Song Name used +</td></tr>
             <tr><td>&#x26A0;&#xFE0F;</td><td>5s per wrong letter</td></tr>
@@ -1827,7 +1874,7 @@
     <!-- Scoring rubric -->
     <div class="lb-rubric">
       <div class="lb-rubric-title">Scoring &mdash; Lower is Better</div>
-      <div class="lb-rubric-penalty" style="margin-bottom:10px; margin-top:0; font-style:normal; color:var(--text-muted);">Your score = Your time + 15 seconds per letter revealed + 30 seconds if Reveal Song Name is used + 5 seconds per wrong letter</div>
+      <div class="lb-rubric-penalty" style="margin-bottom:10px; margin-top:0; font-style:normal; color:var(--text-muted);">Your score = Your time + 2× seconds listened + 15 seconds per letter revealed + 30 seconds if Reveal Song Name is used + 5 seconds per wrong letter</div>
       <div class="lb-rubric-grid">
         <div class="lb-rubric-row"><span>&#x1F3C6; Legendary</span><span>&lt; 20</span></div>
         <div class="lb-rubric-row"><span>&#x1F30C; Otherworldly</span><span>&lt; 40</span></div>
@@ -1922,7 +1969,7 @@
       <p style="margin:0 0 16px;color:var(--text);font-weight:700;font-size:1.05rem;">Orijinz Daily Covers</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">How do you play?</p>
-      <p style="margin:0 0 16px;">You are trying to guess the original artist of a song covered by another musician. Click/Tap <span class="btn-ref">&#x25B6; Tap PLAY to listen</span> the cover. Your timer starts when you press any button. Spotify will play up to 30 seconds of the cover for free; if you are logged into Spotify you may be able to listen to more.</p>
+      <p style="margin:0 0 16px;">You are trying to guess the original artist of a song covered by another musician. Click/Tap <span class="btn-ref">&#x25B6; Tap PLAY to listen</span> to hear a clip of the cover. Choose 10, 20, or 30 seconds and listen as many times as you like. Your timer starts when you press any button.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">What is Reveal a Letter?</p>
       <p style="margin:0 0 16px;">Click/Tap <span class="btn-ref">&#x1F521; Reveal a Letter</span> and a random letter from the original artist&#39;s name is shown. You can reveal as many letters as you like &#8212; even the full answer if you&#39;re stuck.</p>
@@ -1931,7 +1978,7 @@
       <p style="margin:0 0 16px;">Tap <span class="btn-ref">&#x1F50D; Reveal Song Name</span> to unmask the song title and the cover artist. A very useful hint if hearing the cover alone isn&#39;t enough.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">How is my score calculated?</p>
-      <p style="margin:0 0 16px;">Lower is better. Score = your time + 15 seconds per letter revealed + 30 seconds if Reveal Song Name is used + 5 seconds per wrong letter guessed.</p>
+      <p style="margin:0 0 16px;">Lower is better. Score = your time + 2× seconds listened + 15 seconds per letter revealed + 30 seconds if Reveal Song Name is used + 5 seconds per wrong letter guessed.</p>
 
       <p style="margin:0;color:#f5c842;font-weight:700;">Where do I see everyone&#39;s scores?</p>
       <p style="margin:0 0 16px;">After you play, tap <span class="btn-ref"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Results</span> to view your results and the results of other players on the Orijinz leaderboard. There are three tabs &#8212; Score, Games Played, and Streak (games played in a row). If you click the arrows next to &#34;Today&#39;s Results&#34; you can see the outcomes for each of the past three days. You can also enter your Location in the results panel (example: San Francisco, CA) to show other players where you are from.</p>
@@ -2181,7 +2228,7 @@ function recordGameResult(won) {
     s.unfinished++;
   }
   if (won) {
-    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0);
+    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0) + (listenPenalty || 0);
     if (s.lastPuzzleDate !== todayKey) s.gamesPlayed++;
     s.totalReveals  += revealCount;
     s.totalTime     += elapsedSeconds;
@@ -2518,7 +2565,7 @@ function sendResultToWix(won) {
   // when the response arrives, or after 3 seconds (safety timeout).
   waitingForWixLeaderboard = true;
   setTimeout(() => { waitingForWixLeaderboard = false; }, 3000);
-  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0);
+  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0) + (listenPenalty || 0);
   const showOnLB = localStorage.getItem('showOnLeaderboard') !== 'false';
   window.parent.postMessage({
     type:              'orijinz_result',
@@ -2529,6 +2576,7 @@ function sendResultToWix(won) {
     score,
     timeSecs:          elapsedSeconds,
     lettersRevealed:   revealCount,
+    listenSecs:        totalSecsWatched,
     /* Reuses the definitionUsed field — mirrors how Words & Phrases tracks
        its Definition hint. For Covers, "Yes" means Reveal Song Name was used.
        Saved into GameResults.definitionUsed and incremented in
@@ -2995,6 +3043,10 @@ var audioEl = null;          // HTML5 audio (preferred when cover_preview exists
 var pendingPlay = false;
 var timerStarted = false;
 var songRevealed = false;
+var selectedDuration = 10;
+var clipTimer = null;
+var listenPenalty = 0;
+var totalSecsWatched = 0;
 
 window.onSpotifyIframeApiReady = function(IFrameAPI) {
   window._spotifyAPI = IFrameAPI;
@@ -3081,6 +3133,9 @@ function setupCoverAudio(puzzle) {
     audioEl.addEventListener('play',  function(){ setMysteryPlaying(true); });
     audioEl.addEventListener('pause', function(){ setMysteryPlaying(false); });
     audioEl.addEventListener('ended', function(){
+      if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
+      const lp = document.getElementById('listenProgress');
+      if (lp) lp.style.display = 'none';
       setMysteryPlaying(false);
       try { audioEl.currentTime = 0; } catch(e) {}
     });
@@ -3103,6 +3158,9 @@ function setupCoverAudio(puzzle) {
 // otherwise run to its 30s natural end, talking over the confetti / result
 // screen. No-op if audio isn't currently playing or has already ended.
 function fadeOutCoverAudio(durationMs) {
+  if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
+  const lp = document.getElementById('listenProgress');
+  if (lp) lp.style.display = 'none';
   var dur = durationMs || 1500;
   if (audioEl && !audioEl.paused) {
     var startVol = audioEl.volume;
@@ -3127,32 +3185,75 @@ function mysteryPlayClick() {
   if (gameOver) return;
   if (!timerStarted) { startTimer(); timerStarted = true; }
 
-  // Path 1: HTML5 audio
-  if (audioEl) {
-    if (audioEl.paused) {
-      var p = audioEl.play();
-      if (p && typeof p.catch === 'function') {
-        p.catch(function(){
-          // Browser blocked playback — fall back to iframe togglePlay
-          if (spotifyController) {
-            try { spotifyController.togglePlay(); } catch(e) {}
-            setMysteryPlaying(!isPlaying);
-          }
-        });
-      }
-    } else {
-      audioEl.pause();
-    }
+  // If a timed clip is already running, stop it early
+  if (clipTimer) {
+    clearTimeout(clipTimer);
+    clipTimer = null;
+    if (audioEl) audioEl.pause();
+    else if (spotifyController && isPlaying) { try { spotifyController.togglePlay(); } catch(e) {} }
+    setMysteryPlaying(false);
+    const lp = document.getElementById('listenProgress');
+    if (lp) lp.style.display = 'none';
     saveState();
     return;
   }
 
-  // Path 2: Spotify iframe API (fallback)
-  if (!spotifyController) return;
-  try { spotifyController.togglePlay(); } catch(e) {}
-  // Optimistic UI flip; playback_update listener corrects if needed.
-  setMysteryPlaying(!isPlaying);
+  var seconds = selectedDuration;
+
+  // Path 1: HTML5 audio
+  if (audioEl) {
+    audioEl.currentTime = 0;
+    var p = audioEl.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(function() {
+        setMysteryPlaying(false);
+        const lp = document.getElementById('listenProgress');
+        if (lp) lp.style.display = 'none';
+        if (clipTimer) { clearTimeout(clipTimer); clipTimer = null; }
+        showToast('Clip unavailable', 2000);
+      });
+    }
+  } else {
+    // Path 2: Spotify iframe API (fallback)
+    if (!spotifyController) return;
+    try { spotifyController.togglePlay(); } catch(e) {}
+    setMysteryPlaying(true);
+  }
+
+  // Progress bar
+  const prog = document.getElementById('listenProgress');
+  const bar  = document.getElementById('listenProgressBar');
+  if (prog && bar) {
+    prog.style.display = 'block';
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      bar.style.transition = 'width ' + seconds + 's linear';
+      bar.style.width = '100%';
+    }));
+  }
+
+  listenPenalty += seconds * 2;
+  totalSecsWatched += seconds;
   saveState();
+
+  clipTimer = setTimeout(function() {
+    clipTimer = null;
+    if (audioEl) audioEl.pause();
+    else if (spotifyController && isPlaying) { try { spotifyController.togglePlay(); } catch(e) {} }
+    setMysteryPlaying(false);
+    const lp = document.getElementById('listenProgress');
+    if (lp) lp.style.display = 'none';
+  }, seconds * 1000);
+}
+
+function selectDuration(secs) {
+  if (clipTimer) return; // don't change duration mid-clip
+  selectedDuration = secs;
+  [10, 20, 30].forEach(d => {
+    const el = document.getElementById('dur' + d);
+    if (el) el.classList.toggle('selected', d === selectedDuration);
+  });
 }
 
 function setMysteryPlaying(playing) {
@@ -3281,11 +3382,15 @@ function initGame() {
     revealedLetters = new Set(stored.revealed || []);
     revealCount     = stored.revealCount || 0;
     wrongCount      = stored.wrongCount  || 0;
-    revealSongPenalty = stored.revealSongPenalty || 0;
-    gameOver        = stored.gameOver   || false;
-    elapsedSeconds  = stored.elapsed    || 0;
+    revealSongPenalty  = stored.revealSongPenalty  || 0;
+    listenPenalty      = stored.listenPenalty      || 0;
+    totalSecsWatched   = stored.totalSecsWatched   || 0;
+    gameOver           = stored.gameOver   || false;
+    elapsedSeconds     = stored.elapsed    || 0;
   } else {
     revealSongPenalty = 0;
+    listenPenalty     = 0;
+    totalSecsWatched  = 0;
   }
 
   puzzle      = PUZZLES[puzzleIndex];
@@ -3342,6 +3447,7 @@ function initGame() {
     document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
     showResult(true);
   } else {
+    document.body.classList.remove('page-blur'); // show active-tile highlight immediately on load
     // Timer no longer auto-starts; it begins on Play tap or Reveal Song Name tap.
     // EXCEPT for mid-game resume: if the player already accumulated time, keep going.
     document.getElementById('timerDisplay').textContent = formatTime(elapsedSeconds);
@@ -3364,7 +3470,7 @@ function saveState() {
   safeSaveState({
     streak, lastPlayed: new Date().toDateString(),
     guesses, revealed: [...revealedLetters],
-    revealCount, wrongCount, revealSongPenalty, gameOver, elapsed: elapsedSeconds,
+    revealCount, wrongCount, revealSongPenalty, listenPenalty, totalSecsWatched, gameOver, elapsed: elapsedSeconds,
     ...(existing.devPuzzleIndex !== undefined ? { devPuzzleIndex: existing.devPuzzleIndex } : {})
   });
 }
@@ -3813,7 +3919,7 @@ function showResult(won) {
   const timeStr = formatTime(elapsedSeconds);
 
   if (won) {
-    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+    const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0) + (listenPenalty || 0);
     if      (score < 20)  { emoji.textContent = '\uD83C\uDFC6'; hl.textContent = 'Legendary!'; }
     else if (score < 40)  { emoji.textContent = '\uD83C\uDF0C'; hl.textContent = 'Otherworldly!'; }
     else if (score < 60)  { emoji.textContent = '\uD83D\uDD2E'; hl.textContent = 'Uncanny!'; }
@@ -3828,10 +3934,11 @@ function showResult(won) {
     else if (score < 360) { emoji.textContent = '\uD83D\uDCA1'; hl.textContent = 'Nice Job!'; }
     else if (score < 420) { emoji.textContent = '\uD83D\uDC4F'; hl.textContent = 'Solid Work!'; }
     else                  { emoji.textContent = '\uD83C\uDF31'; hl.textContent = 'You Got It!'; }
-    const revealStr = revealCount > 0 ? ' \u00B7 ' + revealCount + ' letter' + (revealCount === 1 ? '' : 's') + ' revealed' : '';
-    const wrongStr  = wrongCount  > 0 ? ' \u00B7 ' + wrongCount  + ' letter' + (wrongCount  === 1 ? '' : 's') + ' guessed incorrectly' : '';
-    const songStr = (revealSongPenalty > 0) ? ' \u00B7 song name revealed' : '';
-    msg.innerHTML = 'Solved in ' + timeStr + revealStr + songStr + wrongStr + '.<br>Share the fun with friends!';
+    const revealStr  = revealCount     > 0 ? ' \u00B7 ' + revealCount + ' letter' + (revealCount === 1 ? '' : 's') + ' revealed' : '';
+    const wrongStr   = wrongCount      > 0 ? ' \u00B7 ' + wrongCount  + ' letter' + (wrongCount  === 1 ? '' : 's') + ' guessed incorrectly' : '';
+    const songStr    = revealSongPenalty > 0 ? ' \u00B7 song name revealed' : '';
+    const listenStr  = totalSecsWatched > 0 ? ' \u00B7 ' + totalSecsWatched + 's listened' : '';
+    msg.innerHTML = 'Solved in ' + timeStr + listenStr + revealStr + songStr + wrongStr + '.<br>Share the fun with friends!';
   } else {
     emoji.textContent = '\uD83C\uDFB5';
     hl.textContent    = 'Better luck tomorrow!';
@@ -3867,7 +3974,7 @@ function showResult(won) {
   const s = getStats();
   document.getElementById('rs-played').textContent = s.gamesPlayed;
   document.getElementById('rs-streak').textContent = streak;
-  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5);
+  const score = elapsedSeconds + (revealCount * 15) + (wrongCount * 5) + (revealSongPenalty || 0) + (listenPenalty || 0);
   document.getElementById('rs-score').textContent = score;
   sendResultToWix(won);
 }
@@ -4080,5 +4187,18 @@ window.addEventListener('resize', fitWordGroups);
   }
 </style>
 
+<script>
+(function() {
+  var ua = navigator.userAgent;
+  var isIOS = /iPhone|iPad|iPod/.test(ua);
+  var isAndroid = /Android/.test(ua);
+  if (!isIOS && !isAndroid) return;
+  document.querySelectorAll('.menu-app-btn, .footer-app-btn').forEach(function(el) {
+    var href = el.getAttribute('href') || '';
+    if (isIOS && href.indexOf('play.google') !== -1) el.style.display = 'none';
+    if (isAndroid && href.indexOf('apps.apple') !== -1) el.style.display = 'none';
+  });
+})();
+</script>
 </body>
 </html>
